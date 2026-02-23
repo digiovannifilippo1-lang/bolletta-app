@@ -8,564 +8,91 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --bg: #0a0a14; --surface: #13132a; --surface2: #1a1a35;
-      --text: #f1f5f9; --text2: #94a3b8;
-      --border: rgba(120,80,255,0.2);
-      --wt-color: #7c3aed; --opt-color: #0ea5e9;
-      --success: #22c55e; --error: #ef4444;
+      --bg:#0a0a14; --surface:#13132a; --surface2:#1a1a35;
+      --text:#f1f5f9; --text2:#94a3b8;
+      --border:rgba(120,80,255,0.2);
+      --wt:#e07020; --opt:#0ea5e9;
+      --success:#22c55e; --error:#ef4444;
     }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--bg); color:var(--text); padding:20px; min-height:100vh; }
-    .container { max-width:960px; margin:0 auto; }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);padding:20px;min-height:100vh;}
+    .container{max-width:960px;margin:0 auto;}
 
-    /* ── HEADER ── */
-    .header { text-align:center; padding:30px 20px 24px; background:var(--surface); border-radius:16px; border:1px solid var(--border); margin-bottom:28px; }
-    .logo { font-size:2.2rem; font-weight:900; background:linear-gradient(135deg,#7c3aed,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-    .header p { color:var(--text2); margin-top:6px; font-size:0.95rem; }
+    /* HEADER */
+    .header{text-align:center;padding:28px 20px 22px;background:var(--surface);border-radius:16px;border:1px solid var(--border);margin-bottom:26px;}
+    .logo{font-size:2rem;font-weight:900;background:linear-gradient(135deg,#7c3aed,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .header p{color:var(--text2);margin-top:6px;font-size:0.92rem;}
 
-    /* ── TABS ── */
-    .tabs { display:flex; gap:0; margin-bottom:28px; background:var(--surface); border-radius:12px; padding:4px; border:1px solid var(--border); }
-    .tab-btn { flex:1; padding:12px; background:none; border:none; color:var(--text2); cursor:pointer; font-size:1rem; font-weight:600; border-radius:10px; transition:all 0.25s; }
-    .tab-btn.active { background:linear-gradient(135deg,#7c3aed,#4f46e5); color:#fff; }
+    /* TABS */
+    .tabs{display:flex;gap:0;margin-bottom:26px;background:var(--surface);border-radius:12px;padding:4px;border:1px solid var(--border);}
+    .tab-btn{flex:1;padding:12px;background:none;border:none;color:var(--text2);cursor:pointer;font-size:1rem;font-weight:600;border-radius:10px;transition:all 0.25s;}
+    .tab-btn.active{background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;}
 
-    /* ── CARD ── */
-    .card { background:var(--surface); border-radius:14px; padding:24px; border:1px solid var(--border); margin-bottom:20px; }
-    .card-title { font-size:1.05rem; font-weight:700; color:#a78bfa; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+    /* CARD */
+    .card{background:var(--surface);border-radius:14px;padding:22px;border:1px solid var(--border);margin-bottom:18px;}
+    .card-title{font-size:1rem;font-weight:700;color:#a78bfa;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
 
-    /* ── UPLOAD ── */
-    .upload-area { border:2px dashed rgba(120,80,255,0.35); border-radius:12px; padding:42px 20px; text-align:center; cursor:pointer; transition:all 0.3s; background:rgba(120,80,255,0.04); }
-    .upload-area:hover { border-color:#7c3aed; background:rgba(120,80,255,0.1); }
-    .upload-area.dragover { border-color:var(--success); background:rgba(34,197,94,0.07); }
-    .upload-area h3 { color:var(--text); margin-bottom:6px; font-size:1.05rem; }
-    .upload-area p { color:var(--text2); font-size:0.85rem; }
-    .upload-icon { font-size:2.5rem; margin-bottom:10px; }
-    .file-input { display:none; }
-    .status-bar { display:none; flex-direction:row; align-items:center; gap:12px; margin-top:14px; background:rgba(120,80,255,0.1); border-radius:8px; padding:11px 15px; font-size:0.9rem; }
-    .spinner { width:17px; height:17px; border:3px solid rgba(120,80,255,0.3); border-top:3px solid #7c3aed; border-radius:50%; animation:spin 1s linear infinite; flex-shrink:0; }
-    @keyframes spin { to { transform:rotate(360deg); } }
+    /* UPLOAD */
+    .upload-area{border:2px dashed rgba(120,80,255,0.35);border-radius:12px;padding:38px 20px;text-align:center;cursor:pointer;transition:all 0.3s;background:rgba(120,80,255,0.04);}
+    .upload-area:hover{border-color:#7c3aed;background:rgba(120,80,255,0.1);}
+    .upload-area.dragover{border-color:var(--success);background:rgba(34,197,94,0.07);}
+    .upload-area h3{color:var(--text);margin-bottom:6px;font-size:1rem;}
+    .upload-area p{color:var(--text2);font-size:0.83rem;}
+    .upload-icon{font-size:2.4rem;margin-bottom:8px;}
+    .file-input{display:none;}
+    .status-bar{display:none;flex-direction:row;align-items:center;gap:12px;margin-top:13px;background:rgba(120,80,255,0.1);border-radius:8px;padding:10px 14px;font-size:0.88rem;}
+    .spinner{width:16px;height:16px;border:3px solid rgba(120,80,255,0.3);border-top:3px solid #7c3aed;border-radius:50%;animation:spin 1s linear infinite;flex-shrink:0;}
+    @keyframes spin{to{transform:rotate(360deg);}}
 
-    /* ── OPERATORE SELECTOR ── */
-    .op-selector { display:none; margin-bottom:20px; }
-    .op-selector-title { color:var(--text2); font-size:0.9rem; margin-bottom:12px; text-align:center; }
-    .op-buttons { display:flex; gap:12px; }
-    .op-btn { flex:1; padding:16px 12px; border-radius:12px; border:2px solid transparent; cursor:pointer; font-size:1rem; font-weight:700; transition:all 0.25s; background:var(--surface2); color:var(--text2); text-align:center; }
-    .op-btn:hover { transform:translateY(-2px); }
-    .op-btn.wt { border-color:rgba(124,58,237,0.4); }
-    .op-btn.wt.selected, .op-btn.wt:hover { background:rgba(124,58,237,0.2); border-color:#7c3aed; color:#c4b5fd; }
-    .op-btn.opt { border-color:rgba(14,165,233,0.4); }
-    .op-btn.opt.selected, .op-btn.opt:hover { background:rgba(14,165,233,0.2); border-color:#0ea5e9; color:#7dd3fc; }
-    .op-logo { font-size:1.4rem; display:block; margin-bottom:4px; }
-    .op-sub { font-size:0.72rem; color:var(--text2); font-weight:400; margin-top:3px; display:block; }
+    /* OPERATORE SELECTOR */
+    .op-selector{display:none;margin-bottom:18px;}
+    .op-selector-title{color:var(--text2);font-size:0.88rem;margin-bottom:11px;text-align:center;}
+    .op-buttons{display:flex;gap:12px;}
+    .op-btn{flex:1;padding:14px 10px;border-radius:12px;border:2px solid transparent;cursor:pointer;font-size:0.9rem;font-weight:700;transition:all 0.25s;background:var(--surface2);color:var(--text2);text-align:center;}
+    .op-btn:hover{transform:translateY(-2px);}
+    .op-btn img{height:32px;object-fit:contain;display:block;margin:0 auto 8px;}
+    .op-btn.wt{border-color:rgba(224,112,32,0.3);}
+    .op-btn.wt.selected,.op-btn.wt:hover{background:rgba(224,112,32,0.15);border-color:var(--wt);color:#fdba74;}
+    .op-btn.opt{border-color:rgba(14,165,233,0.3);}
+    .op-btn.opt.selected,.op-btn.opt:hover{background:rgba(14,165,233,0.15);border-color:var(--opt);color:#7dd3fc;}
+    .op-sub{font-size:0.7rem;color:var(--text2);font-weight:400;margin-top:3px;display:block;line-height:1.4;}
 
-    /* ── MESSAGGI ── */
-    .msg { border-radius:8px; padding:12px 15px; margin-bottom:18px; display:none; font-weight:500; font-size:0.92rem; }
-    .msg.error { background:rgba(239,68,68,0.12); border:2px solid var(--error); color:var(--error); }
-    .msg.success { background:rgba(34,197,94,0.12); border:2px solid var(--success); color:var(--success); }
+    /* WINDTRE CLIENTE TOGGLE */
+    .wt-toggle-box{display:none;background:rgba(224,112,32,0.08);border:1px solid rgba(224,112,32,0.3);border-radius:12px;padding:16px 18px;margin-bottom:16px;}
+    .wt-toggle-label{font-size:0.92rem;font-weight:600;color:#fdba74;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+    .wt-toggle-btns{display:flex;gap:10px;}
+    .wt-sub-btn{flex:1;padding:11px 8px;border-radius:10px;border:2px solid transparent;cursor:pointer;font-size:0.88rem;font-weight:700;transition:all 0.2s;background:var(--surface2);color:var(--text2);text-align:center;}
+    .wt-sub-btn:hover{transform:translateY(-1px);}
+    .wt-sub-btn.yes{border-color:rgba(224,112,32,0.3);}
+    .wt-sub-btn.yes.selected,.wt-sub-btn.yes:hover{background:rgba(224,112,32,0.2);border-color:var(--wt);color:#fdba74;}
+    .wt-sub-btn.no{border-color:rgba(148,163,184,0.3);}
+    .wt-sub-btn.no.selected,.wt-sub-btn.no:hover{background:rgba(148,163,184,0.1);border-color:#94a3b8;color:var(--text);}
+    .wt-sub-detail{font-size:0.72rem;color:var(--text2);margin-top:3px;display:block;}
 
-    /* ── RISULTATI ── */
-    .results { display:none; }
+    /* MESSAGGI */
+    .msg{border-radius:8px;padding:11px 14px;margin-bottom:16px;display:none;font-weight:500;font-size:0.9rem;}
+    .msg.error{background:rgba(239,68,68,0.12);border:2px solid var(--error);color:var(--error);}
+    .msg.success{background:rgba(34,197,94,0.12);border:2px solid var(--success);color:var(--success);}
+
+    /* RISULTATI */
+    .results{display:none;}
 
     /* Hero */
-    .hero { border-radius:14px; padding:28px 22px; text-align:center; margin-bottom:18px; border:2px solid; }
-    .hero.saving { background:linear-gradient(135deg,rgba(34,197,94,0.12),rgba(34,197,94,0.05)); border-color:rgba(34,197,94,0.4); }
-    .hero.losing { background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(239,68,68,0.05)); border-color:rgba(239,68,68,0.3); }
-    .hero-label { font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; color:var(--text2); margin-bottom:6px; }
-    .hero-amount { font-size:3rem; font-weight:900; line-height:1; }
-    .hero-amount.green { color:var(--success); }
-    .hero-amount.red { color:var(--error); }
-    .hero-sub { color:var(--text2); margin-top:8px; font-size:0.9rem; }
-    .perc-pill { display:inline-block; padding:5px 16px; border-radius:20px; font-weight:800; font-size:1rem; margin-top:10px; }
-    .perc-pill.green { background:rgba(34,197,94,0.18); color:var(--success); border:1.5px solid rgba(34,197,94,0.3); }
-    .perc-pill.red { background:rgba(239,68,68,0.15); color:var(--error); border:1.5px solid rgba(239,68,68,0.3); }
+    .hero{border-radius:14px;padding:26px 20px;text-align:center;margin-bottom:16px;border:2px solid;}
+    .hero.saving{background:linear-gradient(135deg,rgba(34,197,94,0.12),rgba(34,197,94,0.04));border-color:rgba(34,197,94,0.35);}
+    .hero.losing{background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(239,68,68,0.04));border-color:rgba(239,68,68,0.3);}
+    .hero-periodo{font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--text2);margin-bottom:4px;}
+    .hero-amount{font-size:2.8rem;font-weight:900;line-height:1;}
+    .hero-amount.green{color:var(--success);}
+    .hero-amount.red{color:var(--error);}
+    .hero-label{font-size:0.82rem;color:var(--text2);margin-top:5px;}
+    .perc-pill{display:inline-block;padding:5px 15px;border-radius:20px;font-weight:800;font-size:0.95rem;margin-top:9px;}
+    .perc-pill.green{background:rgba(34,197,94,0.16);color:var(--success);border:1.5px solid rgba(34,197,94,0.28);}
+    .perc-pill.red{background:rgba(239,68,68,0.14);color:var(--error);border:1.5px solid rgba(239,68,68,0.28);}
+    .hero-annuale{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.07);font-size:0.82rem;color:var(--text2);}
+    .hero-annuale span{font-weight:700;}
+    .hero-annuale span.green{color:var(--success);}
+    .hero-annuale span.red{color:var(--error);}
 
     /* Grid numeri */
-    .num-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px; }
-    @media(max-width:520px) { .num-grid { grid-template-columns:1fr; } }
-    .num-card { background:var(--surface2); border-radius:12px; padding:18px; border:1.5px solid var(--border); }
-    .num-card.curr { border-color:rgba(239,68,68,0.25); }
-    .num-card.offr { border-color:rgba(120,80,255,0.35); }
-    .num-card.offr.opt-style { border-color:rgba(14,165,233,0.35); }
-    .nc-label { font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--text2); margin-bottom:4px; }
-    .nc-op { font-size:0.75rem; color:var(--text2); font-style:italic; margin-bottom:4px; }
-    .nc-val { font-size:1.75rem; font-weight:800; }
-    .nc-val.red { color:#f87171; }
-    .nc-val.purple { color:#c4b5fd; }
-    .nc-val.blue { color:#7dd3fc; }
-    .nc-unit { font-size:0.78rem; color:var(--text2); margin-top:3px; }
-
-    /* Chart */
-    .chart-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:22px; margin-bottom:18px; }
-    .chart-card h3 { color:#a78bfa; margin-bottom:18px; font-size:1rem; }
-    .chart-wrap { position:relative; max-width:260px; margin:0 auto 14px; }
-    .chart-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; pointer-events:none; }
-    .cc-perc { font-size:1.8rem; font-weight:900; }
-    .cc-perc.green { color:var(--success); }
-    .cc-perc.red { color:var(--error); }
-    .cc-sub { font-size:0.78rem; color:var(--text2); }
-    .chart-legend { display:flex; justify-content:center; gap:16px; font-size:0.8rem; color:var(--text2); flex-wrap:wrap; }
-    .ldot { width:11px; height:11px; border-radius:50%; display:inline-block; margin-right:4px; vertical-align:middle; }
-
-    /* Dettaglio */
-    .detail-section { margin-bottom:14px; }
-    .ds-title { font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--text2); margin-bottom:8px; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05); }
-    .dr { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.88rem; }
-    .dr:last-child { border-bottom:none; }
-    .dr-l { color:var(--text2); }
-    .dr-v { font-weight:600; }
-    .dr-v.green { color:var(--success); }
-    .dr-v.red { color:var(--error); }
-    .dr-v.purple { color:#c4b5fd; }
-    .dr-v.blue { color:#7dd3fc; }
-    .tot-row { background:rgba(120,80,255,0.12); border-radius:8px; padding:9px 12px; margin-top:6px; display:flex; justify-content:space-between; font-weight:700; font-size:0.95rem; }
-    .tot-row.blue-row { background:rgba(14,165,233,0.12); }
-
-    /* Bonus */
-    .bonus-note { background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.25); border-radius:10px; padding:12px 15px; font-size:0.85rem; color:var(--text2); margin-bottom:18px; }
-    .bonus-note strong { color:var(--success); }
-
-    /* Dati rilevati */
-    .rilevati { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; }
-    .rb { background:rgba(120,80,255,0.12); border:1px solid var(--border); border-radius:8px; padding:7px 13px; font-size:0.82rem; }
-    .rb strong { color:#a78bfa; display:block; font-size:1rem; }
-
-    /* Offerta info box */
-    .offerta-info { border-radius:10px; padding:14px 16px; margin-bottom:20px; font-size:0.83rem; }
-    .offerta-info.wt-box { background:rgba(124,58,237,0.1); border:1px solid rgba(124,58,237,0.3); }
-    .offerta-info.opt-box { background:rgba(14,165,233,0.1); border:1px solid rgba(14,165,233,0.3); }
-    .offerta-info .oi-row { display:flex; gap:16px; flex-wrap:wrap; }
-    .offerta-info .oi-item { font-size:0.82rem; color:var(--text2); }
-    .offerta-info .oi-item strong { font-size:0.92rem; }
-    .offerta-info .oi-item strong.purple { color:#c4b5fd; }
-    .offerta-info .oi-item strong.blue { color:#7dd3fc; }
-  </style>
-</head>
-<body>
-<div class="container">
-
-  <div class="header">
-    <div class="logo">⚡ Preventivo Energia PRO</div>
-    <p>Carica la bolletta del cliente — confronto automatico con WindTre o Optima</p>
-  </div>
-
-  <div class="msg error" id="msgError"></div>
-  <div class="msg success" id="msgSuccess"></div>
-
-  <!-- TABS LUCE / GAS -->
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('luce', event)">💡 LUCE</button>
-    <button class="tab-btn" onclick="switchTab('gas', event)">🔥 GAS</button>
-  </div>
-
-  <!-- ========= TAB LUCE ========= -->
-  <div id="tab-luce" class="tab-content">
-
-    <div class="card">
-      <div class="card-title">📄 Carica Bolletta LUCE (PDF)</div>
-      <div class="upload-area" id="uploadLuce"
-        ondrop="handleDrop(event,'luce')"
-        ondragover="dov(event,'luce')"
-        ondragleave="dlv(event,'luce')"
-        onclick="document.getElementById('fileLuce').click()">
-        <div class="upload-icon">📋</div>
-        <h3>Trascina il PDF oppure clicca per selezionare</h3>
-        <p>Qualsiasi operatore • Qualsiasi numero di pagine • Max 10 MB</p>
-      </div>
-      <input type="file" id="fileLuce" class="file-input" accept=".pdf" onchange="handleFile(event,'luce')">
-      <div class="status-bar" id="statusLuce">
-        <div class="spinner"></div>
-        <span id="statusTextLuce">Analisi in corso...</span>
-      </div>
-    </div>
-
-    <!-- Selezione operatore -->
-    <div class="op-selector" id="opSelectorLuce">
-      <div class="op-selector-title">Scegli l'operatore con cui fare il preventivo:</div>
-      <div class="op-buttons">
-        <div class="op-btn wt" id="opBtnWT_luce" onclick="selectOp('luce','wt')">
-          <span class="op-logo">🌀</span>
-          WindTre
-          <span class="op-sub">PUN + 0,0278 €/kWh<br>90 €/anno fisso • Bonus 120€</span>
-        </div>
-        <div class="op-btn opt" id="opBtnOPT_luce" onclick="selectOp('luce','opt')">
-          <span class="op-logo">🔵</span>
-          Optima
-          <span class="op-sub">PUN + 0,0396 €/kWh<br>154,80 €/anno fisso</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="results" id="resultsLuce"></div>
-  </div>
-
-  <!-- ========= TAB GAS ========= -->
-  <div id="tab-gas" class="tab-content" style="display:none;">
-
-    <div class="card">
-      <div class="card-title">📄 Carica Bolletta GAS (PDF)</div>
-      <div class="upload-area" id="uploadGas"
-        ondrop="handleDrop(event,'gas')"
-        ondragover="dov(event,'gas')"
-        ondragleave="dlv(event,'gas')"
-        onclick="document.getElementById('fileGas').click()">
-        <div class="upload-icon">📋</div>
-        <h3>Trascina il PDF oppure clicca per selezionare</h3>
-        <p>Qualsiasi operatore • Qualsiasi numero di pagine • Max 10 MB</p>
-      </div>
-      <input type="file" id="fileGas" class="file-input" accept=".pdf" onchange="handleFile(event,'gas')">
-      <div class="status-bar" id="statusGas">
-        <div class="spinner"></div>
-        <span id="statusTextGas">Analisi in corso...</span>
-      </div>
-    </div>
-
-    <div class="op-selector" id="opSelectorGas">
-      <div class="op-selector-title">Scegli l'operatore con cui fare il preventivo:</div>
-      <div class="op-buttons">
-        <div class="op-btn wt" id="opBtnWT_gas" onclick="selectOp('gas','wt')">
-          <span class="op-logo">🌀</span>
-          WindTre
-          <span class="op-sub">PSV + 0,0965 €/Smc<br>90 €/anno fisso • Bonus 120€</span>
-        </div>
-        <div class="op-btn opt" id="opBtnOPT_gas" onclick="selectOp('gas','opt')">
-          <span class="op-logo">🔵</span>
-          Optima
-          <span class="op-sub">PSV + 0,12 €/Smc<br>162 €/anno fisso</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="results" id="resultsGas"></div>
-  </div>
-
-</div><!-- /container -->
-
-<script>
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-  // ── TARIFFE ─────────────────────────────────────────────────
-  const TARIFFE = {
-    luce: {
-      punGen2026: (0.1296 + 0.1240 + 0.1055) / 3, // 0.11970 €/kWh
-      iva: 0.10,
-      wt:  { spread: 0.0278, fisso: 90.00,   varConsumi: 0.0154, bonus: 120.00 },
-      opt: { spread: 0.0396, fisso: 154.80,  varConsumi: 0.0154, bonus: 0 }
-    },
-    gas: {
-      psvGen2026: 0.3488, // €/Smc
-      iva: 0.22,
-      wt:  { spread: 0.0965, fisso: 90.00,  varConsumi: 0,     bonus: 120.00 },
-      opt: { spread: 0.12,   fisso: 162.00, varConsumi: 0.11,  bonus: 0 }
-    }
-  };
-
-  // Dati bolletta estratti, salvati per ricalcolo al cambio operatore
-  const bollettaData = { luce: null, gas: null };
-  const chartInst    = { luce: null, gas: null };
-
-  // ── TABS ─────────────────────────────────────────────────────
-  function switchTab(tab, e) {
-    document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
-    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-    document.getElementById('tab-' + tab).style.display = 'block';
-    e.target.classList.add('active');
-  }
-
-  // ── DRAG & DROP ───────────────────────────────────────────────
-  function dov(e, t) { e.preventDefault(); document.getElementById('upload' + cap(t)).classList.add('dragover'); }
-  function dlv(e, t) { e.preventDefault(); document.getElementById('upload' + cap(t)).classList.remove('dragover'); }
-  function handleDrop(e, t) {
-    e.preventDefault(); dlv(e, t);
-    const f = e.dataTransfer.files[0];
-    if (f && f.type === 'application/pdf') processFile(f, t);
-    else showMsg('error', 'Carica un file PDF valido.');
-  }
-  function handleFile(e, t) { if (e.target.files[0]) processFile(e.target.files[0], t); }
-  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
-
-  // ── ELABORAZIONE PDF ──────────────────────────────────────────
-  async function processFile(file, tipo) {
-    const sb = document.getElementById('status' + cap(tipo));
-    const st = document.getElementById('statusText' + cap(tipo));
-    sb.style.display = 'flex';
-    document.getElementById('results' + cap(tipo)).style.display = 'none';
-    document.getElementById('opSelector' + cap(tipo)).style.display = 'none';
-    st.textContent = 'Lettura PDF...';
-    try {
-      if (file.size > 10485760) { showMsg('error', 'File troppo grande (max 10MB)'); sb.style.display='none'; return; }
-      const buf = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
-      st.textContent = 'Analisi ' + pdf.numPages + ' pagine...';
-      let testo = '';
-      for (let p = 1; p <= pdf.numPages; p++) {
-        const page = await pdf.getPage(p);
-        const c = await page.getTextContent();
-        testo += c.items.map(i => i.str).join(' ') + '\n';
-      }
-      st.textContent = 'Estrazione dati...';
-      const resp = await fetch('/api/estrai-bolletta?tipo=' + tipo, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: testo })
-      });
-      const data = await resp.json();
-      if (!data.success) {
-        showMsg('error', '⚠️ ' + (data.error || 'Dati non trovati nel PDF.'));
-        sb.style.display = 'none';
-        return;
-      }
-      sb.style.display = 'none';
-      const operatore = detectOperatore(testo);
-      const extra     = detectExtra(testo, data.totale, data.consumo, tipo);
-      bollettaData[tipo] = { consumo: data.consumo, totaleAnno: extra.totaleAnno, operatore, quotaFissa: extra.quotaFissa, mesi: extra.mesi };
-      // Mostra selezione operatore
-      document.getElementById('opSelector' + cap(tipo)).style.display = 'block';
-      // Reset selezione
-      ['wt','opt'].forEach(op => {
-        document.getElementById('opBtn' + op.toUpperCase() + '_' + tipo).classList.remove('selected');
-      });
-      showMsg('success', '✅ Bolletta ' + tipo.toUpperCase() + ' letta! Scegli l\'operatore per il preventivo.');
-    } catch(err) {
-      console.error(err);
-      showMsg('error', 'Errore lettura PDF: ' + err.message);
-      sb.style.display = 'none';
-    }
-  }
-
-  // ── SELEZIONE OPERATORE ───────────────────────────────────────
-  function selectOp(tipo, op) {
-    ['wt','opt'].forEach(o => document.getElementById('opBtn' + o.toUpperCase() + '_' + tipo).classList.remove('selected'));
-    document.getElementById('opBtn' + op.toUpperCase() + '_' + tipo).classList.add('selected');
-    const d = bollettaData[tipo];
-    if (d) renderRisultati(tipo, op, d.consumo, d.totaleAnno, d.operatore, d.quotaFissa, d.mesi);
-  }
-
-  // ── RILEVAMENTO OPERATORE ─────────────────────────────────────
-  function detectOperatore(t) {
-    t = t.toLowerCase();
-    const ops = [['iren','IREN'],['enel','Enel'],['eni','ENI/Plenitude'],['a2a','A2A'],['acea','ACEA'],
-      ['sorgenia','Sorgenia'],['illumia','Illumia'],['e.on','E.ON'],['edison','Edison'],
-      ['hera','Hera'],['italgas','Italgas'],['2i rete gas','2i Rete Gas']];
-    for (const [k,v] of ops) if (t.includes(k)) return v;
-    return 'Operatore attuale';
-  }
-
-  // ── ESTRAZIONE DATI EXTRA ─────────────────────────────────────
-  function detectExtra(testo, totaleBoll, consumoBoll, tipo) {
-    // Spesa annua esplicita
-    let totaleAnno = null;
-    const m1 = testo.match(/spesa\s+annua?\s+sostenuta[^€\d]*([\d.,]+)/i);
-    if (m1) { const v = pf(m1[1]); if (v > 30 && v < 20000) totaleAnno = v; }
-    // Consumo annuo (per estrapolazione)
-    let consumoAnno = consumoBoll;
-    const m2 = testo.match(/consumo\s+annuo[^0-9]*([\d.,]+)\s*(?:kwh|smc)/i);
-    if (m2) { const v = pf(m2[1]); if (v > 10) consumoAnno = v; }
-    // Mesi
-    let mesi = 2;
-    const m3 = testo.match(/(\d+)\s+mes[ei]/i);
-    if (m3) { const v = parseInt(m3[1]); if (v >= 1 && v <= 12) mesi = v; }
-    if (!totaleAnno) totaleAnno = parseFloat((totaleBoll / mesi * 12).toFixed(2));
-    // Quota fissa
-    let quotaFissa = 0;
-    const m4 = testo.match(/([\d.,]+)\s*€[^\n]*\/\s*mes[ei]/i);
-    if (m4) { const v = pf(m4[1]); if (v > 0 && v < 500) quotaFissa = v * 12; }
-    return { totaleAnno, quotaFissa, mesi, consumoAnno };
-  }
-
-  function pf(s) { return parseFloat(s.replace(/\./g,'').replace(',','.')); }
-
-  // ── RENDER RISULTATI ──────────────────────────────────────────
-  function renderRisultati(tipo, op, consumoAnno, spesaAtt, operatore, quotaFissaAtt, mesi) {
-    const T = TARIFFE[tipo];
-    const O = T[op];
-    const unita = tipo === 'luce' ? 'kWh' : 'Smc';
-    const isWt  = op === 'wt';
-    const opName = isWt ? 'WindTre' : 'Optima';
-    const opColor = isWt ? 'purple' : 'blue';
-    const totRowClass = isWt ? '' : 'blue-row';
-
-    // ── CALCOLO ───────────────────────────────────────────────
-    const prezzoMedioAtt = spesaAtt / consumoAnno;
-    // Componente energia pura nostra offerta
-    const prezzoIndice = tipo === 'luce' ? T.punGen2026 : T.psvGen2026;
-    const prezzoEnergia_netto = prezzoIndice + O.spread + (O.varConsumi || 0);
-    const prezzoEnergia_ivato = prezzoEnergia_netto * (1 + T.iva);
-    // Rete+oneri: stimate come differenza tra spesa attuale e quota energia (44% luce, 35% gas)
-    const percEnergia = tipo === 'luce' ? 0.44 : 0.35;
-    const quotaEnergiaPuraAtt = spesaAtt * percEnergia;
-    const reteOneriAnno = Math.max(spesaAtt - quotaEnergiaPuraAtt - quotaFissaAtt, 0);
-    // Totale nostra offerta
-    const energiaNostra = prezzoEnergia_ivato * consumoAnno;
-    const totaleNostra = parseFloat((energiaNostra + O.fisso + reteOneriAnno).toFixed(2));
-    const risparmio = parseFloat((spesaAtt - totaleNostra).toFixed(2));
-    const rispConBonus = parseFloat((risparmio + O.bonus).toFixed(2));
-    const perc = parseFloat((risparmio / spesaAtt * 100).toFixed(1));
-    const isSaving = risparmio >= 0;
-
-    // ── HTML ──────────────────────────────────────────────────
-    const container = document.getElementById('results' + cap(tipo));
-    container.innerHTML = `
-      <!-- Dati rilevati -->
-      <div class="rilevati">
-        <div class="rb"><strong>${consumoAnno.toFixed(0)}</strong>${unita}/anno</div>
-        <div class="rb"><strong>${mesi}</strong>mesi fatturati</div>
-        <div class="rb"><strong>${operatore}</strong>operatore attuale</div>
-        <div class="rb"><strong>${prezzoMedioAtt.toFixed(4)}</strong>€/${unita} prezzo medio</div>
-      </div>
-
-      <!-- Offerta selezionata -->
-      <div class="offerta-info ${isWt ? 'wt-box' : 'opt-box'}">
-        <div style="font-weight:700;color:${isWt ? '#c4b5fd' : '#7dd3fc'};margin-bottom:8px;">
-          ${isWt ? '🌀' : '🔵'} Offerta ${opName}
-        </div>
-        <div class="oi-row">
-          <div class="oi-item">Indice: <strong class="${opColor}">${tipo==='luce'?'PUN':'PSV'} + ${O.spread} €/${unita}</strong></div>
-          ${O.varConsumi ? `<div class="oi-item">Quota variabile: <strong class="${opColor}">+ ${O.varConsumi} €/${unita}</strong></div>` : ''}
-          <div class="oi-item">Fisso annuo: <strong class="${opColor}">€ ${O.fisso.toFixed(2)}</strong></div>
-          ${O.bonus > 0 ? `<div class="oi-item">Bonus 1° anno: <strong style="color:var(--success)">+ € ${O.bonus.toFixed(2)}</strong></div>` : ''}
-        </div>
-      </div>
-
-      <!-- Hero -->
-      <div class="hero ${isSaving ? 'saving' : 'losing'}">
-        <div class="hero-label">Risparmio Annuale Stimato</div>
-        <div class="hero-amount ${isSaving ? 'green' : 'red'}">
-          ${isSaving ? '€ ' : '- € '}${Math.abs(risparmio).toFixed(2)}
-        </div>
-        <div class="hero-sub">
-          ${isSaving
-            ? `Da € ${spesaAtt.toFixed(2)} (${operatore}) → € ${totaleNostra.toFixed(2)} (${opName})`
-            : `Con ${opName} spenderesti € ${Math.abs(risparmio).toFixed(2)} in più all'anno`}
-        </div>
-        <div class="perc-pill ${isSaving ? 'green' : 'red'}">
-          ${isSaving ? '-' : '+'}${Math.abs(perc)}% sul costo annuale
-        </div>
-      </div>
-
-      <!-- Numeri -->
-      <div class="num-grid">
-        <div class="num-card curr">
-          <div class="nc-label">Paga ora con</div>
-          <div class="nc-op">${operatore}</div>
-          <div class="nc-val red">€ ${spesaAtt.toFixed(2)}</div>
-          <div class="nc-unit">€ / anno</div>
-        </div>
-        <div class="num-card offr ${isWt ? '' : 'opt-style'}">
-          <div class="nc-label">Con ${opName} pagherebbe</div>
-          <div class="nc-op">${opName} Energia</div>
-          <div class="nc-val ${opColor}">€ ${totaleNostra.toFixed(2)}</div>
-          <div class="nc-unit">€ / anno</div>
-        </div>
-      </div>
-
-      <!-- Grafico -->
-      <div class="chart-card">
-        <h3>📊 Distribuzione Spesa Annuale</h3>
-        <div class="chart-wrap">
-          <canvas id="chart_${tipo}" width="260" height="260"></canvas>
-          <div class="chart-center">
-            <div class="cc-perc ${isSaving ? 'green' : 'red'}" id="ccperc_${tipo}">
-              ${isSaving ? '-' : '+'}${Math.abs(perc)}%
-            </div>
-            <div class="cc-sub">${isSaving ? 'risparmio' : 'costo ++'}</div>
-          </div>
-        </div>
-        <div class="chart-legend">
-          <span><span class="ldot" style="background:${isWt ? '#7c3aed' : '#0ea5e9'};"></span>${opName}</span>
-          <span><span class="ldot" style="background:${isSaving ? '#22c55e' : '#ef4444'};"></span>${isSaving ? 'Risparmio' : 'Costo extra'}</span>
-        </div>
-      </div>
-
-      ${O.bonus > 0 ? `
-      <div class="bonus-note">
-        🎁 <strong>Bonus incluso: € ${O.bonus.toFixed(2)} il primo anno</strong> — il risparmio reale il 1° anno è
-        <strong>${rispConBonus >= 0 ? '€ ' + rispConBonus.toFixed(2) : '- € ' + Math.abs(rispConBonus).toFixed(2)}</strong>
-      </div>` : ''}
-
-      <!-- Dettaglio -->
-      <div class="card">
-        <div class="card-title">🔍 Dettaglio Calcolo</div>
-        <div class="detail-section">
-          <div class="ds-title">📌 Bolletta Attuale — ${operatore}</div>
-          <div class="dr"><span class="dr-l">Consumo annuo</span><span class="dr-v">${consumoAnno.toFixed(0)} ${unita}</span></div>
-          <div class="dr"><span class="dr-l">Spesa annua</span><span class="dr-v red">€ ${spesaAtt.toFixed(2)}</span></div>
-          <div class="dr"><span class="dr-l">Prezzo medio (IVA incl.)</span><span class="dr-v">${prezzoMedioAtt.toFixed(4)} €/${unita}</span></div>
-          <div class="dr"><span class="dr-l">Quota fissa stimata</span><span class="dr-v">€ ${quotaFissaAtt.toFixed(2)}</span></div>
-          <div class="dr"><span class="dr-l">Rete + oneri stimati</span><span class="dr-v">€ ${reteOneriAnno.toFixed(2)}</span></div>
-        </div>
-        <div class="detail-section">
-          <div class="ds-title">${isWt ? '🌀' : '🔵'} Offerta ${opName}</div>
-          <div class="dr"><span class="dr-l">Indice ${tipo==='luce'?'PUN':'PSV'} (${tipo==='luce'?'Gen 2026':'Gen 2026'})</span><span class="dr-v">${prezzoIndice.toFixed(4)} €/${unita}</span></div>
-          <div class="dr"><span class="dr-l">+ Corrispettivo ${opName}</span><span class="dr-v ${opColor}">0,${String(O.spread).replace('0.','')} €/${unita}</span></div>
-          ${O.varConsumi ? `<div class="dr"><span class="dr-l">+ Quota variabile commercializzazione</span><span class="dr-v ${opColor}">${O.varConsumi} €/${unita}</span></div>` : ''}
-          <div class="dr"><span class="dr-l">Prezzo energia (IVA ${tipo==='luce'?'10':'22'}% incl.)</span><span class="dr-v ${opColor}">${prezzoEnergia_ivato.toFixed(4)} €/${unita}</span></div>
-          <div class="dr"><span class="dr-l">Costo energia (${consumoAnno.toFixed(0)} ${unita})</span><span class="dr-v">€ ${energiaNostra.toFixed(2)}</span></div>
-          <div class="dr"><span class="dr-l">Quota fissa annua</span><span class="dr-v">€ ${O.fisso.toFixed(2)}</span></div>
-          <div class="dr"><span class="dr-l">Rete + oneri (identici all'attuale)</span><span class="dr-v">€ ${reteOneriAnno.toFixed(2)}</span></div>
-          <div class="tot-row ${totRowClass}">
-            <span style="color:var(--text2)">Totale ${opName}</span>
-            <span style="color:${isWt ? '#c4b5fd' : '#7dd3fc'}">€ ${totaleNostra.toFixed(2)}</span>
-          </div>
-        </div>
-        <div class="detail-section">
-          <div class="ds-title">✅ Risultato</div>
-          <div class="dr">
-            <span class="dr-l">Risparmio annuo</span>
-            <span class="dr-v ${isSaving ? 'green' : 'red'}">${isSaving ? '+ €' : '- €'} ${Math.abs(risparmio).toFixed(2)}</span>
-          </div>
-          ${O.bonus > 0 ? `
-          <div class="dr"><span class="dr-l">Bonus 1° anno</span><span class="dr-v green">+ € ${O.bonus.toFixed(2)}</span></div>
-          <div class="dr" style="font-weight:700">
-            <span class="dr-l" style="color:var(--text)">Risparmio totale 1° anno</span>
-            <span class="dr-v ${rispConBonus >= 0 ? 'green' : 'red'}" style="font-size:1rem">${rispConBonus >= 0 ? '+' : '-'} € ${Math.abs(rispConBonus).toFixed(2)}</span>
-          </div>` : ''}
-          <div class="dr">
-            <span class="dr-l">Variazione %</span>
-            <span class="dr-v ${isSaving ? 'green' : 'red'}">${isSaving ? '-' : '+'}${Math.abs(perc)}%</span>
-          </div>
-        </div>
-      </div>
-    `;
-
-    container.style.display = 'block';
-    renderChart(tipo, op, totaleNostra, risparmio, isSaving, perc);
-    window.scrollTo({ top: container.offsetTop - 20, behavior: 'smooth' });
-  }
-
-  // ── GRAFICO ───────────────────────────────────────────────────
-  function renderChart(tipo, op, totaleNostra, risparmio, isSaving, perc) {
-    if (chartInst[tipo]) chartInst[tipo].destroy();
-    const ctx = document.getElementById('chart_' + tipo).getContext('2d');
-    const colorOp = op === 'wt' ? 'rgba(124,58,237,0.85)' : 'rgba(14,165,233,0.85)';
-    const colorRisp = isSaving ? 'rgba(34,197,94,0.85)' : 'rgba(239,68,68,0.7)';
-    chartInst[tipo] = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        datasets: [{
-          data: [totaleNostra, Math.max(Math.abs(risparmio), 0.01)],
-          backgroundColor: [colorOp, colorRisp],
-          borderColor: '#0a0a14',
-          borderWidth: 3,
-          hoverOffset: 6
-        }]
-      },
-      options: {
-        cutout: '66%',
-        animation: { duration: 900 },
-        plugins: {
-          legend: { display: false },
-          tooltip: { callbacks: { label: c => ' € ' + c.parsed.toFixed(2) } }
-        }
-      }
-    });
-  }
-
-  // ── MESSAGGI ──────────────────────────────────────────────────
-  function showMsg(type, msg) {
-    const el = document.getElementById(type === 'error' ? 'msgError' : 'msgSuccess');
-    el.textContent = msg; el.style.display = 'block';
-    setTimeout(() => { el.style.display = 'none'; }, 6000);
-  }
-</script>
-</body>
-</html>
+    
