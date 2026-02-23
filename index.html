@@ -3,266 +3,239 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Preventivo WindTre Energia</title>
+  <title>Preventivo Energia PRO</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --primary: #7c3aed;
-      --primary-light: #a78bfa;
-      --success: #22c55e;
-      --error: #ef4444;
-      --bg: #0f0f1a;
-      --surface: #1a1a2e;
-      --surface2: #16213e;
-      --text: #f1f5f9;
-      --text2: #94a3b8;
-      --border: rgba(124,58,237,0.25);
+      --bg: #0a0a14; --surface: #13132a; --surface2: #1a1a35;
+      --text: #f1f5f9; --text2: #94a3b8;
+      --border: rgba(120,80,255,0.2);
+      --wt-color: #7c3aed; --opt-color: #0ea5e9;
+      --success: #22c55e; --error: #ef4444;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background:var(--bg); color:var(--text); padding:20px; min-height:100vh; }
-    .container { max-width:900px; margin:0 auto; }
+    body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--bg); color:var(--text); padding:20px; min-height:100vh; }
+    .container { max-width:960px; margin:0 auto; }
 
-    /* Header */
-    .header { text-align:center; margin-bottom:36px; padding:32px 20px; background:var(--surface); border-radius:16px; border:1px solid var(--border); }
-    .logo { font-size:2.6rem; font-weight:900; background:linear-gradient(135deg,#7c3aed,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:6px; }
-    .header p { color:var(--text2); font-size:1rem; }
-    .windtre-badge { display:inline-block; background:linear-gradient(135deg,#7c3aed,#4f46e5); color:#fff; font-size:0.8rem; font-weight:700; padding:4px 12px; border-radius:20px; margin-top:10px; letter-spacing:1px; }
+    /* ── HEADER ── */
+    .header { text-align:center; padding:30px 20px 24px; background:var(--surface); border-radius:16px; border:1px solid var(--border); margin-bottom:28px; }
+    .logo { font-size:2.2rem; font-weight:900; background:linear-gradient(135deg,#7c3aed,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .header p { color:var(--text2); margin-top:6px; font-size:0.95rem; }
 
-    /* Offerta riepilogo */
-    .offerta-box { background:var(--surface2); border:2px solid var(--border); border-radius:12px; padding:18px 22px; margin-bottom:28px; display:flex; flex-wrap:wrap; gap:16px; align-items:center; }
-    .offerta-item { font-size:0.9rem; color:var(--text2); }
-    .offerta-item strong { color:var(--primary-light); font-size:1.05rem; }
-    .offerta-title { font-weight:700; color:var(--text); font-size:0.95rem; width:100%; margin-bottom:4px; }
+    /* ── TABS ── */
+    .tabs { display:flex; gap:0; margin-bottom:28px; background:var(--surface); border-radius:12px; padding:4px; border:1px solid var(--border); }
+    .tab-btn { flex:1; padding:12px; background:none; border:none; color:var(--text2); cursor:pointer; font-size:1rem; font-weight:600; border-radius:10px; transition:all 0.25s; }
+    .tab-btn.active { background:linear-gradient(135deg,#7c3aed,#4f46e5); color:#fff; }
 
-    /* Upload */
-    .upload-card { background:var(--surface); border-radius:14px; padding:28px; border:1px solid var(--border); margin-bottom:24px; }
-    .upload-card h2 { font-size:1.15rem; color:var(--primary-light); margin-bottom:16px; display:flex; align-items:center; gap:8px; }
-    .upload-area {
-      border:2px dashed rgba(124,58,237,0.4); border-radius:12px; padding:44px 20px;
-      text-align:center; cursor:pointer; transition:all 0.3s;
-      background:rgba(124,58,237,0.04);
-    }
-    .upload-area:hover { border-color:var(--primary); background:rgba(124,58,237,0.1); }
-    .upload-area.dragover { border-color:var(--success); background:rgba(34,197,94,0.08); }
-    .upload-icon { font-size:2.8rem; margin-bottom:10px; }
-    .upload-area h3 { color:var(--text); margin-bottom:6px; font-size:1.1rem; }
-    .upload-area p { color:var(--text2); font-size:0.88rem; }
+    /* ── CARD ── */
+    .card { background:var(--surface); border-radius:14px; padding:24px; border:1px solid var(--border); margin-bottom:20px; }
+    .card-title { font-size:1.05rem; font-weight:700; color:#a78bfa; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+
+    /* ── UPLOAD ── */
+    .upload-area { border:2px dashed rgba(120,80,255,0.35); border-radius:12px; padding:42px 20px; text-align:center; cursor:pointer; transition:all 0.3s; background:rgba(120,80,255,0.04); }
+    .upload-area:hover { border-color:#7c3aed; background:rgba(120,80,255,0.1); }
+    .upload-area.dragover { border-color:var(--success); background:rgba(34,197,94,0.07); }
+    .upload-area h3 { color:var(--text); margin-bottom:6px; font-size:1.05rem; }
+    .upload-area p { color:var(--text2); font-size:0.85rem; }
+    .upload-icon { font-size:2.5rem; margin-bottom:10px; }
     .file-input { display:none; }
-
-    /* Status */
-    .status-bar { display:none; flex-direction:row; align-items:center; gap:12px; margin-top:16px; background:rgba(124,58,237,0.1); border-radius:8px; padding:12px 16px; }
-    .spinner { width:18px; height:18px; border:3px solid rgba(124,58,237,0.3); border-top:3px solid var(--primary); border-radius:50%; animation:spin 1s linear infinite; flex-shrink:0; }
+    .status-bar { display:none; flex-direction:row; align-items:center; gap:12px; margin-top:14px; background:rgba(120,80,255,0.1); border-radius:8px; padding:11px 15px; font-size:0.9rem; }
+    .spinner { width:17px; height:17px; border:3px solid rgba(120,80,255,0.3); border-top:3px solid #7c3aed; border-radius:50%; animation:spin 1s linear infinite; flex-shrink:0; }
     @keyframes spin { to { transform:rotate(360deg); } }
 
-    /* Messaggi */
-    .msg { border-radius:8px; padding:13px 16px; margin-bottom:20px; display:none; font-weight:500; font-size:0.95rem; }
+    /* ── OPERATORE SELECTOR ── */
+    .op-selector { display:none; margin-bottom:20px; }
+    .op-selector-title { color:var(--text2); font-size:0.9rem; margin-bottom:12px; text-align:center; }
+    .op-buttons { display:flex; gap:12px; }
+    .op-btn { flex:1; padding:16px 12px; border-radius:12px; border:2px solid transparent; cursor:pointer; font-size:1rem; font-weight:700; transition:all 0.25s; background:var(--surface2); color:var(--text2); text-align:center; }
+    .op-btn:hover { transform:translateY(-2px); }
+    .op-btn.wt { border-color:rgba(124,58,237,0.4); }
+    .op-btn.wt.selected, .op-btn.wt:hover { background:rgba(124,58,237,0.2); border-color:#7c3aed; color:#c4b5fd; }
+    .op-btn.opt { border-color:rgba(14,165,233,0.4); }
+    .op-btn.opt.selected, .op-btn.opt:hover { background:rgba(14,165,233,0.2); border-color:#0ea5e9; color:#7dd3fc; }
+    .op-logo { font-size:1.4rem; display:block; margin-bottom:4px; }
+    .op-sub { font-size:0.72rem; color:var(--text2); font-weight:400; margin-top:3px; display:block; }
+
+    /* ── MESSAGGI ── */
+    .msg { border-radius:8px; padding:12px 15px; margin-bottom:18px; display:none; font-weight:500; font-size:0.92rem; }
     .msg.error { background:rgba(239,68,68,0.12); border:2px solid var(--error); color:var(--error); }
     .msg.success { background:rgba(34,197,94,0.12); border:2px solid var(--success); color:var(--success); }
 
-    /* Risultati */
+    /* ── RISULTATI ── */
     .results { display:none; }
 
-    /* Hero risparmio */
-    .hero-risparmio {
-      background:linear-gradient(135deg,rgba(124,58,237,0.2),rgba(6,182,212,0.1));
-      border:2px solid var(--primary); border-radius:16px; padding:30px 24px;
-      text-align:center; margin-bottom:24px;
-    }
-    .hero-risparmio .label { color:var(--text2); font-size:0.9rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
-    .hero-risparmio .amount { font-size:3.2rem; font-weight:900; color:var(--success); line-height:1; }
-    .hero-risparmio .amount.negative { color:var(--error); }
-    .hero-risparmio .sub { color:var(--text2); margin-top:8px; font-size:1rem; }
-    .hero-risparmio .perc-badge {
-      display:inline-block; padding:6px 18px; border-radius:20px; font-weight:800;
-      font-size:1.1rem; margin-top:12px;
-    }
-    .perc-badge.save { background:rgba(34,197,94,0.2); color:var(--success); border:2px solid rgba(34,197,94,0.4); }
-    .perc-badge.lose { background:rgba(239,68,68,0.2); color:var(--error); border:2px solid rgba(239,68,68,0.4); }
+    /* Hero */
+    .hero { border-radius:14px; padding:28px 22px; text-align:center; margin-bottom:18px; border:2px solid; }
+    .hero.saving { background:linear-gradient(135deg,rgba(34,197,94,0.12),rgba(34,197,94,0.05)); border-color:rgba(34,197,94,0.4); }
+    .hero.losing { background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(239,68,68,0.05)); border-color:rgba(239,68,68,0.3); }
+    .hero-label { font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; color:var(--text2); margin-bottom:6px; }
+    .hero-amount { font-size:3rem; font-weight:900; line-height:1; }
+    .hero-amount.green { color:var(--success); }
+    .hero-amount.red { color:var(--error); }
+    .hero-sub { color:var(--text2); margin-top:8px; font-size:0.9rem; }
+    .perc-pill { display:inline-block; padding:5px 16px; border-radius:20px; font-weight:800; font-size:1rem; margin-top:10px; }
+    .perc-pill.green { background:rgba(34,197,94,0.18); color:var(--success); border:1.5px solid rgba(34,197,94,0.3); }
+    .perc-pill.red { background:rgba(239,68,68,0.15); color:var(--error); border:1.5px solid rgba(239,68,68,0.3); }
 
-    /* Griglia numeri */
-    .numbers-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; }
-    @media (max-width:560px) { .numbers-grid { grid-template-columns:1fr; } }
-    .num-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; }
-    .num-card.current { border-color:rgba(239,68,68,0.3); }
-    .num-card.offer { border-color:rgba(124,58,237,0.5); }
-    .nc-label { font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; color:var(--text2); margin-bottom:6px; }
-    .nc-operator { font-size:0.75rem; color:var(--text2); margin-bottom:4px; font-style:italic; }
-    .nc-value { font-size:1.8rem; font-weight:800; }
-    .nc-value.red { color:#f87171; }
-    .nc-value.purple { color:var(--primary-light); }
-    .nc-unit { font-size:0.82rem; color:var(--text2); margin-top:4px; }
+    /* Grid numeri */
+    .num-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px; }
+    @media(max-width:520px) { .num-grid { grid-template-columns:1fr; } }
+    .num-card { background:var(--surface2); border-radius:12px; padding:18px; border:1.5px solid var(--border); }
+    .num-card.curr { border-color:rgba(239,68,68,0.25); }
+    .num-card.offr { border-color:rgba(120,80,255,0.35); }
+    .num-card.offr.opt-style { border-color:rgba(14,165,233,0.35); }
+    .nc-label { font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--text2); margin-bottom:4px; }
+    .nc-op { font-size:0.75rem; color:var(--text2); font-style:italic; margin-bottom:4px; }
+    .nc-val { font-size:1.75rem; font-weight:800; }
+    .nc-val.red { color:#f87171; }
+    .nc-val.purple { color:#c4b5fd; }
+    .nc-val.blue { color:#7dd3fc; }
+    .nc-unit { font-size:0.78rem; color:var(--text2); margin-top:3px; }
 
-    /* Grafico */
-    .chart-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:24px; }
-    .chart-card h3 { color:var(--primary-light); margin-bottom:20px; font-size:1.05rem; }
-    .chart-wrap { position:relative; max-width:280px; margin:0 auto 16px; }
+    /* Chart */
+    .chart-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:22px; margin-bottom:18px; }
+    .chart-card h3 { color:#a78bfa; margin-bottom:18px; font-size:1rem; }
+    .chart-wrap { position:relative; max-width:260px; margin:0 auto 14px; }
     .chart-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; pointer-events:none; }
-    .chart-center .c-perc { font-size:1.9rem; font-weight:900; }
-    .chart-center .c-perc.green { color:var(--success); }
-    .chart-center .c-perc.red { color:var(--error); }
-    .chart-center .c-euro { font-size:0.82rem; color:var(--text2); }
-    .chart-legend { display:flex; justify-content:center; gap:20px; font-size:0.85rem; color:var(--text2); flex-wrap:wrap; }
-    .legend-dot { width:12px; height:12px; border-radius:50%; display:inline-block; margin-right:5px; vertical-align:middle; }
+    .cc-perc { font-size:1.8rem; font-weight:900; }
+    .cc-perc.green { color:var(--success); }
+    .cc-perc.red { color:var(--error); }
+    .cc-sub { font-size:0.78rem; color:var(--text2); }
+    .chart-legend { display:flex; justify-content:center; gap:16px; font-size:0.8rem; color:var(--text2); flex-wrap:wrap; }
+    .ldot { width:11px; height:11px; border-radius:50%; display:inline-block; margin-right:4px; vertical-align:middle; }
 
     /* Dettaglio */
-    .detail-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:24px; }
-    .detail-card h3 { color:var(--primary-light); margin-bottom:16px; font-size:1.05rem; }
-    .detail-section { margin-bottom:16px; }
-    .detail-section-title { font-size:0.78rem; text-transform:uppercase; letter-spacing:1px; color:var(--text2); margin-bottom:8px; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.06); }
-    .detail-row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.9rem; }
-    .detail-row:last-child { border-bottom:none; }
-    .dr-label { color:var(--text2); }
-    .dr-value { font-weight:600; }
-    .dr-value.green { color:var(--success); }
-    .dr-value.red { color:var(--error); }
-    .dr-value.purple { color:var(--primary-light); }
-    .total-row { background:rgba(124,58,237,0.15); border-radius:8px; padding:10px 12px; margin-top:8px; display:flex; justify-content:space-between; font-weight:700; font-size:1rem; }
+    .detail-section { margin-bottom:14px; }
+    .ds-title { font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--text2); margin-bottom:8px; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .dr { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.88rem; }
+    .dr:last-child { border-bottom:none; }
+    .dr-l { color:var(--text2); }
+    .dr-v { font-weight:600; }
+    .dr-v.green { color:var(--success); }
+    .dr-v.red { color:var(--error); }
+    .dr-v.purple { color:#c4b5fd; }
+    .dr-v.blue { color:#7dd3fc; }
+    .tot-row { background:rgba(120,80,255,0.12); border-radius:8px; padding:9px 12px; margin-top:6px; display:flex; justify-content:space-between; font-weight:700; font-size:0.95rem; }
+    .tot-row.blue-row { background:rgba(14,165,233,0.12); }
 
-    /* Nota bonus */
-    .bonus-note { background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3); border-radius:10px; padding:14px 16px; font-size:0.88rem; color:var(--text2); margin-bottom:24px; }
+    /* Bonus */
+    .bonus-note { background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.25); border-radius:10px; padding:12px 15px; font-size:0.85rem; color:var(--text2); margin-bottom:18px; }
     .bonus-note strong { color:var(--success); }
 
-    /* Consumi */
-    .consumo-info { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:8px; }
-    .ci-badge { background:rgba(124,58,237,0.15); border:1px solid var(--border); border-radius:8px; padding:8px 14px; font-size:0.85rem; }
-    .ci-badge strong { color:var(--primary-light); display:block; font-size:1.1rem; }
+    /* Dati rilevati */
+    .rilevati { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; }
+    .rb { background:rgba(120,80,255,0.12); border:1px solid var(--border); border-radius:8px; padding:7px 13px; font-size:0.82rem; }
+    .rb strong { color:#a78bfa; display:block; font-size:1rem; }
+
+    /* Offerta info box */
+    .offerta-info { border-radius:10px; padding:14px 16px; margin-bottom:20px; font-size:0.83rem; }
+    .offerta-info.wt-box { background:rgba(124,58,237,0.1); border:1px solid rgba(124,58,237,0.3); }
+    .offerta-info.opt-box { background:rgba(14,165,233,0.1); border:1px solid rgba(14,165,233,0.3); }
+    .offerta-info .oi-row { display:flex; gap:16px; flex-wrap:wrap; }
+    .offerta-info .oi-item { font-size:0.82rem; color:var(--text2); }
+    .offerta-info .oi-item strong { font-size:0.92rem; }
+    .offerta-info .oi-item strong.purple { color:#c4b5fd; }
+    .offerta-info .oi-item strong.blue { color:#7dd3fc; }
   </style>
 </head>
 <body>
 <div class="container">
 
   <div class="header">
-    <div class="logo">⚡ Preventivo Energia</div>
-    <p>Carica la bolletta del cliente e confronta automaticamente con la nostra offerta</p>
-    <div class="windtre-badge">🌀 WINDTRE ENERGIA</div>
-  </div>
-
-  <!-- Riepilogo offerta -->
-  <div class="offerta-box">
-    <div class="offerta-title">💜 La tua offerta WindTre — condizioni riservate clienti WindTre</div>
-    <div class="offerta-item">⚡ Prezzo energia: <strong>PUN Index GME + 0,0278 €/kWh</strong></div>
-    <div class="offerta-item">📅 Quota fissa: <strong>90 €/anno</strong> (bloccata 24 mesi)</div>
-    <div class="offerta-item">🎁 Bonus: <strong>120 € (10€/mese per 12 mesi)</strong></div>
+    <div class="logo">⚡ Preventivo Energia PRO</div>
+    <p>Carica la bolletta del cliente — confronto automatico con WindTre o Optima</p>
   </div>
 
   <div class="msg error" id="msgError"></div>
   <div class="msg success" id="msgSuccess"></div>
 
-  <!-- Upload -->
-  <div class="upload-card">
-    <h2>📄 Carica Bolletta Cliente (PDF)</h2>
-    <div class="upload-area" id="uploadArea"
-      ondrop="handleDrop(event)"
-      ondragover="e => { e.preventDefault(); document.getElementById('uploadArea').classList.add('dragover'); }"
-      ondragleave="document.getElementById('uploadArea').classList.remove('dragover')"
-      onclick="document.getElementById('fileInput').click()">
-      <div class="upload-icon">📋</div>
-      <h3>Trascina il PDF qui oppure clicca per selezionare</h3>
-      <p>Qualsiasi operatore • Qualsiasi numero di pagine • Max 10 MB</p>
-    </div>
-    <input type="file" id="fileInput" class="file-input" accept=".pdf" onchange="handleFile(event)">
-    <div class="status-bar" id="statusBar">
-      <div class="spinner"></div>
-      <span id="statusText">Analisi in corso...</span>
-    </div>
+  <!-- TABS LUCE / GAS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('luce', event)">💡 LUCE</button>
+    <button class="tab-btn" onclick="switchTab('gas', event)">🔥 GAS</button>
   </div>
 
-  <!-- Risultati -->
-  <div class="results" id="results">
+  <!-- ========= TAB LUCE ========= -->
+  <div id="tab-luce" class="tab-content">
 
-    <!-- Consumi rilevati -->
-    <div class="detail-card" style="margin-bottom:16px;">
-      <h3>📊 Dati Rilevati dalla Bolletta</h3>
-      <div class="consumo-info">
-        <div class="ci-badge"><strong id="r-kwh">--</strong>kWh/anno consumo</div>
-        <div class="ci-badge"><strong id="r-mesi">--</strong>mesi fatturati</div>
-        <div class="ci-badge"><strong id="r-operatore">--</strong>operatore attuale</div>
-        <div class="ci-badge"><strong id="r-media-att">--</strong>€/kWh prezzo medio attuale</div>
+    <div class="card">
+      <div class="card-title">📄 Carica Bolletta LUCE (PDF)</div>
+      <div class="upload-area" id="uploadLuce"
+        ondrop="handleDrop(event,'luce')"
+        ondragover="dov(event,'luce')"
+        ondragleave="dlv(event,'luce')"
+        onclick="document.getElementById('fileLuce').click()">
+        <div class="upload-icon">📋</div>
+        <h3>Trascina il PDF oppure clicca per selezionare</h3>
+        <p>Qualsiasi operatore • Qualsiasi numero di pagine • Max 10 MB</p>
+      </div>
+      <input type="file" id="fileLuce" class="file-input" accept=".pdf" onchange="handleFile(event,'luce')">
+      <div class="status-bar" id="statusLuce">
+        <div class="spinner"></div>
+        <span id="statusTextLuce">Analisi in corso...</span>
       </div>
     </div>
 
-    <!-- Hero risparmio -->
-    <div class="hero-risparmio" id="heroBox">
-      <div class="label">Risparmio Annuale Stimato</div>
-      <div class="amount" id="heroAmount">--</div>
-      <div class="sub" id="heroSub">--</div>
-      <div class="perc-badge save" id="heroPerc">--</div>
-    </div>
-
-    <!-- Numeri principali -->
-    <div class="numbers-grid">
-      <div class="num-card current">
-        <div class="nc-label">Paga ora con</div>
-        <div class="nc-operator" id="nc-op-current">--</div>
-        <div class="nc-value red" id="nc-attuale">--</div>
-        <div class="nc-unit">€ / anno (stimato)</div>
-      </div>
-      <div class="num-card offer">
-        <div class="nc-label">Con WindTre pagherebbe</div>
-        <div class="nc-operator">WindTre Energia</div>
-        <div class="nc-value purple" id="nc-offerta">--</div>
-        <div class="nc-unit">€ / anno</div>
-      </div>
-    </div>
-
-    <!-- Grafico donut -->
-    <div class="chart-card">
-      <h3>📊 Distribuzione Spesa Annuale</h3>
-      <div class="chart-wrap">
-        <canvas id="myChart" width="280" height="280"></canvas>
-        <div class="chart-center">
-          <div class="c-perc green" id="chartPerc">--</div>
-          <div class="c-euro" id="chartEuro">risparmio</div>
+    <!-- Selezione operatore -->
+    <div class="op-selector" id="opSelectorLuce">
+      <div class="op-selector-title">Scegli l'operatore con cui fare il preventivo:</div>
+      <div class="op-buttons">
+        <div class="op-btn wt" id="opBtnWT_luce" onclick="selectOp('luce','wt')">
+          <span class="op-logo">🌀</span>
+          WindTre
+          <span class="op-sub">PUN + 0,0278 €/kWh<br>90 €/anno fisso • Bonus 120€</span>
+        </div>
+        <div class="op-btn opt" id="opBtnOPT_luce" onclick="selectOp('luce','opt')">
+          <span class="op-logo">🔵</span>
+          Optima
+          <span class="op-sub">PUN + 0,0396 €/kWh<br>154,80 €/anno fisso</span>
         </div>
       </div>
-      <div class="chart-legend">
-        <span><span class="legend-dot" style="background:#7c3aed;"></span>WindTre (nostra offerta)</span>
-        <span><span class="legend-dot" style="background:#22c55e;"></span>Risparmio</span>
-        <span><span class="legend-dot" style="background:rgba(239,68,68,0.7);"></span>Costo aggiuntivo se più cara</span>
+    </div>
+
+    <div class="results" id="resultsLuce"></div>
+  </div>
+
+  <!-- ========= TAB GAS ========= -->
+  <div id="tab-gas" class="tab-content" style="display:none;">
+
+    <div class="card">
+      <div class="card-title">📄 Carica Bolletta GAS (PDF)</div>
+      <div class="upload-area" id="uploadGas"
+        ondrop="handleDrop(event,'gas')"
+        ondragover="dov(event,'gas')"
+        ondragleave="dlv(event,'gas')"
+        onclick="document.getElementById('fileGas').click()">
+        <div class="upload-icon">📋</div>
+        <h3>Trascina il PDF oppure clicca per selezionare</h3>
+        <p>Qualsiasi operatore • Qualsiasi numero di pagine • Max 10 MB</p>
+      </div>
+      <input type="file" id="fileGas" class="file-input" accept=".pdf" onchange="handleFile(event,'gas')">
+      <div class="status-bar" id="statusGas">
+        <div class="spinner"></div>
+        <span id="statusTextGas">Analisi in corso...</span>
       </div>
     </div>
 
-    <!-- Bonus WindTre -->
-    <div class="bonus-note">
-      🎁 <strong>Bonus incluso: 120 € il primo anno</strong> — 10 € accreditati ogni mese per 12 mesi. Il risparmio reale il primo anno è ancora maggiore: <strong id="bonusTotal">--</strong> €
-    </div>
-
-    <!-- Dettaglio calcolo -->
-    <div class="detail-card">
-      <h3>🔍 Dettaglio Calcolo Confronto</h3>
-
-      <div class="detail-section">
-        <div class="detail-section-title">📌 Bolletta Attuale Cliente</div>
-        <div class="detail-row"><span class="dr-label">Operatore attuale</span><span class="dr-value" id="d-op">--</span></div>
-        <div class="detail-row"><span class="dr-label">Consumo annuo</span><span class="dr-value" id="d-kwh">--</span></div>
-        <div class="detail-row"><span class="dr-label">Spesa annua stimata</span><span class="dr-value red" id="d-spesa-att">--</span></div>
-        <div class="detail-row"><span class="dr-label">Prezzo medio attuale (IVA incl.)</span><span class="dr-value" id="d-media">--</span></div>
-        <div class="detail-row"><span class="dr-label">di cui quota fissa stimata</span><span class="dr-value" id="d-fissa-att">--</span></div>
-        <div class="detail-row"><span class="dr-label">di cui energia (variabile)</span><span class="dr-value" id="d-var-att">--</span></div>
-      </div>
-
-      <div class="detail-section">
-        <div class="detail-section-title">💜 Offerta WindTre</div>
-        <div class="detail-row"><span class="dr-label">PUN Index GME (Gen 2026)</span><span class="dr-value">0,1197 €/kWh</span></div>
-        <div class="detail-row"><span class="dr-label">+ Corrispettivo consumo WindTre</span><span class="dr-value">0,0278 €/kWh</span></div>
-        <div class="detail-row"><span class="dr-label">Prezzo energia WindTre (lordo IVA)</span><span class="dr-value purple" id="d-prezzo-wt">--</span></div>
-        <div class="detail-row"><span class="dr-label">Costo energia (kWh × prezzo)</span><span class="dr-value" id="d-energia-wt">--</span></div>
-        <div class="detail-row"><span class="dr-label">Quota fissa annua</span><span class="dr-value">90,00 €</span></div>
-        <div class="detail-row"><span class="dr-label">Rete + oneri (uguali per tutti)</span><span class="dr-value" id="d-rete-wt">--</span></div>
-        <div class="total-row"><span style="color:var(--text2)">Totale Offerta WindTre</span><span style="color:var(--primary-light)" id="d-totale-wt">--</span></div>
-      </div>
-
-      <div class="detail-section">
-        <div class="detail-section-title">✅ Risultato</div>
-        <div class="detail-row"><span class="dr-label">Risparmio annuo (senza bonus)</span><span class="dr-value green" id="d-risparmio">--</span></div>
-        <div class="detail-row"><span class="dr-label">Bonus primo anno</span><span class="dr-value green">+ 120,00 €</span></div>
-        <div class="detail-row"><span class="dr-label" style="font-weight:700;color:var(--text)">Risparmio totale primo anno</span><span class="dr-value green" style="font-size:1.05rem" id="d-risparmio-bonus">--</span></div>
-        <div class="detail-row"><span class="dr-label">Variazione %</span><span class="dr-value" id="d-perc">--</span></div>
+    <div class="op-selector" id="opSelectorGas">
+      <div class="op-selector-title">Scegli l'operatore con cui fare il preventivo:</div>
+      <div class="op-buttons">
+        <div class="op-btn wt" id="opBtnWT_gas" onclick="selectOp('gas','wt')">
+          <span class="op-logo">🌀</span>
+          WindTre
+          <span class="op-sub">PSV + 0,0965 €/Smc<br>90 €/anno fisso • Bonus 120€</span>
+        </div>
+        <div class="op-btn opt" id="opBtnOPT_gas" onclick="selectOp('gas','opt')">
+          <span class="op-logo">🔵</span>
+          Optima
+          <span class="op-sub">PSV + 0,12 €/Smc<br>162 €/anno fisso</span>
+        </div>
       </div>
     </div>
 
-  </div><!-- /results -->
+    <div class="results" id="resultsGas"></div>
+  </div>
 
 </div><!-- /container -->
 
@@ -270,39 +243,54 @@
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-  // ── TARIFFE WINDTRE ───────────────────────────────────────────
-  const WT = {
-    punGen2026: (0.1296 + 0.1240 + 0.1055) / 3,  // media F1+F2+F3 = 0.11970 €/kWh
-    corrispettivo: 0.0278,    // €/kWh corrispettivo consumo WindTre
-    quotaFissaAnno: 90.00,    // €/anno bloccata 24 mesi
-    bonus: 120.00,            // € primo anno
-    iva: 0.10                 // IVA 10% domestico
+  // ── TARIFFE ─────────────────────────────────────────────────
+  const TARIFFE = {
+    luce: {
+      punGen2026: (0.1296 + 0.1240 + 0.1055) / 3, // 0.11970 €/kWh
+      iva: 0.10,
+      wt:  { spread: 0.0278, fisso: 90.00,   varConsumi: 0.0154, bonus: 120.00 },
+      opt: { spread: 0.0396, fisso: 154.80,  varConsumi: 0.0154, bonus: 0 }
+    },
+    gas: {
+      psvGen2026: 0.3488, // €/Smc
+      iva: 0.22,
+      wt:  { spread: 0.0965, fisso: 90.00,  varConsumi: 0,     bonus: 120.00 },
+      opt: { spread: 0.12,   fisso: 162.00, varConsumi: 0.11,  bonus: 0 }
+    }
   };
 
-  let chartInstance = null;
+  // Dati bolletta estratti, salvati per ricalcolo al cambio operatore
+  const bollettaData = { luce: null, gas: null };
+  const chartInst    = { luce: null, gas: null };
+
+  // ── TABS ─────────────────────────────────────────────────────
+  function switchTab(tab, e) {
+    document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + tab).style.display = 'block';
+    e.target.classList.add('active');
+  }
 
   // ── DRAG & DROP ───────────────────────────────────────────────
-  function handleDrop(e) {
-    e.preventDefault();
-    document.getElementById('uploadArea').classList.remove('dragover');
+  function dov(e, t) { e.preventDefault(); document.getElementById('upload' + cap(t)).classList.add('dragover'); }
+  function dlv(e, t) { e.preventDefault(); document.getElementById('upload' + cap(t)).classList.remove('dragover'); }
+  function handleDrop(e, t) {
+    e.preventDefault(); dlv(e, t);
     const f = e.dataTransfer.files[0];
-    if (f && f.type === 'application/pdf') processFile(f);
+    if (f && f.type === 'application/pdf') processFile(f, t);
     else showMsg('error', 'Carica un file PDF valido.');
   }
-  function handleFile(e) { if (e.target.files[0]) processFile(e.target.files[0]); }
-
-  const ua = document.getElementById('uploadArea');
-  ua.addEventListener('dragover', e => { e.preventDefault(); ua.classList.add('dragover'); });
-  ua.addEventListener('dragleave', e => { e.preventDefault(); ua.classList.remove('dragover'); });
+  function handleFile(e, t) { if (e.target.files[0]) processFile(e.target.files[0], t); }
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
   // ── ELABORAZIONE PDF ──────────────────────────────────────────
-  async function processFile(file) {
-    const sb = document.getElementById('statusBar');
-    const st = document.getElementById('statusText');
+  async function processFile(file, tipo) {
+    const sb = document.getElementById('status' + cap(tipo));
+    const st = document.getElementById('statusText' + cap(tipo));
     sb.style.display = 'flex';
-    document.getElementById('results').style.display = 'none';
+    document.getElementById('results' + cap(tipo)).style.display = 'none';
+    document.getElementById('opSelector' + cap(tipo)).style.display = 'none';
     st.textContent = 'Lettura PDF...';
-
     try {
       if (file.size > 10485760) { showMsg('error', 'File troppo grande (max 10MB)'); sb.style.display='none'; return; }
       const buf = await file.arrayBuffer();
@@ -314,211 +302,265 @@
         const c = await page.getTextContent();
         testo += c.items.map(i => i.str).join(' ') + '\n';
       }
-      st.textContent = 'Estrazione dati bolletta...';
-      const resp = await fetch('/api/estrai-bolletta?tipo=luce', {
+      st.textContent = 'Estrazione dati...';
+      const resp = await fetch('/api/estrai-bolletta?tipo=' + tipo, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: testo })
       });
       const data = await resp.json();
       if (!data.success) {
-        showMsg('error', '⚠️ ' + (data.error || 'Dati non trovati. Verifica che sia una bolletta luce PDF.'));
+        showMsg('error', '⚠️ ' + (data.error || 'Dati non trovati nel PDF.'));
         sb.style.display = 'none';
         return;
       }
       sb.style.display = 'none';
-      // Cerca l'operatore nel testo
       const operatore = detectOperatore(testo);
-      // Cerca spesa annua e quota fissa nel testo
-      const spesaAnnua = detectSpesaAnnua(testo, data.totale, data.consumo);
-      renderRisultati(data.consumo, spesaAnnua.totaleAnno, operatore, spesaAnnua.quotaFissa, spesaAnnua.mesi);
-      showMsg('success', '✅ Bolletta elaborata! Confronto calcolato.');
+      const extra     = detectExtra(testo, data.totale, data.consumo, tipo);
+      bollettaData[tipo] = { consumo: data.consumo, totaleAnno: extra.totaleAnno, operatore, quotaFissa: extra.quotaFissa, mesi: extra.mesi };
+      // Mostra selezione operatore
+      document.getElementById('opSelector' + cap(tipo)).style.display = 'block';
+      // Reset selezione
+      ['wt','opt'].forEach(op => {
+        document.getElementById('opBtn' + op.toUpperCase() + '_' + tipo).classList.remove('selected');
+      });
+      showMsg('success', '✅ Bolletta ' + tipo.toUpperCase() + ' letta! Scegli l\'operatore per il preventivo.');
     } catch(err) {
       console.error(err);
       showMsg('error', 'Errore lettura PDF: ' + err.message);
-      document.getElementById('statusBar').style.display = 'none';
+      sb.style.display = 'none';
     }
+  }
+
+  // ── SELEZIONE OPERATORE ───────────────────────────────────────
+  function selectOp(tipo, op) {
+    ['wt','opt'].forEach(o => document.getElementById('opBtn' + o.toUpperCase() + '_' + tipo).classList.remove('selected'));
+    document.getElementById('opBtn' + op.toUpperCase() + '_' + tipo).classList.add('selected');
+    const d = bollettaData[tipo];
+    if (d) renderRisultati(tipo, op, d.consumo, d.totaleAnno, d.operatore, d.quotaFissa, d.mesi);
   }
 
   // ── RILEVAMENTO OPERATORE ─────────────────────────────────────
-  function detectOperatore(testo) {
-    const t = testo.toLowerCase();
-    if (t.includes('iren')) return 'IREN';
-    if (t.includes('enel')) return 'Enel';
-    if (t.includes('eni')) return 'Eni gas e luce';
-    if (t.includes('a2a')) return 'A2A';
-    if (t.includes('acea')) return 'ACEA';
-    if (t.includes('sorgenia')) return 'Sorgenia';
-    if (t.includes('illumia')) return 'Illumia';
-    if (t.includes('eon') || t.includes('e.on')) return 'E.ON';
-    if (t.includes('Edison')) return 'Edison';
-    if (t.includes('plenitude') || t.includes('eni')) return 'Plenitude (ENI)';
+  function detectOperatore(t) {
+    t = t.toLowerCase();
+    const ops = [['iren','IREN'],['enel','Enel'],['eni','ENI/Plenitude'],['a2a','A2A'],['acea','ACEA'],
+      ['sorgenia','Sorgenia'],['illumia','Illumia'],['e.on','E.ON'],['edison','Edison'],
+      ['hera','Hera'],['italgas','Italgas'],['2i rete gas','2i Rete Gas']];
+    for (const [k,v] of ops) if (t.includes(k)) return v;
     return 'Operatore attuale';
   }
 
-  // ── RILEVAMENTO SPESA ANNUA + QUOTA FISSA ────────────────────
-  function detectSpesaAnnua(testo, totaleBolletta, consumoBolletta) {
-    // Cerca spesa annua esplicita
-    const annuaMatch = testo.match(/spesa\s+annua?\s+sostenuta[^€\d]*[€\s]*([\d.,]+)/i)
-      || testo.match(/[\d.,]+\s*€[^\n]*annua?\b/i);
+  // ── ESTRAZIONE DATI EXTRA ─────────────────────────────────────
+  function detectExtra(testo, totaleBoll, consumoBoll, tipo) {
+    // Spesa annua esplicita
     let totaleAnno = null;
-    if (annuaMatch && annuaMatch[1]) {
-      const v = parseFloat(annuaMatch[1].replace('.','').replace(',','.'));
-      if (v > 50 && v < 10000) totaleAnno = v;
-    }
-    // Cerca consumo annuo per stimare spesa annua se non trovata
-    let consumoAnno = consumoBolletta;
-    const consumoAnnuoMatch = testo.match(/consumo\s+annuo[^0-9]*([\d.,]+)\s*kwh/i)
-      || testo.match(/dal\s+\d{2}\/\d{2}\/\d{4}\s+al\s+\d{2}\/\d{2}\/\d{4}[^0-9]*([\d.,]+)\s*kwh/i);
-    if (consumoAnnuoMatch && consumoAnnuoMatch[1]) {
-      const v = parseFloat(consumoAnnuoMatch[1].replace('.','').replace(',','.'));
-      if (v > 50 && v < 100000) consumoAnno = v;
-    }
-    // Cerca periodo (mesi fatturati)
+    const m1 = testo.match(/spesa\s+annua?\s+sostenuta[^€\d]*([\d.,]+)/i);
+    if (m1) { const v = pf(m1[1]); if (v > 30 && v < 20000) totaleAnno = v; }
+    // Consumo annuo (per estrapolazione)
+    let consumoAnno = consumoBoll;
+    const m2 = testo.match(/consumo\s+annuo[^0-9]*([\d.,]+)\s*(?:kwh|smc)/i);
+    if (m2) { const v = pf(m2[1]); if (v > 10) consumoAnno = v; }
+    // Mesi
     let mesi = 2;
-    const mesiMatch = testo.match(/(\d+)\s+mes[ei]/i);
-    if (mesiMatch) { const m = parseInt(mesiMatch[1]); if (m >= 1 && m <= 12) mesi = m; }
-    // Se non trovata spesa annua, estrapola da bolletta
-    if (!totaleAnno) {
-      totaleAnno = parseFloat((totaleBolletta / mesi * 12).toFixed(2));
-    }
-    // Cerca quota fissa annua attuale
-    let quotaFissa = null;
-    const qfMatch = testo.match(/quota\s+fissa[^€\d]*([\d.,]+)\s*€[^/]*\/\s*mes/i)
-      || testo.match(/([\d.,]+)\s*€[^\n]*\/\s*mes[ei][^\n]*quota\s+fissa/i);
-    if (qfMatch && qfMatch[1]) {
-      const v = parseFloat(qfMatch[1].replace(',','.'));
-      if (v > 0 && v < 500) quotaFissa = v * 12;
-    }
-    if (!quotaFissa) {
-      // Cerca "X €/mesi" nel testo (tipo 19,55 €/mesi)
-      const qfMatch2 = testo.match(/([\d.,]+)\s*€\/mes[ei]/i);
-      if (qfMatch2) {
-        const v = parseFloat(qfMatch2[1].replace(',','.'));
-        if (v > 0 && v < 500) quotaFissa = v * 12;
-      }
-    }
-    return { totaleAnno, quotaFissa: quotaFissa || 0, mesi, consumoAnno };
+    const m3 = testo.match(/(\d+)\s+mes[ei]/i);
+    if (m3) { const v = parseInt(m3[1]); if (v >= 1 && v <= 12) mesi = v; }
+    if (!totaleAnno) totaleAnno = parseFloat((totaleBoll / mesi * 12).toFixed(2));
+    // Quota fissa
+    let quotaFissa = 0;
+    const m4 = testo.match(/([\d.,]+)\s*€[^\n]*\/\s*mes[ei]/i);
+    if (m4) { const v = pf(m4[1]); if (v > 0 && v < 500) quotaFissa = v * 12; }
+    return { totaleAnno, quotaFissa, mesi, consumoAnno };
   }
+
+  function pf(s) { return parseFloat(s.replace(/\./g,'').replace(',','.')); }
 
   // ── RENDER RISULTATI ──────────────────────────────────────────
-  function renderRisultati(consumoAnno, spesaAttualeAnno, operatore, quotaFissaAtt, mesi) {
+  function renderRisultati(tipo, op, consumoAnno, spesaAtt, operatore, quotaFissaAtt, mesi) {
+    const T = TARIFFE[tipo];
+    const O = T[op];
+    const unita = tipo === 'luce' ? 'kWh' : 'Smc';
+    const isWt  = op === 'wt';
+    const opName = isWt ? 'WindTre' : 'Optima';
+    const opColor = isWt ? 'purple' : 'blue';
+    const totRowClass = isWt ? '' : 'blue-row';
 
-    // ── CALCOLO OFFERTA WINDTRE ───────────────────────────────
-    // Prezzo energia WindTre (IVA 10% inclusa)
-    const prezzoEnergia_netto = WT.punGen2026 + WT.corrispettivo;  // €/kWh netto
-    const prezzoEnergia_ivato = prezzoEnergia_netto * (1 + WT.iva);
-
-    // Stima rete+oneri: sono fissi e uguali per tutti gli operatori.
-    // Li ricaviamo sottraendo la quota energia attuale dalla spesa totale.
-    // Dalla bolletta IREN: rete+oneri = 17,59+17,79=35,38€ per 2 mesi = ~212€ anno su 443kWh
-    // In generale stimiamo: reteOneri = spesaAttuale - quota_energia_attuale
-    // quota_energia_attuale = consumo × prezzo_medio_energia_variabile
-    const prezzoMedioAttuale = spesaAttualeAnno / consumoAnno; // €/kWh lordo tutto
-    // Componente energia pura attuale (stima 55% del totale come dal dettaglio bolletta)
-    const quotaEnergiaPuraAtt = spesaAttualeAnno * 0.44; // ~44% energia variabile
-    const reteOneriAnno = spesaAttualeAnno - quotaEnergiaPuraAtt - quotaFissaAtt;
-
-    // Totale offerta WindTre
-    const energiaWT = prezzoEnergia_ivato * consumoAnno;
-    const totaleWT = parseFloat((energiaWT + WT.quotaFissaAnno + Math.max(reteOneriAnno, 0)).toFixed(2));
-
-    const risparmio = parseFloat((spesaAttualeAnno - totaleWT).toFixed(2));
-    const risparmioConBonus = parseFloat((risparmio + WT.bonus).toFixed(2));
-    const perc = parseFloat((risparmio / spesaAttualeAnno * 100).toFixed(1));
+    // ── CALCOLO ───────────────────────────────────────────────
+    const prezzoMedioAtt = spesaAtt / consumoAnno;
+    // Componente energia pura nostra offerta
+    const prezzoIndice = tipo === 'luce' ? T.punGen2026 : T.psvGen2026;
+    const prezzoEnergia_netto = prezzoIndice + O.spread + (O.varConsumi || 0);
+    const prezzoEnergia_ivato = prezzoEnergia_netto * (1 + T.iva);
+    // Rete+oneri: stimate come differenza tra spesa attuale e quota energia (44% luce, 35% gas)
+    const percEnergia = tipo === 'luce' ? 0.44 : 0.35;
+    const quotaEnergiaPuraAtt = spesaAtt * percEnergia;
+    const reteOneriAnno = Math.max(spesaAtt - quotaEnergiaPuraAtt - quotaFissaAtt, 0);
+    // Totale nostra offerta
+    const energiaNostra = prezzoEnergia_ivato * consumoAnno;
+    const totaleNostra = parseFloat((energiaNostra + O.fisso + reteOneriAnno).toFixed(2));
+    const risparmio = parseFloat((spesaAtt - totaleNostra).toFixed(2));
+    const rispConBonus = parseFloat((risparmio + O.bonus).toFixed(2));
+    const perc = parseFloat((risparmio / spesaAtt * 100).toFixed(1));
     const isSaving = risparmio >= 0;
 
-    // ── POPOLA DOM ────────────────────────────────────────────
-    set('r-kwh', consumoAnno.toFixed(0));
-    set('r-mesi', mesi);
-    set('r-operatore', operatore);
-    set('r-media-att', prezzoMedioAttuale.toFixed(4));
+    // ── HTML ──────────────────────────────────────────────────
+    const container = document.getElementById('results' + cap(tipo));
+    container.innerHTML = `
+      <!-- Dati rilevati -->
+      <div class="rilevati">
+        <div class="rb"><strong>${consumoAnno.toFixed(0)}</strong>${unita}/anno</div>
+        <div class="rb"><strong>${mesi}</strong>mesi fatturati</div>
+        <div class="rb"><strong>${operatore}</strong>operatore attuale</div>
+        <div class="rb"><strong>${prezzoMedioAtt.toFixed(4)}</strong>€/${unita} prezzo medio</div>
+      </div>
 
-    // Hero
-    const heroEl = document.getElementById('heroAmount');
-    heroEl.textContent = (isSaving ? '€ ' : '- € ') + Math.abs(risparmio).toFixed(2);
-    heroEl.className = 'amount' + (isSaving ? '' : ' negative');
-    set('heroSub', isSaving
-      ? 'Da € '+spesaAttualeAnno.toFixed(2)+' ('+operatore+') → € '+totaleWT.toFixed(2)+' (WindTre) all\'anno'
-      : 'L\'offerta WindTre costerebbe € '+Math.abs(risparmio).toFixed(2)+' in più all\'anno'
-    );
-    const percEl = document.getElementById('heroPerc');
-    percEl.textContent = (isSaving ? '-' : '+') + Math.abs(perc) + '% sul costo annuale';
-    percEl.className = 'perc-badge ' + (isSaving ? 'save' : 'lose');
+      <!-- Offerta selezionata -->
+      <div class="offerta-info ${isWt ? 'wt-box' : 'opt-box'}">
+        <div style="font-weight:700;color:${isWt ? '#c4b5fd' : '#7dd3fc'};margin-bottom:8px;">
+          ${isWt ? '🌀' : '🔵'} Offerta ${opName}
+        </div>
+        <div class="oi-row">
+          <div class="oi-item">Indice: <strong class="${opColor}">${tipo==='luce'?'PUN':'PSV'} + ${O.spread} €/${unita}</strong></div>
+          ${O.varConsumi ? `<div class="oi-item">Quota variabile: <strong class="${opColor}">+ ${O.varConsumi} €/${unita}</strong></div>` : ''}
+          <div class="oi-item">Fisso annuo: <strong class="${opColor}">€ ${O.fisso.toFixed(2)}</strong></div>
+          ${O.bonus > 0 ? `<div class="oi-item">Bonus 1° anno: <strong style="color:var(--success)">+ € ${O.bonus.toFixed(2)}</strong></div>` : ''}
+        </div>
+      </div>
 
-    // Numeri
-    set('nc-op-current', operatore);
-    set('nc-attuale', '€ ' + spesaAttualeAnno.toFixed(2));
-    set('nc-offerta', '€ ' + totaleWT.toFixed(2));
+      <!-- Hero -->
+      <div class="hero ${isSaving ? 'saving' : 'losing'}">
+        <div class="hero-label">Risparmio Annuale Stimato</div>
+        <div class="hero-amount ${isSaving ? 'green' : 'red'}">
+          ${isSaving ? '€ ' : '- € '}${Math.abs(risparmio).toFixed(2)}
+        </div>
+        <div class="hero-sub">
+          ${isSaving
+            ? `Da € ${spesaAtt.toFixed(2)} (${operatore}) → € ${totaleNostra.toFixed(2)} (${opName})`
+            : `Con ${opName} spenderesti € ${Math.abs(risparmio).toFixed(2)} in più all'anno`}
+        </div>
+        <div class="perc-pill ${isSaving ? 'green' : 'red'}">
+          ${isSaving ? '-' : '+'}${Math.abs(perc)}% sul costo annuale
+        </div>
+      </div>
 
-    // Bonus
-    set('bonusTotal', risparmioConBonus.toFixed(2));
+      <!-- Numeri -->
+      <div class="num-grid">
+        <div class="num-card curr">
+          <div class="nc-label">Paga ora con</div>
+          <div class="nc-op">${operatore}</div>
+          <div class="nc-val red">€ ${spesaAtt.toFixed(2)}</div>
+          <div class="nc-unit">€ / anno</div>
+        </div>
+        <div class="num-card offr ${isWt ? '' : 'opt-style'}">
+          <div class="nc-label">Con ${opName} pagherebbe</div>
+          <div class="nc-op">${opName} Energia</div>
+          <div class="nc-val ${opColor}">€ ${totaleNostra.toFixed(2)}</div>
+          <div class="nc-unit">€ / anno</div>
+        </div>
+      </div>
 
-    // Dettaglio
-    set('d-op', operatore);
-    set('d-kwh', consumoAnno.toFixed(0) + ' kWh/anno');
-    set('d-spesa-att', '€ ' + spesaAttualeAnno.toFixed(2));
-    set('d-media', prezzoMedioAttuale.toFixed(4) + ' €/kWh');
-    set('d-fissa-att', '€ ' + quotaFissaAtt.toFixed(2));
-    set('d-var-att', '€ ' + quotaEnergiaPuraAtt.toFixed(2));
-    set('d-prezzo-wt', prezzoEnergia_ivato.toFixed(4) + ' €/kWh (IVA 10% incl.)');
-    set('d-energia-wt', '€ ' + energiaWT.toFixed(2));
-    set('d-rete-wt', '€ ' + Math.max(reteOneriAnno, 0).toFixed(2) + ' (stimate)');
-    set('d-totale-wt', '€ ' + totaleWT.toFixed(2));
-    const rispEl = document.getElementById('d-risparmio');
-    rispEl.textContent = (isSaving ? '+ €' : '- €') + Math.abs(risparmio).toFixed(2);
-    rispEl.className = 'dr-value ' + (isSaving ? 'green' : 'red');
-    const rispBonusEl = document.getElementById('d-risparmio-bonus');
-    rispBonusEl.textContent = (risparmioConBonus >= 0 ? '+ €' : '- €') + Math.abs(risparmioConBonus).toFixed(2);
-    const percDetEl = document.getElementById('d-perc');
-    percDetEl.textContent = (isSaving ? '-' : '+') + Math.abs(perc) + '%';
-    percDetEl.className = 'dr-value ' + (isSaving ? 'green' : 'red');
+      <!-- Grafico -->
+      <div class="chart-card">
+        <h3>📊 Distribuzione Spesa Annuale</h3>
+        <div class="chart-wrap">
+          <canvas id="chart_${tipo}" width="260" height="260"></canvas>
+          <div class="chart-center">
+            <div class="cc-perc ${isSaving ? 'green' : 'red'}" id="ccperc_${tipo}">
+              ${isSaving ? '-' : '+'}${Math.abs(perc)}%
+            </div>
+            <div class="cc-sub">${isSaving ? 'risparmio' : 'costo ++'}</div>
+          </div>
+        </div>
+        <div class="chart-legend">
+          <span><span class="ldot" style="background:${isWt ? '#7c3aed' : '#0ea5e9'};"></span>${opName}</span>
+          <span><span class="ldot" style="background:${isSaving ? '#22c55e' : '#ef4444'};"></span>${isSaving ? 'Risparmio' : 'Costo extra'}</span>
+        </div>
+      </div>
 
-    // Grafico
-    renderChart(totaleWT, risparmio, isSaving, perc);
+      ${O.bonus > 0 ? `
+      <div class="bonus-note">
+        🎁 <strong>Bonus incluso: € ${O.bonus.toFixed(2)} il primo anno</strong> — il risparmio reale il 1° anno è
+        <strong>${rispConBonus >= 0 ? '€ ' + rispConBonus.toFixed(2) : '- € ' + Math.abs(rispConBonus).toFixed(2)}</strong>
+      </div>` : ''}
 
-    document.getElementById('results').style.display = 'block';
-    window.scrollTo({ top: document.getElementById('results').offsetTop - 20, behavior: 'smooth' });
+      <!-- Dettaglio -->
+      <div class="card">
+        <div class="card-title">🔍 Dettaglio Calcolo</div>
+        <div class="detail-section">
+          <div class="ds-title">📌 Bolletta Attuale — ${operatore}</div>
+          <div class="dr"><span class="dr-l">Consumo annuo</span><span class="dr-v">${consumoAnno.toFixed(0)} ${unita}</span></div>
+          <div class="dr"><span class="dr-l">Spesa annua</span><span class="dr-v red">€ ${spesaAtt.toFixed(2)}</span></div>
+          <div class="dr"><span class="dr-l">Prezzo medio (IVA incl.)</span><span class="dr-v">${prezzoMedioAtt.toFixed(4)} €/${unita}</span></div>
+          <div class="dr"><span class="dr-l">Quota fissa stimata</span><span class="dr-v">€ ${quotaFissaAtt.toFixed(2)}</span></div>
+          <div class="dr"><span class="dr-l">Rete + oneri stimati</span><span class="dr-v">€ ${reteOneriAnno.toFixed(2)}</span></div>
+        </div>
+        <div class="detail-section">
+          <div class="ds-title">${isWt ? '🌀' : '🔵'} Offerta ${opName}</div>
+          <div class="dr"><span class="dr-l">Indice ${tipo==='luce'?'PUN':'PSV'} (${tipo==='luce'?'Gen 2026':'Gen 2026'})</span><span class="dr-v">${prezzoIndice.toFixed(4)} €/${unita}</span></div>
+          <div class="dr"><span class="dr-l">+ Corrispettivo ${opName}</span><span class="dr-v ${opColor}">0,${String(O.spread).replace('0.','')} €/${unita}</span></div>
+          ${O.varConsumi ? `<div class="dr"><span class="dr-l">+ Quota variabile commercializzazione</span><span class="dr-v ${opColor}">${O.varConsumi} €/${unita}</span></div>` : ''}
+          <div class="dr"><span class="dr-l">Prezzo energia (IVA ${tipo==='luce'?'10':'22'}% incl.)</span><span class="dr-v ${opColor}">${prezzoEnergia_ivato.toFixed(4)} €/${unita}</span></div>
+          <div class="dr"><span class="dr-l">Costo energia (${consumoAnno.toFixed(0)} ${unita})</span><span class="dr-v">€ ${energiaNostra.toFixed(2)}</span></div>
+          <div class="dr"><span class="dr-l">Quota fissa annua</span><span class="dr-v">€ ${O.fisso.toFixed(2)}</span></div>
+          <div class="dr"><span class="dr-l">Rete + oneri (identici all'attuale)</span><span class="dr-v">€ ${reteOneriAnno.toFixed(2)}</span></div>
+          <div class="tot-row ${totRowClass}">
+            <span style="color:var(--text2)">Totale ${opName}</span>
+            <span style="color:${isWt ? '#c4b5fd' : '#7dd3fc'}">€ ${totaleNostra.toFixed(2)}</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="ds-title">✅ Risultato</div>
+          <div class="dr">
+            <span class="dr-l">Risparmio annuo</span>
+            <span class="dr-v ${isSaving ? 'green' : 'red'}">${isSaving ? '+ €' : '- €'} ${Math.abs(risparmio).toFixed(2)}</span>
+          </div>
+          ${O.bonus > 0 ? `
+          <div class="dr"><span class="dr-l">Bonus 1° anno</span><span class="dr-v green">+ € ${O.bonus.toFixed(2)}</span></div>
+          <div class="dr" style="font-weight:700">
+            <span class="dr-l" style="color:var(--text)">Risparmio totale 1° anno</span>
+            <span class="dr-v ${rispConBonus >= 0 ? 'green' : 'red'}" style="font-size:1rem">${rispConBonus >= 0 ? '+' : '-'} € ${Math.abs(rispConBonus).toFixed(2)}</span>
+          </div>` : ''}
+          <div class="dr">
+            <span class="dr-l">Variazione %</span>
+            <span class="dr-v ${isSaving ? 'green' : 'red'}">${isSaving ? '-' : '+'}${Math.abs(perc)}%</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    container.style.display = 'block';
+    renderChart(tipo, op, totaleNostra, risparmio, isSaving, perc);
+    window.scrollTo({ top: container.offsetTop - 20, behavior: 'smooth' });
   }
 
-  // ── GRAFICO DONUT ─────────────────────────────────────────────
-  function renderChart(totaleWT, risparmio, isSaving, perc) {
-    if (chartInstance) chartInstance.destroy();
-    const ctx = document.getElementById('myChart').getContext('2d');
-    chartInstance = new Chart(ctx, {
+  // ── GRAFICO ───────────────────────────────────────────────────
+  function renderChart(tipo, op, totaleNostra, risparmio, isSaving, perc) {
+    if (chartInst[tipo]) chartInst[tipo].destroy();
+    const ctx = document.getElementById('chart_' + tipo).getContext('2d');
+    const colorOp = op === 'wt' ? 'rgba(124,58,237,0.85)' : 'rgba(14,165,233,0.85)';
+    const colorRisp = isSaving ? 'rgba(34,197,94,0.85)' : 'rgba(239,68,68,0.7)';
+    chartInst[tipo] = new Chart(ctx, {
       type: 'doughnut',
       data: {
         datasets: [{
-          data: isSaving ? [totaleWT, Math.abs(risparmio)] : [totaleWT, 0.001],
-          backgroundColor: isSaving
-            ? ['rgba(124,58,237,0.85)', 'rgba(34,197,94,0.85)']
-            : ['rgba(239,68,68,0.7)', 'rgba(124,58,237,0.3)'],
-          borderColor: '#0f0f1a',
+          data: [totaleNostra, Math.max(Math.abs(risparmio), 0.01)],
+          backgroundColor: [colorOp, colorRisp],
+          borderColor: '#0a0a14',
           borderWidth: 3,
           hoverOffset: 6
         }]
       },
       options: {
-        cutout: '68%',
-        animation: { duration: 1000 },
+        cutout: '66%',
+        animation: { duration: 900 },
         plugins: {
           legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: ctx => ' € ' + ctx.parsed.toFixed(2)
-            }
-          }
+          tooltip: { callbacks: { label: c => ' € ' + c.parsed.toFixed(2) } }
         }
       }
     });
-    const percEl = document.getElementById('chartPerc');
-    percEl.textContent = (isSaving ? '-' : '+') + Math.abs(perc) + '%';
-    percEl.className = 'c-perc ' + (isSaving ? 'green' : 'red');
-    set('chartEuro', (isSaving ? 'risparmio' : 'costo aggiuntivo'));
   }
 
-  function set(id, val) { document.getElementById(id).textContent = val; }
-
+  // ── MESSAGGI ──────────────────────────────────────────────────
   function showMsg(type, msg) {
     const el = document.getElementById(type === 'error' ? 'msgError' : 'msgSuccess');
     el.textContent = msg; el.style.display = 'block';
