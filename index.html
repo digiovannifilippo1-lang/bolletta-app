@@ -18,21 +18,24 @@
     body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);padding:20px;min-height:100vh;}
     .container{max-width:960px;margin:0 auto;}
 
-    /* HEADER */
     .header{text-align:center;padding:28px 20px 22px;background:var(--surface);border-radius:16px;border:1px solid var(--border);margin-bottom:26px;}
     .logo{font-size:2rem;font-weight:900;background:linear-gradient(135deg,#7c3aed,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
     .header p{color:var(--text2);margin-top:6px;font-size:0.92rem;}
 
-    /* TABS */
-    .tabs{display:flex;gap:0;margin-bottom:26px;background:var(--surface);border-radius:12px;padding:4px;border:1px solid var(--border);}
+    /* Indici live */
+    .indici-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px;background:var(--surface);border-radius:12px;padding:14px 18px;border:1px solid var(--border);}
+    .indice-item{font-size:0.82rem;color:var(--text2);}
+    .indice-item strong{color:#a78bfa;font-size:0.95rem;}
+    .indice-item .tag{font-size:0.7rem;background:rgba(120,80,255,0.2);border-radius:4px;padding:1px 6px;margin-left:4px;color:#c4b5fd;}
+    .indice-upd{font-size:0.7rem;color:var(--text2);margin-left:auto;align-self:center;font-style:italic;}
+
+    .tabs{display:flex;gap:0;margin-bottom:22px;background:var(--surface);border-radius:12px;padding:4px;border:1px solid var(--border);}
     .tab-btn{flex:1;padding:12px;background:none;border:none;color:var(--text2);cursor:pointer;font-size:1rem;font-weight:600;border-radius:10px;transition:all 0.25s;}
     .tab-btn.active{background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;}
 
-    /* CARD */
     .card{background:var(--surface);border-radius:14px;padding:22px;border:1px solid var(--border);margin-bottom:18px;}
     .card-title{font-size:1rem;font-weight:700;color:#a78bfa;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
 
-    /* UPLOAD */
     .upload-area{border:2px dashed rgba(120,80,255,0.35);border-radius:12px;padding:38px 20px;text-align:center;cursor:pointer;transition:all 0.3s;background:rgba(120,80,255,0.04);}
     .upload-area:hover{border-color:#7c3aed;background:rgba(120,80,255,0.1);}
     .upload-area.dragover{border-color:var(--success);background:rgba(34,197,94,0.07);}
@@ -44,20 +47,18 @@
     .spinner{width:16px;height:16px;border:3px solid rgba(120,80,255,0.3);border-top:3px solid #7c3aed;border-radius:50%;animation:spin 1s linear infinite;flex-shrink:0;}
     @keyframes spin{to{transform:rotate(360deg);}}
 
-    /* OPERATORE SELECTOR */
     .op-selector{display:none;margin-bottom:18px;}
     .op-selector-title{color:var(--text2);font-size:0.88rem;margin-bottom:11px;text-align:center;}
     .op-buttons{display:flex;gap:12px;}
     .op-btn{flex:1;padding:14px 10px;border-radius:12px;border:2px solid transparent;cursor:pointer;font-size:0.9rem;font-weight:700;transition:all 0.25s;background:var(--surface2);color:var(--text2);text-align:center;}
     .op-btn:hover{transform:translateY(-2px);}
-    .op-btn img{height:32px;object-fit:contain;display:block;margin:0 auto 8px;}
+    .op-btn img{height:30px;object-fit:contain;display:block;margin:0 auto 8px;}
     .op-btn.wt{border-color:rgba(224,112,32,0.3);}
     .op-btn.wt.selected,.op-btn.wt:hover{background:rgba(224,112,32,0.15);border-color:var(--wt);color:#fdba74;}
     .op-btn.opt{border-color:rgba(14,165,233,0.3);}
     .op-btn.opt.selected,.op-btn.opt:hover{background:rgba(14,165,233,0.15);border-color:var(--opt);color:#7dd3fc;}
     .op-sub{font-size:0.7rem;color:var(--text2);font-weight:400;margin-top:3px;display:block;line-height:1.4;}
 
-    /* WINDTRE CLIENTE TOGGLE */
     .wt-toggle-box{display:none;background:rgba(224,112,32,0.08);border:1px solid rgba(224,112,32,0.3);border-radius:12px;padding:16px 18px;margin-bottom:16px;}
     .wt-toggle-label{font-size:0.92rem;font-weight:600;color:#fdba74;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
     .wt-toggle-btns{display:flex;gap:10px;}
@@ -69,15 +70,12 @@
     .wt-sub-btn.no.selected,.wt-sub-btn.no:hover{background:rgba(148,163,184,0.1);border-color:#94a3b8;color:var(--text);}
     .wt-sub-detail{font-size:0.72rem;color:var(--text2);margin-top:3px;display:block;}
 
-    /* MESSAGGI */
     .msg{border-radius:8px;padding:11px 14px;margin-bottom:16px;display:none;font-weight:500;font-size:0.9rem;}
     .msg.error{background:rgba(239,68,68,0.12);border:2px solid var(--error);color:var(--error);}
     .msg.success{background:rgba(34,197,94,0.12);border:2px solid var(--success);color:var(--success);}
 
-    /* RISULTATI */
     .results{display:none;}
 
-    /* Hero */
     .hero{border-radius:14px;padding:26px 20px;text-align:center;margin-bottom:16px;border:2px solid;}
     .hero.saving{background:linear-gradient(135deg,rgba(34,197,94,0.12),rgba(34,197,94,0.04));border-color:rgba(34,197,94,0.35);}
     .hero.losing{background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(239,68,68,0.04));border-color:rgba(239,68,68,0.3);}
@@ -90,11 +88,9 @@
     .perc-pill.green{background:rgba(34,197,94,0.16);color:var(--success);border:1.5px solid rgba(34,197,94,0.28);}
     .perc-pill.red{background:rgba(239,68,68,0.14);color:var(--error);border:1.5px solid rgba(239,68,68,0.28);}
     .hero-annuale{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.07);font-size:0.82rem;color:var(--text2);}
-    .hero-annuale span{font-weight:700;}
-    .hero-annuale span.green{color:var(--success);}
-    .hero-annuale span.red{color:var(--error);}
+    .hero-annuale span.green{color:var(--success);font-weight:700;}
+    .hero-annuale span.red{color:var(--error);font-weight:700;}
 
-    /* Grid numeri */
     .num-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:16px;}
     @media(max-width:500px){.num-grid{grid-template-columns:1fr;}}
     .num-card{background:var(--surface2);border-radius:12px;padding:16px;border:1.5px solid var(--border);}
@@ -109,7 +105,6 @@
     .nc-val.blue{color:#7dd3fc;}
     .nc-unit{font-size:0.75rem;color:var(--text2);margin-top:2px;}
 
-    /* Chart */
     .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;}
     .chart-card h3{color:#a78bfa;margin-bottom:16px;font-size:0.95rem;}
     .chart-wrap{position:relative;max-width:240px;margin:0 auto 12px;}
@@ -121,7 +116,6 @@
     .chart-legend{display:flex;justify-content:center;gap:14px;font-size:0.78rem;color:var(--text2);flex-wrap:wrap;}
     .ldot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:middle;}
 
-    /* Dettaglio */
     .detail-section{margin-bottom:12px;}
     .ds-title{font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--text2);margin-bottom:7px;padding-bottom:4px;border-bottom:1px solid rgba(255,255,255,0.05);}
     .dr{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.85rem;}
@@ -136,18 +130,16 @@
     .tot-row.wt-bg{background:rgba(224,112,32,0.12);}
     .tot-row.opt-bg{background:rgba(14,165,233,0.12);}
 
-    /* Offerta info */
     .offerta-info{border-radius:10px;padding:12px 15px;margin-bottom:16px;font-size:0.82rem;}
     .offerta-info.wt-box{background:rgba(224,112,32,0.08);border:1px solid rgba(224,112,32,0.25);}
     .offerta-info.opt-box{background:rgba(14,165,233,0.08);border:1px solid rgba(14,165,233,0.25);}
     .oi-title{font-weight:700;margin-bottom:7px;display:flex;align-items:center;gap:8px;}
-    .oi-title img{height:22px;object-fit:contain;}
+    .oi-title img{height:20px;object-fit:contain;}
     .oi-row{display:flex;gap:14px;flex-wrap:wrap;}
     .oi-item{color:var(--text2);}
     .oi-item strong.orange{color:#fdba74;}
     .oi-item strong.blue{color:#7dd3fc;}
 
-    /* Dati rilevati */
     .rilevati{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:14px;}
     .rb{background:rgba(120,80,255,0.1);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:0.8rem;}
     .rb strong{color:#a78bfa;display:block;font-size:0.95rem;}
@@ -161,16 +153,28 @@
     <p>Carica la bolletta del cliente — confronto automatico con WindTre o Optima</p>
   </div>
 
+  <!-- Barra indici live -->
+  <div class="indici-bar">
+    <div class="indice-item">
+      💡 PUN Index GME <strong id="punDisplay">---</strong> €/kWh
+      <span class="tag" id="punMese">---</span>
+    </div>
+    <div class="indice-item">
+      🔥 PSV <strong id="psvDisplay">---</strong> €/Smc
+      <span class="tag" id="psvMese">---</span>
+    </div>
+    <div class="indice-upd" id="indiciUpd">Caricamento indici...</div>
+  </div>
+
   <div class="msg error" id="msgError"></div>
   <div class="msg success" id="msgSuccess"></div>
 
-  <!-- TABS -->
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('luce',event)">💡 LUCE</button>
     <button class="tab-btn" onclick="switchTab('gas',event)">🔥 GAS</button>
   </div>
 
-  <!-- ===== TAB LUCE ===== -->
+  <!-- TAB LUCE -->
   <div id="tab-luce">
     <div class="card">
       <div class="card-title">📄 Carica Bolletta LUCE (PDF)</div>
@@ -189,7 +193,6 @@
       </div>
     </div>
 
-    <!-- Selezione operatore LUCE -->
     <div class="op-selector" id="opSelectorLuce">
       <div class="op-selector-title">Scegli l'operatore per il preventivo:</div>
       <div class="op-buttons">
@@ -206,16 +209,15 @@
       </div>
     </div>
 
-    <!-- Toggle cliente WindTre LUCE -->
     <div class="wt-toggle-box" id="wtToggleLuce">
       <div class="wt-toggle-label">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/WindTre_logo.svg/160px-WindTre_logo.svg.png" style="height:20px;object-fit:contain;" alt="WindTre">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/WindTre_logo.svg/160px-WindTre_logo.svg.png" style="height:18px;object-fit:contain;" alt="WindTre">
         Il cliente è già cliente WindTre?
       </div>
       <div class="wt-toggle-btns">
         <div class="wt-sub-btn yes" id="wtYes_luce" onclick="selectWtCliente('luce',true)">
           ✅ Sì, è cliente WindTre
-          <span class="wt-sub-detail">Fisso 90 €/anno (-66€)</span>
+          <span class="wt-sub-detail">Fisso 90 €/anno (sconto -66€)</span>
         </div>
         <div class="wt-sub-btn no" id="wtNo_luce" onclick="selectWtCliente('luce',false)">
           ❌ No, non è cliente WindTre
@@ -227,7 +229,7 @@
     <div class="results" id="resultsLuce"></div>
   </div>
 
-  <!-- ===== TAB GAS ===== -->
+  <!-- TAB GAS -->
   <div id="tab-gas" style="display:none;">
     <div class="card">
       <div class="card-title">📄 Carica Bolletta GAS (PDF)</div>
@@ -246,7 +248,6 @@
       </div>
     </div>
 
-    <!-- Selezione operatore GAS -->
     <div class="op-selector" id="opSelectorGas">
       <div class="op-selector-title">Scegli l'operatore per il preventivo:</div>
       <div class="op-buttons">
@@ -263,16 +264,15 @@
       </div>
     </div>
 
-    <!-- Toggle cliente WindTre GAS -->
     <div class="wt-toggle-box" id="wtToggleGas">
       <div class="wt-toggle-label">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/WindTre_logo.svg/160px-WindTre_logo.svg.png" style="height:20px;object-fit:contain;" alt="WindTre">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/WindTre_logo.svg/160px-WindTre_logo.svg.png" style="height:18px;object-fit:contain;" alt="WindTre">
         Il cliente è già cliente WindTre?
       </div>
       <div class="wt-toggle-btns">
         <div class="wt-sub-btn yes" id="wtYes_gas" onclick="selectWtCliente('gas',true)">
           ✅ Sì, è cliente WindTre
-          <span class="wt-sub-detail">Fisso 90 €/anno (-66€)</span>
+          <span class="wt-sub-detail">Fisso 90 €/anno (sconto -66€)</span>
         </div>
         <div class="wt-sub-btn no" id="wtNo_gas" onclick="selectWtCliente('gas',false)">
           ❌ No, non è cliente WindTre
@@ -290,47 +290,73 @@
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-  // ── TARIFFE ──────────────────────────────────────────────────
+  // ── INDICI LIVE (aggiornati da API backend) ──────────────────
+  // Valori di fallback certificati (Gennaio 2026 — fonte GME/A2A)
+  const INDICI = {
+    punMonorario: 0.132660,   // €/kWh — PUN Index GME Gen 2026
+    punF1: 0.151261,
+    punF2: 0.137405,
+    punF3: 0.118292,
+    psv:   0.404227,          // €/Smc — PSV Gen 2026
+    mese:  'Gennaio 2026'
+  };
+
+  // Tenta di caricare indici aggiornati dall'API backend
+  async function caricaIndici() {
+    try {
+      const r = await fetch('/api/indici', { signal: AbortSignal.timeout(3000) });
+      if (r.ok) {
+        const d = await r.json();
+        if (d.punMonorario) INDICI.punMonorario = d.punMonorario;
+        if (d.punF1) INDICI.punF1 = d.punF1;
+        if (d.punF2) INDICI.punF2 = d.punF2;
+        if (d.punF3) INDICI.punF3 = d.punF3;
+        if (d.psv)   INDICI.psv   = d.psv;
+        if (d.mese)  INDICI.mese  = d.mese;
+      }
+    } catch(e) { /* usa fallback certificato */ }
+    aggiornaBarraIndici();
+  }
+
+  function aggiornaBarraIndici() {
+    document.getElementById('punDisplay').textContent = INDICI.punMonorario.toFixed(6);
+    document.getElementById('psvDisplay').textContent = INDICI.psv.toFixed(6);
+    document.getElementById('punMese').textContent    = INDICI.mese;
+    document.getElementById('psvMese').textContent    = INDICI.mese;
+    document.getElementById('indiciUpd').textContent  = 'Media mensile ufficiale GME';
+  }
+
+  caricaIndici();
+
+  // ── TARIFFE COMMERCIALI ──────────────────────────────────────
   const TARIFFE = {
     luce: {
-      punGen2026: (0.1296 + 0.1240 + 0.1055) / 3, // 0.11970
+      get pun() { return INDICI.punMonorario; },
       iva: 0.10,
-      wt: {
-        spread: 0.0278, varConsumi: 0.0154,
-        fissoWT: 90.00,   // cliente WindTre
-        fissoNO: 156.00,  // NON cliente WindTre
-        bonus: 120.00
-      },
-      opt: { spread: 0.0396, varConsumi: 0.0154, fisso: 154.80, bonus: 0 }
+      wt:  { spread: 0.0278, varConsumi: 0.0154, fissoWT: 90.00,  fissoNO: 156.00, bonus: 120.00 },
+      opt: { spread: 0.0396, varConsumi: 0.0154, fisso:   154.80, bonus: 0 }
     },
     gas: {
-      psvGen2026: 0.3488,
+      get psv() { return INDICI.psv; },
       iva: 0.22,
-      wt: {
-        spread: 0.0965, varConsumi: 0,
-        fissoWT: 90.00,
-        fissoNO: 156.00,
-        bonus: 120.00
-      },
-      opt: { spread: 0.12, varConsumi: 0.11, fisso: 162.00, bonus: 0 }
+      wt:  { spread: 0.0965, varConsumi: 0,    fissoWT: 90.00,  fissoNO: 156.00, bonus: 120.00 },
+      opt: { spread: 0.12,   varConsumi: 0.11, fisso:   162.00, bonus: 0 }
     }
   };
 
-  // Stato globale
   const bollettaData  = { luce: null, gas: null };
-  const statoOp       = { luce: null, gas: null };   // 'wt' | 'opt'
-  const statoWtClient = { luce: null, gas: null };   // true | false
+  const statoOp       = { luce: null, gas: null };
+  const statoWtClient = { luce: null, gas: null };
   const chartInst     = { luce: null, gas: null };
 
   // ── TABS ──────────────────────────────────────────────────────
   function switchTab(tab, e) {
-    ['luce','gas'].forEach(t => document.getElementById('tab-'+t).style.display = 'none');
+    ['luce','gas'].forEach(t => document.getElementById('tab-'+t).style.display='none');
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('tab-'+tab).style.display = 'block';
     e.target.classList.add('active');
   }
 
-  // ── DRAG & DROP ───────────────────────────────────────────────
   function dov(e,t){e.preventDefault();document.getElementById('upload'+cap(t)).classList.add('dragover');}
   function dlv(e,t){e.preventDefault();document.getElementById('upload'+cap(t)).classList.remove('dragover');}
   function handleDrop(e,t){e.preventDefault();dlv(e,t);const f=e.dataTransfer.files[0];if(f&&f.type==='application/pdf')processFile(f,t);else showMsg('error','Carica un file PDF valido.');}
@@ -341,23 +367,25 @@
   async function processFile(file, tipo) {
     const sb = document.getElementById('status'+cap(tipo));
     const st = document.getElementById('statusText'+cap(tipo));
-    sb.style.display = 'flex';
-    document.getElementById('results'+cap(tipo)).style.display = 'none';
-    document.getElementById('opSelector'+cap(tipo)).style.display = 'none';
-    document.getElementById('wtToggle'+cap(tipo)).style.display = 'none';
-    st.textContent = 'Lettura PDF...';
+    sb.style.display='flex';
+    document.getElementById('results'+cap(tipo)).style.display='none';
+    document.getElementById('opSelector'+cap(tipo)).style.display='none';
+    document.getElementById('wtToggle'+cap(tipo)).style.display='none';
+    st.textContent='Lettura PDF...';
     try {
       if (file.size > 10485760) { showMsg('error','File troppo grande (max 10MB)'); sb.style.display='none'; return; }
       const buf = await file.arrayBuffer();
       const pdf = await pdfjsLib.getDocument({data:buf}).promise;
-      st.textContent = 'Analisi '+pdf.numPages+' pagine...';
+      st.textContent='Analisi '+pdf.numPages+' pagine...';
       let testo = '';
-      for (let p = 1; p <= pdf.numPages; p++) {
+      for (let p=1; p<=pdf.numPages; p++) {
         const page = await pdf.getPage(p);
         const c = await page.getTextContent();
         testo += c.items.map(i=>i.str).join(' ')+'\n';
       }
-      st.textContent = 'Estrazione dati...';
+      st.textContent='Estrazione dati...';
+
+      // Chiama API backend
       const resp = await fetch('/api/estrai-bolletta?tipo='+tipo, {
         method:'POST',
         headers:{'Content-Type':'application/json'},
@@ -368,24 +396,32 @@
         showMsg('error','⚠️ '+(data.error||'Dati non trovati nel PDF.'));
         sb.style.display='none'; return;
       }
-      sb.style.display = 'none';
-      const operatore = detectOperatore(testo);
-      const extra     = detectExtra(testo, data.totale, data.consumo, tipo);
+      sb.style.display='none';
+
+      // ── OPERATORE: priorità API → fallback testo locale ──────
+      // L'API restituisce data.operatore se lo ha estratto,
+      // altrimenti lo rileva la funzione locale sul testo grezzo
+      const operatore = (data.operatore && data.operatore.trim() !== '')
+        ? data.operatore.trim()
+        : detectOperatore(testo);
+
+      const extra = detectExtra(testo, data.totale, data.consumo, tipo);
+
       bollettaData[tipo] = {
-        consumo: data.consumo,
-        totalePeriodo: data.totale,          // spesa reale del periodo fatturato
-        totaleAnno: extra.totaleAnno,         // spesa stimata annua
+        consumo:       data.consumo,
+        totalePeriodo: data.totale,
+        totaleAnno:    extra.totaleAnno,
         operatore,
-        quotaFissa: extra.quotaFissa,
-        mesi: extra.mesi
+        quotaFissa:    extra.quotaFissa,
+        mesi:          extra.mesi
       };
+
       statoOp[tipo] = null;
       statoWtClient[tipo] = null;
-      // Reset UI
       ['wt','opt'].forEach(o => document.getElementById('opBtn'+o.toUpperCase()+'_'+tipo).classList.remove('selected'));
       ['Yes','No'].forEach(n => document.getElementById('wt'+n+'_'+tipo).classList.remove('selected'));
-      document.getElementById('opSelector'+cap(tipo)).style.display = 'block';
-      showMsg('success','✅ Bolletta letta ('+operatore+', '+extra.mesi+' mesi). Scegli l\'operatore.');
+      document.getElementById('opSelector'+cap(tipo)).style.display='block';
+      showMsg('success','✅ Bolletta letta — '+operatore+' ('+extra.mesi+' mesi). Scegli l\'operatore per il preventivo.');
     } catch(err) {
       console.error(err);
       showMsg('error','Errore: '+err.message);
@@ -393,116 +429,156 @@
     }
   }
 
+  // ── DETECT OPERATORE (fallback locale) ───────────────────────
+  // Usato SOLO se l'API non restituisce il campo operatore
+  function detectOperatore(t) {
+    const tl = t.toLowerCase();
+    // Mappa ordinata dal più specifico al più generico
+    const ops = [
+      ['iren mercato','IREN Mercato'],['iren','IREN'],
+      ['plenitude','Plenitude (ENI)'],
+      ['enel energia','Enel Energia'],['enel','Enel'],
+      ['eni gas','ENI Gas'],['eni','ENI'],
+      ['a2a energia','A2A Energia'],['a2a','A2A'],
+      ['acea energia','ACEA Energia'],['acea','ACEA'],
+      ['sorgenia','Sorgenia'],
+      ['illumia','Illumia'],
+      ['e.on energia','E.ON Energia'],['e.on','E.ON'],['eon ','E.ON'],
+      ['edison','Edison'],
+      ['hera comm','Hera Comm'],['hera','Hera'],
+      ['2i rete gas','2i Rete Gas'],
+      ['italgas','Italgas'],
+      ['green network','Green Network'],
+      ['bluenergy','Bluenergy'],
+      ['dolomiti energia','Dolomiti Energia'],
+      ['engie','ENGIE'],
+      ['wekiwi','Wekiwi'],
+      ['eni plenitude','Plenitude'],
+    ];
+    for (const [k,v] of ops) if (tl.includes(k)) return v;
+    // Tenta con maiuscole nel testo originale (es. "AGSM", "AMAG", etc.)
+    const matchMaiuscole = t.match(/([A-Z]{3,}(?:\s[A-Z]{2,})?)\s+(?:S\.p\.A|srl|spa|s\.r\.l)/);
+    if (matchMaiuscole) return matchMaiuscole[1];
+    return 'Operatore attuale';
+  }
+
+  // ── DETECT EXTRA ──────────────────────────────────────────────
+  function detectExtra(testo, totaleBoll, consumoBoll, tipo) {
+    let totaleAnno = null;
+    const m1 = testo.match(/spesa\s+annua?\s+sostenuta[^€\d]*([\d.,]+)/i);
+    if (m1) { const v=pf(m1[1]); if(v>30&&v<20000) totaleAnno=v; }
+    let mesi = 2;
+    const m3 = testo.match(/(\d+)\s+mes[ei]/i);
+    if (m3) { const v=parseInt(m3[1]); if(v>=1&&v<=12) mesi=v; }
+    if (!totaleAnno) totaleAnno = parseFloat((totaleBoll/mesi*12).toFixed(2));
+    let quotaFissa = 0;
+    const m4 = testo.match(/([\d.,]+)\s*€[^\n]*\/\s*mes[ei]/i);
+    if (m4) { const v=pf(m4[1]); if(v>0&&v<500) quotaFissa=v*mesi; }
+    return { totaleAnno, quotaFissa, mesi };
+  }
+
+  function pf(s){ return parseFloat(s.replace(/\./g,'').replace(',','.')); }
+
   // ── SELEZIONE OPERATORE ───────────────────────────────────────
   function selectOp(tipo, op) {
     ['wt','opt'].forEach(o => document.getElementById('opBtn'+o.toUpperCase()+'_'+tipo).classList.remove('selected'));
     document.getElementById('opBtn'+op.toUpperCase()+'_'+tipo).classList.add('selected');
     statoOp[tipo] = op;
-    document.getElementById('wtToggle'+cap(tipo)).style.display = op === 'wt' ? 'block' : 'none';
-    document.getElementById('results'+cap(tipo)).style.display = 'none';
-    // Reset toggle WindTre
-    if (op === 'wt') {
+    document.getElementById('wtToggle'+cap(tipo)).style.display = op==='wt' ? 'block' : 'none';
+    document.getElementById('results'+cap(tipo)).style.display='none';
+    if (op==='wt') {
       ['Yes','No'].forEach(n => document.getElementById('wt'+n+'_'+tipo).classList.remove('selected'));
-      statoWtClient[tipo] = null;
+      statoWtClient[tipo]=null;
     } else {
-      statoWtClient[tipo] = null;
+      statoWtClient[tipo]=null;
       calcola(tipo, op);
     }
   }
 
-  // ── TOGGLE CLIENTE WINDTRE ────────────────────────────────────
   function selectWtCliente(tipo, isCliente) {
-    statoWtClient[tipo] = isCliente;
-    document.getElementById('wtYes_'+tipo).classList.toggle('selected', isCliente);
-    document.getElementById('wtNo_'+tipo).classList.toggle('selected', !isCliente);
-    calcola(tipo, 'wt');
+    statoWtClient[tipo]=isCliente;
+    document.getElementById('wtYes_'+tipo).classList.toggle('selected',isCliente);
+    document.getElementById('wtNo_'+tipo).classList.toggle('selected',!isCliente);
+    calcola(tipo,'wt');
   }
 
-  // ── CALCOLO + RENDER ──────────────────────────────────────────
+  // ── CALCOLO ───────────────────────────────────────────────────
   function calcola(tipo, op) {
     const d = bollettaData[tipo];
     if (!d) return;
     const T = TARIFFE[tipo];
     const O = T[op];
-    const unita = tipo === 'luce' ? 'kWh' : 'Smc';
-    const isWt  = op === 'wt';
+    const unita   = tipo==='luce' ? 'kWh' : 'Smc';
+    const isWt    = op==='wt';
     const opName  = isWt ? 'WindTre' : 'Optima';
     const opColor = isWt ? 'orange' : 'blue';
+    const fisso   = isWt ? (statoWtClient[tipo] ? O.fissoWT : O.fissoNO) : O.fisso;
+    const isWtClient = isWt && statoWtClient[tipo]===true;
 
-    // Fisso WindTre dipende da se è già cliente
-    let fisso = isWt ? (statoWtClient[tipo] ? O.fissoWT : O.fissoNO) : O.fisso;
-    const isWtClient = isWt && statoWtClient[tipo] === true;
+    // Indice aggiornato
+    const prezzoIndice = tipo==='luce' ? T.pun : T.psv;
 
-    // ── PREZZI ────────────────────────────────────────────────
-    const prezzoIndice = tipo === 'luce' ? T.punGen2026 : T.psvGen2026;
-    const prezzoEnergia_netto = prezzoIndice + O.spread + (O.varConsumi || 0);
-    const prezzoEnergia_ivato = prezzoEnergia_netto * (1 + T.iva);
+    // Prezzo energia (IVA inclusa)
+    const prezzoEnergia_netto = prezzoIndice + O.spread + (O.varConsumi||0);
+    const prezzoEnergia_ivato = prezzoEnergia_netto * (1+T.iva);
 
-    // ── CALCOLO SUL PERIODO FATTURATO ────────────────────────
-    const consumoPeriodo = d.consumo;           // kWh/Smc del periodo
-    const spesaPeriodo   = d.totalePeriodo;     // € pagati nel periodo
+    // Dati bolletta
+    const consumoPeriodo = d.consumo;
+    const spesaPeriodo   = d.totalePeriodo;
     const mesi           = d.mesi;
 
-    // Rete+oneri: fissi per tutti → li estraiamo dalla bolletta
-    // stima: rete+oneri = spesa totale - quota energia (~44% luce, ~35% gas) - quota fissa
-    const percEnergia = tipo === 'luce' ? 0.44 : 0.35;
+    // Rete+oneri (stessa per tutti, estratta dalla bolletta)
+    const percEnergia = tipo==='luce' ? 0.44 : 0.35;
     const quotaEnergiaPuraAtt = spesaPeriodo * percEnergia;
     const reteOneriPeriodo = Math.max(spesaPeriodo - quotaEnergiaPuraAtt - d.quotaFissa, 0);
 
-    // Fisso pro-quota periodo
-    const fissoPeriodo = fisso / 12 * mesi;
-
-    // Totale nostra offerta sul periodo
+    // Calcolo periodo
+    const fissoPeriodo        = fisso / 12 * mesi;
     const energiaNostraPeriodo = prezzoEnergia_ivato * consumoPeriodo;
     const totaleNostraPeriodo  = parseFloat((energiaNostraPeriodo + fissoPeriodo + reteOneriPeriodo).toFixed(2));
+    const risparmioPeriodo     = parseFloat((spesaPeriodo - totaleNostraPeriodo).toFixed(2));
+    const percPeriodo          = parseFloat((risparmioPeriodo/spesaPeriodo*100).toFixed(1));
+    const isSaving             = risparmioPeriodo >= 0;
 
-    // Risparmio periodo reale
-    const risparmioPeriodo = parseFloat((spesaPeriodo - totaleNostraPeriodo).toFixed(2));
-    const percPeriodo = parseFloat((risparmioPeriodo / spesaPeriodo * 100).toFixed(1));
-    const isSaving = risparmioPeriodo >= 0;
+    // Stima annuale
+    const fattore         = 12/mesi;
+    const spesaAnnoAtt    = parseFloat((spesaPeriodo*fattore).toFixed(2));
+    const totaleNostraAnno= parseFloat((totaleNostraPeriodo*fattore).toFixed(2));
+    const risparmioAnno   = parseFloat((spesaAnnoAtt-totaleNostraAnno).toFixed(2));
+    const prezzoMedioAtt  = spesaPeriodo/consumoPeriodo;
 
-    // ── STIMA ANNUALE ─────────────────────────────────────────
-    const fattore = 12 / mesi;
-    const spesaAnnoAtt     = parseFloat((spesaPeriodo * fattore).toFixed(2));
-    const totaleNostraAnno = parseFloat((totaleNostraPeriodo * fattore).toFixed(2));
-    const risparmioAnno    = parseFloat((spesaAnnoAtt - totaleNostraAnno).toFixed(2));
-
-    // Prezzi medi
-    const prezzoMedioAtt = spesaPeriodo / consumoPeriodo;
-
-    // ── RENDER HTML ───────────────────────────────────────────
-    const container = document.getElementById('results'+cap(tipo));
-    const wtClienteLabel = isWt ? (isWtClient ? ' · Cliente WindTre ✅' : ' · Non cliente WindTre') : '';
     const opLogoWT  = 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/WindTre_logo.svg/160px-WindTre_logo.svg.png';
     const opLogoOPT = 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Optima_Italia_logo.svg/160px-Optima_Italia_logo.svg.png';
     const opLogo    = isWt ? opLogoWT : opLogoOPT;
+    const wtLabel   = isWt ? (isWtClient ? ' · Cliente WindTre ✅' : ' · Non cliente WindTre') : '';
+    const indiceLabel = tipo==='luce'
+      ? `PUN Index GME ${INDICI.mese}: ${prezzoIndice.toFixed(6)} €/${unita}`
+      : `PSV ${INDICI.mese}: ${prezzoIndice.toFixed(6)} €/${unita}`;
 
+    const container = document.getElementById('results'+cap(tipo));
     container.innerHTML = `
-      <!-- Dati rilevati -->
       <div class="rilevati">
         <div class="rb"><strong>${consumoPeriodo.toFixed(0)}</strong>${unita} nel periodo</div>
-        <div class="rb"><strong>${mesi}</strong>mesi fatturati</div>
+        <div class="rb"><strong>${mesi}</strong>${mesi===1?'mese':'mesi'} fatturati</div>
         <div class="rb"><strong>${d.operatore}</strong>operatore bolletta</div>
-        <div class="rb"><strong>${prezzoMedioAtt.toFixed(4)}</strong>€/${unita} prezzo medio</div>
+        <div class="rb"><strong>${prezzoMedioAtt.toFixed(4)}</strong>€/${unita} prezzo medio attuale</div>
       </div>
 
-      <!-- Offerta info -->
       <div class="offerta-info ${isWt ? 'wt-box' : 'opt-box'}">
         <div class="oi-title" style="color:${isWt ? '#fdba74' : '#7dd3fc'}">
-          <img src="${opLogo}" alt="${opName}">
-          ${opName}${wtClienteLabel}
+          <img src="${opLogo}" alt="${opName}">${opName}${wtLabel}
         </div>
         <div class="oi-row">
-          <div class="oi-item">Energia: <strong class="${opColor}">${tipo==='luce'?'PUN':'PSV'} + ${O.spread} €/${unita}</strong></div>
-          ${O.varConsumi ? `<div class="oi-item">Comm. variabile: <strong class="${opColor}">+ ${O.varConsumi} €/${unita}</strong></div>` : ''}
-          <div class="oi-item">Fisso annuo: <strong class="${opColor}">€ ${fisso.toFixed(2)}${isWt && isWtClient ? ' 🏷️' : ''}</strong></div>
+          <div class="oi-item">Indice: <strong class="${opColor}">${indiceLabel}</strong></div>
+          <div class="oi-item">Spread: <strong class="${opColor}">+ ${O.spread} €/${unita}</strong></div>
+          ${O.varConsumi ? `<div class="oi-item">Comm. var.: <strong class="${opColor}">+ ${O.varConsumi} €/${unita}</strong></div>` : ''}
+          <div class="oi-item">Fisso: <strong class="${opColor}">€ ${fisso.toFixed(2)}/anno${isWt&&isWtClient?' 🏷️':''}</strong></div>
         </div>
       </div>
 
-      <!-- HERO — risparmio SUL PERIODO FATTURATO -->
       <div class="hero ${isSaving ? 'saving' : 'losing'}">
         <div class="hero-periodo">
-          Risparmio sullo stesso periodo (${mesi} ${mesi===1?'mese':'mesi'})
+          Risparmio sullo stesso periodo fatturato (${mesi} ${mesi===1?'mese':'mesi'})
         </div>
         <div class="hero-amount ${isSaving ? 'green' : 'red'}">
           ${isSaving ? '€ ' : '- € '}${Math.abs(risparmioPeriodo).toFixed(2)}
@@ -515,33 +591,31 @@
           ${isSaving ? '-' : '+'}${Math.abs(percPeriodo)}% sul periodo
         </div>
         <div class="hero-annuale">
-          📅 Stima risparmio annuale: 
-          <span class="${risparmioAnno >= 0 ? 'green' : 'red'}">
-            ${risparmioAnno >= 0 ? '+ €' : '- €'} ${Math.abs(risparmioAnno).toFixed(2)}/anno
+          📅 Stima risparmio annuale:
+          <span class="${risparmioAnno>=0?'green':'red'}">
+            ${risparmioAnno>=0 ? '+ €' : '- €'} ${Math.abs(risparmioAnno).toFixed(2)}/anno
           </span>
           &nbsp;(da € ${spesaAnnoAtt.toFixed(2)} → € ${totaleNostraAnno.toFixed(2)})
         </div>
       </div>
 
-      <!-- Numeri -->
       <div class="num-grid">
         <div class="num-card curr">
           <div class="nc-label">Paga ora con</div>
           <div class="nc-op">${d.operatore}</div>
           <div class="nc-val red">€ ${spesaPeriodo.toFixed(2)}</div>
-          <div class="nc-unit">€ / ${mesi} ${mesi===1?'mese':'mesi'} fatturati</div>
+          <div class="nc-unit">/ ${mesi} ${mesi===1?'mese':'mesi'} fatturati</div>
         </div>
         <div class="num-card offr-${op}">
           <div class="nc-label">Con ${opName} pagherebbe</div>
-          <div class="nc-op">${opName}${wtClienteLabel}</div>
+          <div class="nc-op">${opName}${wtLabel}</div>
           <div class="nc-val ${opColor}">€ ${totaleNostraPeriodo.toFixed(2)}</div>
-          <div class="nc-unit">€ / stesso periodo</div>
+          <div class="nc-unit">/ stesso periodo</div>
         </div>
       </div>
 
-      <!-- Grafico -->
       <div class="chart-card">
-        <h3>📊 Confronto spesa — stesso periodo (${mesi} mesi)</h3>
+        <h3>📊 Confronto spesa — ${mesi} ${mesi===1?'mese':'mesi'} fatturati</h3>
         <div class="chart-wrap">
           <canvas id="chart_${tipo}" width="240" height="240"></canvas>
           <div class="chart-center">
@@ -557,12 +631,11 @@
         </div>
       </div>
 
-      <!-- Dettaglio -->
       <div class="card">
         <div class="card-title">🔍 Dettaglio Calcolo</div>
 
         <div class="detail-section">
-          <div class="ds-title">📌 Bolletta — ${d.operatore} (${mesi} mesi)</div>
+          <div class="ds-title">📌 Bolletta — ${d.operatore} (${mesi} ${mesi===1?'mese':'mesi'})</div>
           <div class="dr"><span class="dr-l">Consumo periodo</span><span class="dr-v">${consumoPeriodo.toFixed(0)} ${unita}</span></div>
           <div class="dr"><span class="dr-l">Spesa periodo</span><span class="dr-v red">€ ${spesaPeriodo.toFixed(2)}</span></div>
           <div class="dr"><span class="dr-l">Prezzo medio (IVA incl.)</span><span class="dr-v">${prezzoMedioAtt.toFixed(4)} €/${unita}</span></div>
@@ -571,13 +644,13 @@
         </div>
 
         <div class="detail-section">
-          <div class="ds-title">${isWt ? '🌀' : '🔵'} ${opName}${wtClienteLabel}</div>
-          <div class="dr"><span class="dr-l">Indice ${tipo==='luce'?'PUN':'PSV'} Gen 2026</span><span class="dr-v">${prezzoIndice.toFixed(4)} €/${unita}</span></div>
+          <div class="ds-title">${isWt ? '🌀' : '🔵'} ${opName}${wtLabel}</div>
+          <div class="dr"><span class="dr-l">${tipo==='luce'?'PUN Index GME':'PSV'} — ${INDICI.mese}</span><span class="dr-v ${opColor}">${prezzoIndice.toFixed(6)} €/${unita}</span></div>
           <div class="dr"><span class="dr-l">+ Corrispettivo ${opName}</span><span class="dr-v ${opColor}">+ ${O.spread} €/${unita}</span></div>
           ${O.varConsumi ? `<div class="dr"><span class="dr-l">+ Comm. variabile</span><span class="dr-v ${opColor}">+ ${O.varConsumi} €/${unita}</span></div>` : ''}
-          <div class="dr"><span class="dr-l">Prezzo energia (IVA ${tipo==='luce'?'10':'22'}% incl.)</span><span class="dr-v ${opColor}">${prezzoEnergia_ivato.toFixed(4)} €/${unita}</span></div>
+          <div class="dr"><span class="dr-l">Prezzo energia (IVA ${tipo==='luce'?'10':'22'}% incl.)</span><span class="dr-v ${opColor}">${prezzoEnergia_ivato.toFixed(6)} €/${unita}</span></div>
           <div class="dr"><span class="dr-l">Costo energia (${consumoPeriodo.toFixed(0)} ${unita})</span><span class="dr-v">€ ${energiaNostraPeriodo.toFixed(2)}</span></div>
-          <div class="dr"><span class="dr-l">Quota fissa (${mesi} mesi su 12)</span><span class="dr-v">€ ${fissoPeriodo.toFixed(2)}</span></div>
+          <div class="dr"><span class="dr-l">Quota fissa (${mesi}/${12} mesi)</span><span class="dr-v">€ ${fissoPeriodo.toFixed(2)}</span></div>
           <div class="dr"><span class="dr-l">Rete + oneri (identici)</span><span class="dr-v">€ ${reteOneriPeriodo.toFixed(2)}</span></div>
           <div class="tot-row ${isWt ? 'wt-bg' : 'opt-bg'}">
             <span style="color:var(--text2)">Totale ${opName} (periodo)</span>
@@ -588,12 +661,12 @@
         <div class="detail-section">
           <div class="ds-title">✅ Risultato</div>
           <div class="dr">
-            <span class="dr-l">Risparmio periodo (${mesi} mesi)</span>
+            <span class="dr-l">Risparmio sul periodo (${mesi} mesi)</span>
             <span class="dr-v ${isSaving ? 'green' : 'red'}">${isSaving ? '+' : '-'} € ${Math.abs(risparmioPeriodo).toFixed(2)}</span>
           </div>
           <div class="dr">
             <span class="dr-l">Stima risparmio annuale</span>
-            <span class="dr-v ${risparmioAnno >= 0 ? 'green' : 'red'}">${risparmioAnno >= 0 ? '+' : '-'} € ${Math.abs(risparmioAnno).toFixed(2)}</span>
+            <span class="dr-v ${risparmioAnno>=0 ? 'green' : 'red'}">${risparmioAnno>=0 ? '+' : '-'} € ${Math.abs(risparmioAnno).toFixed(2)}</span>
           </div>
           <div class="dr">
             <span class="dr-l">Variazione %</span>
@@ -601,38 +674,36 @@
           </div>
           ${isWt && isWtClient ? `
           <div class="dr">
-            <span class="dr-l">Sconto fisso cliente WindTre</span>
-            <span class="dr-v green">- € 66,00/anno (vs listino)</span>
+            <span class="dr-l">Sconto cliente WindTre sul fisso</span>
+            <span class="dr-v green">- € 66,00/anno</span>
           </div>` : ''}
         </div>
       </div>
     `;
 
-    container.style.display = 'block';
+    container.style.display='block';
     renderChart(tipo, op, totaleNostraPeriodo, risparmioPeriodo, isSaving, percPeriodo);
-    window.scrollTo({top: container.offsetTop - 20, behavior:'smooth'});
+    window.scrollTo({top: container.offsetTop-20, behavior:'smooth'});
   }
 
   // ── GRAFICO ───────────────────────────────────────────────────
   function renderChart(tipo, op, totaleNostra, risparmio, isSaving, perc) {
     if (chartInst[tipo]) chartInst[tipo].destroy();
     const ctx = document.getElementById('chart_'+tipo).getContext('2d');
-    const cOp   = op === 'wt' ? 'rgba(224,112,32,0.85)' : 'rgba(14,165,233,0.85)';
-    const cRisp = isSaving ? 'rgba(34,197,94,0.82)' : 'rgba(239,68,68,0.75)';
     chartInst[tipo] = new Chart(ctx, {
       type:'doughnut',
       data:{
         datasets:[{
           data:[totaleNostra, Math.max(Math.abs(risparmio), 0.01)],
-          backgroundColor:[cOp, cRisp],
-          borderColor:'#0a0a14',
-          borderWidth:3,
-          hoverOffset:6
+          backgroundColor:[
+            op==='wt' ? 'rgba(224,112,32,0.85)' : 'rgba(14,165,233,0.85)',
+            isSaving  ? 'rgba(34,197,94,0.82)'  : 'rgba(239,68,68,0.75)'
+          ],
+          borderColor:'#0a0a14', borderWidth:3, hoverOffset:6
         }]
       },
       options:{
-        cutout:'66%',
-        animation:{duration:900},
+        cutout:'66%', animation:{duration:900},
         plugins:{
           legend:{display:false},
           tooltip:{callbacks:{label:c=>' € '+c.parsed.toFixed(2)}}
@@ -640,35 +711,6 @@
       }
     });
   }
-
-  // ── DETECT OPERATORE ──────────────────────────────────────────
-  function detectOperatore(t) {
-    t = t.toLowerCase();
-    const ops=[['iren','IREN'],['enel','Enel'],['plenitude','Plenitude (ENI)'],['eni ','ENI'],
-      ['a2a','A2A'],['acea','ACEA'],['sorgenia','Sorgenia'],['illumia','Illumia'],
-      ['e.on','E.ON'],['edison','Edison'],['hera','Hera'],['2i rete','2i Rete Gas'],
-      ['italgas','Italgas'],['eon','E.ON'],['green network','Green Network'],
-      ['bluenergy','Bluenergy'],['dolomiti','Dolomiti Energia']];
-    for (const [k,v] of ops) if (t.includes(k)) return v;
-    return 'Operatore attuale';
-  }
-
-  // ── DETECT EXTRA ──────────────────────────────────────────────
-  function detectExtra(testo, totaleBoll, consumoBoll, tipo) {
-    let totaleAnno = null;
-    const m1 = testo.match(/spesa\s+annua?\s+sostenuta[^€\d]*([\d.,]+)/i);
-    if (m1) { const v=pf(m1[1]); if(v>30&&v<20000) totaleAnno=v; }
-    let mesi = 2;
-    const m3 = testo.match(/(\d+)\s+mes[ei]/i);
-    if (m3) { const v=parseInt(m3[1]); if(v>=1&&v<=12) mesi=v; }
-    if (!totaleAnno) totaleAnno = parseFloat((totaleBoll / mesi * 12).toFixed(2));
-    let quotaFissa = 0;
-    const m4 = testo.match(/([\d.,]+)\s*€[^\n]*\/\s*mes[ei]/i);
-    if (m4) { const v=pf(m4[1]); if(v>0&&v<500) quotaFissa=v*mesi; }
-    return { totaleAnno, quotaFissa, mesi };
-  }
-
-  function pf(s){ return parseFloat(s.replace(/\./g,'').replace(',','.')); }
 
   // ── MESSAGGI ──────────────────────────────────────────────────
   function showMsg(type, msg) {
