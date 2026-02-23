@@ -1,606 +1,603 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Preventivo Energia PRO</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    :root{
-      --bg:#0a0a14;--sf:#13132a;--sf2:#1a1a35;
-      --tx:#f1f5f9;--tx2:#94a3b8;--bd:rgba(120,80,255,0.2);
-      --wt:#e07020;--opt:#0ea5e9;--ok:#22c55e;--er:#ef4444;
-    }
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-         background:var(--bg);color:var(--tx);padding:20px;min-height:100vh;}
-    .wrap{max-width:920px;margin:0 auto;}
-
-    .header{text-align:center;padding:26px 20px 18px;background:var(--sf);
-            border-radius:16px;border:1px solid var(--bd);margin-bottom:16px;}
-    .logo{font-size:1.9rem;font-weight:900;
-      background:linear-gradient(135deg,#7c3aed,#06b6d4);
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-    .header p{color:var(--tx2);margin-top:5px;font-size:0.9rem;}
-
-    /* INDICI */
-    .indici{display:flex;gap:14px;flex-wrap:wrap;align-items:center;
-            background:var(--sf);border-radius:12px;padding:11px 16px;
-            border:1px solid var(--bd);margin-bottom:16px;}
-    .ic{font-size:0.82rem;display:flex;align-items:center;gap:5px;}
-    .ic b{color:#a78bfa;}
-    .ic-tag{font-size:0.69rem;background:rgba(120,80,255,0.18);
-            border-radius:4px;padding:1px 6px;color:#c4b5fd;}
-    .ic-note{margin-left:auto;font-size:0.69rem;color:var(--tx2);font-style:italic;}
-
-    /* TABS */
-    .tabs{display:flex;background:var(--sf);border-radius:12px;
-          padding:4px;border:1px solid var(--bd);margin-bottom:16px;}
-    .tb{flex:1;padding:10px;background:none;border:none;color:var(--tx2);
-        cursor:pointer;font-size:0.97rem;font-weight:600;border-radius:9px;transition:all .22s;}
-    .tb.on{background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;}
-
-    /* CARD */
-    .card{background:var(--sf);border-radius:13px;padding:20px;
-          border:1px solid var(--bd);margin-bottom:14px;}
-    .ctit{font-size:0.97rem;font-weight:700;color:#a78bfa;
-          margin-bottom:13px;display:flex;align-items:center;gap:7px;}
-
-    /* UPLOAD */
-    .dropz{border:2px dashed rgba(120,80,255,0.35);border-radius:11px;
-           padding:32px 18px;text-align:center;cursor:pointer;
-           transition:all .28s;background:rgba(120,80,255,0.04);}
-    .dropz:hover,.dropz.over{border-color:#7c3aed;background:rgba(120,80,255,0.09);}
-    .dropz h3{color:var(--tx);margin-bottom:5px;font-size:0.98rem;}
-    .dropz p{color:var(--tx2);font-size:0.8rem;}
-    .dropz .ico{font-size:2.2rem;margin-bottom:7px;}
-    input[type=file]{display:none;}
-    .stbar{display:none;flex-direction:row;align-items:center;gap:11px;
-           margin-top:11px;background:rgba(120,80,255,0.1);
-           border-radius:8px;padding:9px 13px;font-size:0.87rem;}
-    .spin{width:15px;height:15px;border:3px solid rgba(120,80,255,0.3);
-          border-top:3px solid #7c3aed;border-radius:50%;
-          animation:spin 1s linear infinite;flex-shrink:0;}
-    @keyframes spin{to{transform:rotate(360deg);}}
-
-    /* OP SELECTOR */
-    .ops{display:none;margin-bottom:14px;}
-    .ops-t{color:var(--tx2);font-size:0.86rem;margin-bottom:9px;text-align:center;}
-    .op-btns{display:flex;gap:11px;}
-    .ob{flex:1;padding:15px 9px 11px;border-radius:13px;border:2px solid transparent;
-        cursor:pointer;transition:all .22s;background:var(--sf2);
-        text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;}
-    .ob:hover{transform:translateY(-2px);}
-    .ob .nm{font-size:0.93rem;font-weight:700;color:var(--tx2);}
-    .ob .sub{font-size:0.69rem;color:var(--tx2);line-height:1.5;}
-    .ob.wt{border-color:rgba(224,112,32,0.22);}
-    .ob.wt.sel,.ob.wt:hover{background:rgba(224,112,32,0.11);border-color:var(--wt);}
-    .ob.wt.sel .nm,.ob.wt:hover .nm{color:#fdba74;}
-    .ob.opt{border-color:rgba(14,165,233,0.22);}
-    .ob.opt.sel,.ob.opt:hover{background:rgba(14,165,233,0.11);border-color:var(--opt);}
-    .ob.opt.sel .nm,.ob.opt:hover .nm{color:#7dd3fc;}
-
-    /* WT TOGGLE */
-    .wttog{display:none;background:rgba(224,112,32,0.07);
-           border:1px solid rgba(224,112,32,0.27);border-radius:11px;
-           padding:14px 16px;margin-bottom:14px;}
-    .wttog-t{font-size:0.88rem;font-weight:600;color:#fdba74;margin-bottom:10px;}
-    .wt-bs{display:flex;gap:10px;}
-    .wtsb{flex:1;padding:10px 8px;border-radius:9px;border:2px solid transparent;
-          cursor:pointer;font-size:0.86rem;font-weight:700;transition:all .2s;
-          background:var(--sf2);color:var(--tx2);text-align:center;}
-    .wtsb small{font-size:0.69rem;color:var(--tx2);display:block;margin-top:2px;}
-    .wtsb.y.sel,.wtsb.y:hover{background:rgba(224,112,32,0.17);border-color:var(--wt);color:#fdba74;}
-    .wtsb.n.sel,.wtsb.n:hover{background:rgba(148,163,184,0.09);border-color:#94a3b8;color:var(--tx);}
-
-    /* MESSAGGI */
-    .msg{border-radius:8px;padding:10px 13px;margin-bottom:13px;
-         display:none;font-weight:500;font-size:0.88rem;}
-    .msg.err{background:rgba(239,68,68,0.09);border:1.5px solid var(--er);color:var(--er);}
-    .msg.ok{background:rgba(34,197,94,0.09);border:1.5px solid var(--ok);color:var(--ok);}
-
-    /* RESULTS */
-    .res{display:none;}
-
-    /* HERO */
-    .hero{border-radius:13px;padding:24px 18px;text-align:center;
-          margin-bottom:13px;border:2px solid;}
-    .hero.sav{background:linear-gradient(135deg,rgba(34,197,94,0.09),rgba(34,197,94,0.02));border-color:rgba(34,197,94,0.28);}
-    .hero.los{background:linear-gradient(135deg,rgba(239,68,68,0.09),rgba(239,68,68,0.02));border-color:rgba(239,68,68,0.26);}
-    .h-tag{font-size:0.7rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--tx2);margin-bottom:3px;}
-    .h-big{font-size:2.9rem;font-weight:900;line-height:1;}
-    .h-big.g{color:var(--ok);}
-    .h-big.r{color:var(--er);}
-    .h-sub{font-size:0.81rem;color:var(--tx2);margin-top:5px;}
-    .h-sub strong{color:var(--tx);}
-    .pill{display:inline-block;padding:4px 15px;border-radius:20px;
-          font-weight:800;font-size:0.93rem;margin-top:9px;}
-    .pill.g{background:rgba(34,197,94,0.13);color:var(--ok);border:1.5px solid rgba(34,197,94,0.23);}
-    .pill.r{background:rgba(239,68,68,0.11);color:var(--er);border:1.5px solid rgba(239,68,68,0.23);}
-
-    /* GRID CARDS */
-    .ng{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:13px;}
-    @media(max-width:480px){.ng{grid-template-columns:1fr;}}
-    .nc{background:var(--sf2);border-radius:11px;padding:15px;border:1.5px solid var(--bd);}
-    .nc.cr{border-color:rgba(239,68,68,0.2);}
-    .nc.nw{border-color:rgba(224,112,32,0.28);}
-    .nc.no{border-color:rgba(14,165,233,0.28);}
-    .nc-l{font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--tx2);margin-bottom:2px;}
-    .nc-o{font-size:0.7rem;color:var(--tx2);font-style:italic;margin-bottom:4px;}
-    .nc-v{font-size:1.6rem;font-weight:800;}
-    .nc-v.r{color:#f87171;}
-    .nc-v.or{color:#fdba74;}
-    .nc-v.bl{color:#7dd3fc;}
-    .nc-u{font-size:0.71rem;color:var(--tx2);margin-top:2px;}
-
-    /* GRAFICI */
-    .ch-row{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px;}
-    @media(max-width:540px){.ch-row{grid-template-columns:1fr;}}
-    .chc{background:var(--sf);border:1px solid var(--bd);border-radius:13px;padding:16px;}
-    .chc h3{color:#a78bfa;margin-bottom:11px;font-size:0.86rem;text-align:center;}
-    .chw{position:relative;max-width:185px;margin:0 auto 9px;}
-    .chcen{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
-    .chcen .cb{font-size:1.45rem;font-weight:900;}
-    .chcen .cb.g{color:var(--ok);}
-    .chcen .cb.r{color:var(--er);}
-    .chcen .cs{font-size:0.68rem;color:var(--tx2);}
-    .chl{display:flex;justify-content:center;gap:11px;font-size:0.73rem;color:var(--tx2);flex-wrap:wrap;}
-    .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:3px;vertical-align:middle;}
-
-    /* DETTAGLIO */
-    .ds{margin-bottom:11px;}
-    .ds-t{font-size:0.69rem;text-transform:uppercase;letter-spacing:1px;color:var(--tx2);
-          margin-bottom:6px;padding-bottom:3px;border-bottom:1px solid rgba(255,255,255,0.05);}
-    .dr{display:flex;justify-content:space-between;padding:4px 0;
-        border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.83rem;}
-    .dr:last-child{border-bottom:none;}
-    .dl{color:var(--tx2);}
-    .dv{font-weight:600;}
-    .dv.g{color:var(--ok);}
-    .dv.r{color:#f87171;}
-    .dv.or{color:#fdba74;}
-    .dv.bl{color:#7dd3fc;}
-    .tr{border-radius:7px;padding:7px 10px;margin-top:5px;
-        display:flex;justify-content:space-between;font-weight:700;font-size:0.88rem;}
-    .tr.c{background:rgba(239,68,68,0.07);}
-    .tr.w{background:rgba(224,112,32,0.09);}
-    .tr.o{background:rgba(14,165,233,0.09);}
-
-    /* QF BOX */
-    .qfbox{background:rgba(120,80,255,0.06);border:1px solid rgba(120,80,255,0.2);
-           border-radius:10px;padding:12px 15px;margin-bottom:13px;}
-    .qfbox-t{font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;
-             color:#a78bfa;margin-bottom:8px;}
-
-    /* INFO OFFERTA */
-    .oi{border-radius:9px;padding:11px 14px;margin-bottom:13px;font-size:0.81rem;}
-    .oi.w{background:rgba(224,112,32,0.06);border:1px solid rgba(224,112,32,0.2);}
-    .oi.o{background:rgba(14,165,233,0.06);border:1px solid rgba(14,165,233,0.2);}
-    .oi-t{font-weight:700;margin-bottom:6px;font-size:0.9rem;}
-    .oi-r{display:flex;gap:13px;flex-wrap:wrap;}
-    .oi-i{color:var(--tx2);}
-    .oi-i b.or{color:#fdba74;}
-    .oi-i b.bl{color:#7dd3fc;}
-
-    /* BADGE */
-    .br{color:var(--ok);font-size:0.68rem;margin-left:5px;}
-    .bs{color:#f59e0b;font-size:0.68rem;margin-left:5px;}
-
-    /* CHIPS */
-    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
-    .chip{background:rgba(120,80,255,0.09);border:1px solid var(--bd);
-          border-radius:7px;padding:5px 11px;font-size:0.77rem;}
-    .chip b{color:#a78bfa;display:block;font-size:0.91rem;}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preventivo Energia PRO</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#090912;--sf:#11112a;--sf2:#181830;--tx:#f1f5f9;--tx2:#8892a4;--bd:rgba(100,80,255,.18);--wt:#e07020;--opt:#0ea5e9;--ok:#22c55e;--er:#ef4444;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--tx);padding:16px;min-height:100vh;}
+.wrap{max-width:900px;margin:0 auto;}
+/* HEADER */
+.hdr{text-align:center;padding:22px 16px 16px;background:var(--sf);border-radius:14px;border:1px solid var(--bd);margin-bottom:14px;}
+.logo{font-size:1.8rem;font-weight:900;background:linear-gradient(135deg,#7c3aed,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hdr p{color:var(--tx2);margin-top:4px;font-size:.88rem;}
+/* INDICI */
+.indici{display:flex;flex-wrap:wrap;gap:12px;align-items:center;background:var(--sf);border-radius:11px;padding:10px 15px;border:1px solid var(--bd);margin-bottom:14px;font-size:.82rem;}
+.ic{display:flex;align-items:center;gap:5px;} .ic b{color:#a78bfa;}
+.ic-tag{font-size:.68rem;background:rgba(120,80,255,.16);border-radius:4px;padding:1px 6px;color:#c4b5fd;}
+.ic-note{margin-left:auto;font-size:.68rem;color:var(--tx2);font-style:italic;}
+/* TABS */
+.tabs{display:flex;background:var(--sf);border-radius:11px;padding:3px;border:1px solid var(--bd);margin-bottom:14px;}
+.tb{flex:1;padding:9px;background:none;border:none;color:var(--tx2);cursor:pointer;font-size:.95rem;font-weight:600;border-radius:9px;transition:all .2s;}
+.tb.on{background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;}
+/* CARD */
+.card{background:var(--sf);border-radius:12px;padding:18px;border:1px solid var(--bd);margin-bottom:13px;}
+.ctit{font-size:.95rem;font-weight:700;color:#a78bfa;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+/* UPLOAD */
+.dropz{border:2px dashed rgba(120,80,255,.32);border-radius:10px;padding:28px 16px;text-align:center;cursor:pointer;transition:all .25s;background:rgba(120,80,255,.03);}
+.dropz:hover,.dropz.over{border-color:#7c3aed;background:rgba(120,80,255,.08);}
+.dropz .ico{font-size:2rem;margin-bottom:6px;}
+.dropz h3{color:var(--tx);margin-bottom:4px;font-size:.95rem;}
+.dropz p{color:var(--tx2);font-size:.78rem;}
+input[type=file]{display:none;}
+.stbar{display:none;flex-direction:row;align-items:center;gap:10px;margin-top:10px;background:rgba(120,80,255,.09);border-radius:7px;padding:8px 12px;font-size:.85rem;}
+.spin{width:14px;height:14px;border:2.5px solid rgba(120,80,255,.28);border-top:2.5px solid #7c3aed;border-radius:50%;animation:spin 1s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* OP SELECTOR */
+.ops{display:none;margin-bottom:13px;}
+.ops-t{color:var(--tx2);font-size:.84rem;margin-bottom:8px;text-align:center;}
+.op-btns{display:flex;gap:10px;}
+.ob{flex:1;padding:13px 8px 10px;border-radius:12px;border:2px solid transparent;cursor:pointer;transition:all .2s;background:var(--sf2);text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.ob:hover{transform:translateY(-2px);}
+.ob .nm{font-size:.9rem;font-weight:700;color:var(--tx2);}
+.ob .sb{font-size:.68rem;color:var(--tx2);line-height:1.5;}
+.ob.wt{border-color:rgba(224,112,32,.2);}.ob.wt.sel,.ob.wt:hover{background:rgba(224,112,32,.1);border-color:var(--wt);}.ob.wt.sel .nm,.ob.wt:hover .nm{color:#fdba74;}
+.ob.opt{border-color:rgba(14,165,233,.2);}.ob.opt.sel,.ob.opt:hover{background:rgba(14,165,233,.1);border-color:var(--opt);}.ob.opt.sel .nm,.ob.opt:hover .nm{color:#7dd3fc;}
+/* WT TOGGLE */
+.wttog{display:none;background:rgba(224,112,32,.06);border:1px solid rgba(224,112,32,.25);border-radius:10px;padding:12px 14px;margin-bottom:13px;}
+.wttog-t{font-size:.87rem;font-weight:600;color:#fdba74;margin-bottom:9px;}
+.wt-bs{display:flex;gap:9px;}
+.wtsb{flex:1;padding:9px 7px;border-radius:8px;border:2px solid transparent;cursor:pointer;font-size:.84rem;font-weight:700;transition:all .18s;background:var(--sf2);color:var(--tx2);text-align:center;}
+.wtsb small{font-size:.67rem;color:var(--tx2);display:block;margin-top:2px;}
+.wtsb.y.sel,.wtsb.y:hover{background:rgba(224,112,32,.16);border-color:var(--wt);color:#fdba74;}
+.wtsb.n.sel,.wtsb.n:hover{background:rgba(148,163,184,.08);border-color:#94a3b8;color:var(--tx);}
+/* MSG */
+.msg{border-radius:7px;padding:9px 12px;margin-bottom:12px;display:none;font-weight:500;font-size:.87rem;}
+.msg.er{background:rgba(239,68,68,.08);border:1.5px solid var(--er);color:var(--er);}
+.msg.ok{background:rgba(34,197,94,.08);border:1.5px solid var(--ok);color:var(--ok);}
+/* RESULTS */
+.res{display:none;}
+/* HERO */
+.hero{border-radius:12px;padding:22px 16px;text-align:center;margin-bottom:12px;border:2px solid;}
+.hero.sav{background:linear-gradient(135deg,rgba(34,197,94,.08),rgba(34,197,94,.01));border-color:rgba(34,197,94,.26);}
+.hero.los{background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(239,68,68,.01));border-color:rgba(239,68,68,.24);}
+.h-tag{font-size:.68rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--tx2);margin-bottom:3px;}
+.h-big{font-size:2.7rem;font-weight:900;line-height:1.}
+.h-big.g{color:var(--ok);}.h-big.r{color:var(--er);}
+.h-sub{font-size:.79rem;color:var(--tx2);margin-top:5px;} .h-sub strong{color:var(--tx);}
+.pill{display:inline-block;padding:3px 14px;border-radius:20px;font-weight:800;font-size:.9rem;margin-top:8px;}
+.pill.g{background:rgba(34,197,94,.12);color:var(--ok);border:1.5px solid rgba(34,197,94,.22);}
+.pill.r{background:rgba(239,68,68,.1);color:var(--er);border:1.5px solid rgba(239,68,68,.22);}
+/* GRID */
+.ng{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+@media(max-width:460px){.ng{grid-template-columns:1fr;}}
+.nc{background:var(--sf2);border-radius:10px;padding:14px;border:1.5px solid var(--bd);}
+.nc.cr{border-color:rgba(239,68,68,.18);}.nc.nw{border-color:rgba(224,112,32,.26);}.nc.no{border-color:rgba(14,165,233,.26);}
+.nc-l{font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:var(--tx2);margin-bottom:2px;}
+.nc-o{font-size:.68rem;color:var(--tx2);font-style:italic;margin-bottom:4px;}
+.nc-v{font-size:1.5rem;font-weight:800;}
+.nc-v.r{color:#f87171;}.nc-v.or{color:#fdba74;}.nc-v.bl{color:#7dd3fc;}
+.nc-u{font-size:.69rem;color:var(--tx2);margin-top:2px;}
+/* CHARTS */
+.ch-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+@media(max-width:520px){.ch-row{grid-template-columns:1fr;}}
+.chc{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:14px;}
+.chc h3{color:#a78bfa;margin-bottom:10px;font-size:.83rem;text-align:center;}
+.chw{position:relative;max-width:175px;margin:0 auto 8px;}
+.chcen{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
+.chcen .cb{font-size:1.35rem;font-weight:900;}.chcen .cb.g{color:var(--ok);}.chcen .cb.r{color:var(--er);}
+.chcen .cs{font-size:.65rem;color:var(--tx2);}
+.chl{display:flex;justify-content:center;gap:10px;font-size:.71rem;color:var(--tx2);flex-wrap:wrap;}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:2px;vertical-align:middle;}
+/* DETTAGLIO */
+.dstit{font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:var(--tx2);margin:12px 0 6px;padding-bottom:3px;border-bottom:1px solid rgba(255,255,255,.05);}
+.dr{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.81rem;}
+.dr:last-child{border-bottom:none;}
+.dl{color:var(--tx2);}.dv{font-weight:600;}
+.dv.g{color:var(--ok);}.dv.r{color:#f87171;}.dv.or{color:#fdba74;}.dv.bl{color:#7dd3fc;}
+.trow{border-radius:7px;padding:6px 10px;margin-top:5px;display:flex;justify-content:space-between;font-weight:700;font-size:.87rem;}
+.trow.c{background:rgba(239,68,68,.06);}.trow.w{background:rgba(224,112,32,.08);}.trow.o{background:rgba(14,165,233,.08);}
+/* QF BOX */
+.qfb{background:rgba(120,80,255,.05);border:1px solid rgba(120,80,255,.18);border-radius:9px;padding:11px 14px;margin-bottom:12px;}
+.qfb-t{font-size:.69rem;text-transform:uppercase;letter-spacing:1px;color:#a78bfa;margin-bottom:7px;}
+/* OI */
+.oi{border-radius:8px;padding:10px 13px;margin-bottom:12px;font-size:.79rem;}
+.oi.w{background:rgba(224,112,32,.05);border:1px solid rgba(224,112,32,.18);}
+.oi.o{background:rgba(14,165,233,.05);border:1px solid rgba(14,165,233,.18);}
+.oi-t{font-weight:700;margin-bottom:5px;font-size:.88rem;}
+.oi-r{display:flex;gap:11px;flex-wrap:wrap;} .oi-i{color:var(--tx2);}
+.oi-i b.or{color:#fdba74;} .oi-i b.bl{color:#7dd3fc;}
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:11px;}
+.chip{background:rgba(120,80,255,.08);border:1px solid var(--bd);border-radius:6px;padding:4px 10px;font-size:.75rem;}
+.chip b{color:#a78bfa;display:block;font-size:.88rem;}
+.br{color:var(--ok);font-size:.66rem;margin-left:4px;}
+.bs{color:#f59e0b;font-size:.66rem;margin-left:4px;}
+</style>
 </head>
 <body>
 <div class="wrap">
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="logo">⚡ Preventivo Energia PRO</div>
-    <p>Carica la bolletta del cliente — confronto WindTre / Optima</p>
-  </div>
+<div class="hdr">
+  <div class="logo">⚡ Preventivo Energia PRO</div>
+  <p>Carica la bolletta PDF — confronto automatico WindTre / Optima</p>
+</div>
 
-  <!-- INDICI (solo qui) -->
-  <div class="indici">
-    <div class="ic">💡 PUN GME: <b id="punV">0,13266</b> €/kWh <span class="ic-tag" id="punM">Gen 2026</span></div>
-    <div class="ic">🔥 PSV: <b id="psvV">0,40423</b> €/Smc <span class="ic-tag" id="psvM">Gen 2026</span></div>
-    <div class="ic-note">Media mensile ufficiale GME · aggiornata mensilmente</div>
-  </div>
+<div class="indici">
+  <div class="ic">💡 PUN GME: <b id="pV">0,13266</b> €/kWh <span class="ic-tag" id="pM">Gen 2026</span></div>
+  <div class="ic">🔥 PSV: <b id="sV">0,40423</b> €/Smc <span class="ic-tag" id="sM">Gen 2026</span></div>
+  <div class="ic-note">Media mensile GME · aggiornata mensilmente</div>
+</div>
 
-  <div class="msg err" id="mErr"></div>
-  <div class="msg ok"  id="mOk"></div>
+<div class="msg er" id="mEr"></div>
+<div class="msg ok" id="mOk"></div>
 
-  <!-- TABS -->
-  <div class="tabs">
-    <button class="tb on" onclick="sTab('luce',event)">💡 LUCE</button>
-    <button class="tb"    onclick="sTab('gas',event)">🔥 GAS</button>
-  </div>
+<div class="tabs">
+  <button class="tb on" onclick="sTab('l',event)">💡 LUCE</button>
+  <button class="tb"    onclick="sTab('g',event)">🔥 GAS</button>
+</div>
 
-  <!-- TAB LUCE -->
-  <div id="tl">
-    <div class="card">
-      <div class="ctit">📄 Bolletta LUCE (PDF)</div>
-      <div class="dropz" id="dL" ondrop="onDrop(event,'l')"
-           ondragover="onOv(event,'l')" ondragleave="onLv(event,'l')"
-           onclick="document.getElementById('fL').click()">
-        <div class="ico">📋</div>
-        <h3>Trascina il PDF oppure clicca</h3>
-        <p>Tutti gli operatori (IREN, Enel, ENI, A2A…) · Max 10 MB</p>
-      </div>
-      <input type="file" id="fL" accept=".pdf" onchange="onFile(event,'l')">
-      <div class="stbar" id="sbL"><div class="spin"></div><span id="stL">Analisi...</span></div>
+<!-- LUCE -->
+<div id="TL">
+  <div class="card">
+    <div class="ctit">📄 Bolletta LUCE (PDF)</div>
+    <div class="dropz" id="DL" ondrop="onDrop(event,'l')" ondragover="onOv(event,'l')" ondragleave="onLv(event,'l')" onclick="document.getElementById('FL').click()">
+      <div class="ico">📋</div><h3>Trascina PDF o clicca per selezionare</h3>
+      <p>Qualsiasi operatore italiano · Max 10 MB</p>
     </div>
-    <div class="ops" id="opsL">
-      <div class="ops-t">Scegli operatore per il preventivo:</div>
-      <div class="op-btns">
-        <div class="ob wt" id="obWL" onclick="selOp('l','wt')">
-          <span style="font-size:1.4rem">🌀</span>
-          <span class="nm">WindTre</span>
-          <span class="sub">PUN + 0,0278 €/kWh<br>Fisso 90–156 €/anno</span>
-        </div>
-        <div class="ob opt" id="obOL" onclick="selOp('l','opt')">
-          <span style="font-size:1.4rem">🔵</span>
-          <span class="nm">Optima</span>
-          <span class="sub">PUN + 0,0396 €/kWh<br>Fisso 154,80 €/anno</span>
-        </div>
-      </div>
-    </div>
-    <div class="wttog" id="wtL">
-      <div class="wttog-t">🌀 Il cliente è già cliente WindTre?</div>
-      <div class="wt-bs">
-        <div class="wtsb y" id="wtYL" onclick="selWt('l',true)">✅ Sì — Cliente WindTre<small>Fisso 90 €/anno</small></div>
-        <div class="wtsb n" id="wtNL" onclick="selWt('l',false)">❌ No — Non è cliente<small>Fisso 156 €/anno</small></div>
-      </div>
-    </div>
-    <div class="res" id="rL"></div>
+    <input type="file" id="FL" accept=".pdf" onchange="onFile(event,'l')">
+    <div class="stbar" id="SBL"><div class="spin"></div><span id="STL">Lettura...</span></div>
   </div>
+  <div class="ops" id="OPL">
+    <div class="ops-t">Scegli operatore per il preventivo:</div>
+    <div class="op-btns">
+      <div class="ob wt" id="BWL" onclick="selOp('l','wt')"><span style="font-size:1.3rem">🌀</span><span class="nm">WindTre</span><span class="sb">PUN+0,0278 €/kWh<br>Fisso 90–156 €/anno</span></div>
+      <div class="ob opt" id="BOL" onclick="selOp('l','opt')"><span style="font-size:1.3rem">🔵</span><span class="nm">Optima</span><span class="sb">PUN+0,0396 €/kWh<br>Fisso 154,80 €/anno</span></div>
+    </div>
+  </div>
+  <div class="wttog" id="WTL">
+    <div class="wttog-t">🌀 Il cliente è già cliente WindTre?</div>
+    <div class="wt-bs">
+      <div class="wtsb y" id="WYL" onclick="selWt('l',true)">✅ Sì, cliente WindTre<small>Fisso 90 €/anno</small></div>
+      <div class="wtsb n" id="WNL" onclick="selWt('l',false)">❌ No, non è cliente<small>Fisso 156 €/anno</small></div>
+    </div>
+  </div>
+  <div class="res" id="RL"></div>
+</div>
 
-  <!-- TAB GAS -->
-  <div id="tg" style="display:none">
-    <div class="card">
-      <div class="ctit">📄 Bolletta GAS (PDF)</div>
-      <div class="dropz" id="dG" ondrop="onDrop(event,'g')"
-           ondragover="onOv(event,'g')" ondragleave="onLv(event,'g')"
-           onclick="document.getElementById('fG').click()">
-        <div class="ico">📋</div>
-        <h3>Trascina il PDF oppure clicca</h3>
-        <p>Tutti gli operatori · Max 10 MB</p>
-      </div>
-      <input type="file" id="fG" accept=".pdf" onchange="onFile(event,'g')">
-      <div class="stbar" id="sbG"><div class="spin"></div><span id="stG">Analisi...</span></div>
+<!-- GAS -->
+<div id="TG" style="display:none">
+  <div class="card">
+    <div class="ctit">📄 Bolletta GAS (PDF)</div>
+    <div class="dropz" id="DG" ondrop="onDrop(event,'g')" ondragover="onOv(event,'g')" ondragleave="onLv(event,'g')" onclick="document.getElementById('FG').click()">
+      <div class="ico">📋</div><h3>Trascina PDF o clicca per selezionare</h3>
+      <p>Qualsiasi operatore italiano · Max 10 MB</p>
     </div>
-    <div class="ops" id="opsG">
-      <div class="ops-t">Scegli operatore per il preventivo:</div>
-      <div class="op-btns">
-        <div class="ob wt" id="obWG" onclick="selOp('g','wt')">
-          <span style="font-size:1.4rem">🌀</span>
-          <span class="nm">WindTre</span>
-          <span class="sub">PSV + 0,0965 €/Smc<br>Fisso 90–156 €/anno</span>
-        </div>
-        <div class="ob opt" id="obOG" onclick="selOp('g','opt')">
-          <span style="font-size:1.4rem">🔵</span>
-          <span class="nm">Optima</span>
-          <span class="sub">PSV + 0,12 €/Smc<br>Fisso 162 €/anno</span>
-        </div>
-      </div>
-    </div>
-    <div class="wttog" id="wtG">
-      <div class="wttog-t">🌀 Il cliente è già cliente WindTre?</div>
-      <div class="wt-bs">
-        <div class="wtsb y" id="wtYG" onclick="selWt('g',true)">✅ Sì — Cliente WindTre<small>Fisso 90 €/anno</small></div>
-        <div class="wtsb n" id="wtNG" onclick="selWt('g',false)">❌ No — Non è cliente<small>Fisso 156 €/anno</small></div>
-      </div>
-    </div>
-    <div class="res" id="rG"></div>
+    <input type="file" id="FG" accept=".pdf" onchange="onFile(event,'g')">
+    <div class="stbar" id="SBG"><div class="spin"></div><span id="STG">Lettura...</span></div>
   </div>
+  <div class="ops" id="OPG">
+    <div class="ops-t">Scegli operatore per il preventivo:</div>
+    <div class="op-btns">
+      <div class="ob wt" id="BWG" onclick="selOp('g','wt')"><span style="font-size:1.3rem">🌀</span><span class="nm">WindTre</span><span class="sb">PSV+0,0965 €/Smc<br>Fisso 90–156 €/anno</span></div>
+      <div class="ob opt" id="BOG" onclick="selOp('g','opt')"><span style="font-size:1.3rem">🔵</span><span class="nm">Optima</span><span class="sb">PSV+0,12 €/Smc<br>Fisso 162 €/anno</span></div>
+    </div>
+  </div>
+  <div class="wttog" id="WTG">
+    <div class="wttog-t">🌀 Il cliente è già cliente WindTre?</div>
+    <div class="wt-bs">
+      <div class="wtsb y" id="WYG" onclick="selWt('g',true)">✅ Sì, cliente WindTre<small>Fisso 90 €/anno</small></div>
+      <div class="wtsb n" id="WNG" onclick="selWt('g',false)">❌ No, non è cliente<small>Fisso 156 €/anno</small></div>
+    </div>
+  </div>
+  <div class="res" id="RG"></div>
+</div>
 
 </div><!-- /wrap -->
-
 <script>
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-// ── INDICI ───────────────────────────────────────────────────
-const IND = { pun: 0.132660, psv: 0.404227, mese: 'Gen 2026' };
+// ── INDICI ──────────────────────────────────────────────────
+const IND={pun:0.132660,psv:0.404227,mese:'Gen 2026'};
 (async()=>{
-  try{
-    const r=await fetch('/api/indici',{signal:AbortSignal.timeout(3000)});
-    if(r.ok){const d=await r.json();if(d.pun)IND.pun=d.pun;if(d.psv)IND.psv=d.psv;if(d.mese)IND.mese=d.mese;}
-  }catch(e){}
-  document.getElementById('punV').textContent=IND.pun.toFixed(5);
-  document.getElementById('psvV').textContent=IND.psv.toFixed(5);
-  document.getElementById('punM').textContent=IND.mese;
-  document.getElementById('psvM').textContent=IND.mese;
+  try{const r=await fetch('/api/indici',{signal:AbortSignal.timeout(3000)});
+    if(r.ok){const d=await r.json();if(d.pun)IND.pun=d.pun;if(d.psv)IND.psv=d.psv;if(d.mese)IND.mese=d.mese;}}
+  catch(e){}
+  document.getElementById('pV').textContent=IND.pun.toFixed(5);
+  document.getElementById('sV').textContent=IND.psv.toFixed(5);
+  document.getElementById('pM').textContent=IND.mese;
+  document.getElementById('sM').textContent=IND.mese;
 })();
 
-// ── TARIFFE ──────────────────────────────────────────────────
+// ── TARIFFE ─────────────────────────────────────────────────
+// Tutto annuale. Fisso = quota fissa annua nostra offerta.
 const TAR={
-  l:{ get idx(){return IND.pun;}, iva:0.10,
-      wt:{sp:0.0278,vc:0.0154,fWT:90.00,fNO:156.00},
-      opt:{sp:0.0396,vc:0.0154,f:154.80} },
-  g:{ get idx(){return IND.psv;}, iva:0.22,
-      wt:{sp:0.0965,vc:0,fWT:90.00,fNO:156.00},
-      opt:{sp:0.12,vc:0.11,f:162.00} }
+  l:{get idx(){return IND.pun;},iva:0.10,
+     wt:{sp:0.0278,vc:0.0154,fWT:90,fNO:156},
+     opt:{sp:0.0396,vc:0.0154,f:154.80}},
+  g:{get idx(){return IND.psv;},iva:0.22,
+     wt:{sp:0.0965,vc:0,fWT:90,fNO:156},
+     opt:{sp:0.12,vc:0.11,f:162}}
 };
 
-// ── STATO ────────────────────────────────────────────────────
-const BD={l:null,g:null};          // bolletta data
-const SOP={l:null,g:null};         // operatore selezionato
-const SWT={l:null,g:null};         // cliente windtre
-const CH={lP:null,lA:null,gP:null,gA:null};
+// ── STATO ───────────────────────────────────────────────────
+const BD={l:null,g:null};
+const SOP={l:null,g:null};
+const SWT={l:null,g:null};
+const CH={};
 
-// ── TABS ─────────────────────────────────────────────────────
+// ── UI ──────────────────────────────────────────────────────
 function sTab(t,e){
-  document.getElementById('tl').style.display=t==='luce'?'block':'none';
-  document.getElementById('tg').style.display=t==='gas'?'block':'none';
+  ['l','g'].forEach(x=>document.getElementById('T'+x.toUpperCase()).style.display='none');
   document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('T'+t.toUpperCase()).style.display='block';
   e.target.classList.add('on');
 }
-function onOv(e,t){e.preventDefault();document.getElementById('d'+t.toUpperCase()).classList.add('over');}
-function onLv(e,t){e.preventDefault();document.getElementById('d'+t.toUpperCase()).classList.remove('over');}
-function onDrop(e,t){e.preventDefault();onLv(e,t);const f=e.dataTransfer.files[0];if(f&&f.type==='application/pdf')proc(f,t);else showErr('Carica un PDF valido.');}
-function onFile(e,t){if(e.target.files[0])proc(e.target.files[0],t);}
-const T=t=>t.toUpperCase();
+const U=t=>t.toUpperCase();
+function onOv(e,t){e.preventDefault();document.getElementById('D'+U(t)).classList.add('over');}
+function onLv(e,t){e.preventDefault();document.getElementById('D'+U(t)).classList.remove('over');}
+function onDrop(e,t){e.preventDefault();onLv(e,t);const f=e.dataTransfer.files[0];if(f&&f.type==='application/pdf')readPDF(f,t);else showEr('Carica un PDF valido.');}
+function onFile(e,t){if(e.target.files[0])readPDF(e.target.files[0],t);}
 
-// ── LETTURA PDF ───────────────────────────────────────────────
-async function proc(file,t){
-  const sb=document.getElementById('sb'+T(t));
-  const st=document.getElementById('st'+T(t));
-  const tipo=t==='l'?'luce':'gas';
+// ── LETTURA PDF + PARSING IN BROWSER ────────────────────────
+async function readPDF(file,t){
+  const sb=document.getElementById('SB'+U(t));
+  const st=document.getElementById('ST'+U(t));
   sb.style.display='flex';
-  document.getElementById('r'+T(t)).style.display='none';
-  document.getElementById('ops'+T(t)).style.display='none';
-  document.getElementById('wt'+T(t)).style.display='none';
+  document.getElementById('R'+U(t)).style.display='none';
+  document.getElementById('OP'+U(t)).style.display='none';
+  document.getElementById('WT'+U(t)).style.display='none';
   resetOb(t);
   st.textContent='Lettura PDF...';
   try{
-    if(file.size>10485760){showErr('File troppo grande (max 10 MB)');sb.style.display='none';return;}
+    if(file.size>10485760){showEr('File troppo grande (max 10 MB)');sb.style.display='none';return;}
     const buf=await file.arrayBuffer();
     const pdf=await pdfjsLib.getDocument({data:buf}).promise;
     st.textContent='Analisi '+pdf.numPages+' pagine...';
-    let txt='';
+    let raw='';
     for(let p=1;p<=pdf.numPages;p++){
       const pg=await pdf.getPage(p);
       const c=await pg.getTextContent();
-      txt+=c.items.map(i=>i.str).join(' ')+'\n';
+      raw+=c.items.map(i=>i.str).join(' ')+'\n';
     }
-    st.textContent='Estrazione dati...';
-    const resp=await fetch('/api/estrai-bolletta?tipo='+tipo,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({text:txt})
-    });
-    const data=await resp.json();
-    if(!data.success){showErr('⚠️ '+(data.error||'Dati non trovati.'));sb.style.display='none';return;}
     sb.style.display='none';
 
-    BD[t]={
-      operatore:    data.operatore||'Operatore attuale',
-      consumoAnn:   data.consumoAnnuo,
-      spesaAnn:     data.spesaAnnua,
-      consumoPer:   data.consumoPeriodo,
-      spesaPer:     data.spesaPeriodo,
-      mesi:         data.mesi||2,
-      qfAnn:        data.quotaFissaAnnua||null,   // quota fissa annuale cliente
-      fonte:        data.quotaFissaAnnua?'reale':'stimata'
-    };
+    // ── PARSING DIRETTAMENTE IN BROWSER ─────────────────────
+    const tipo=t==='l'?'luce':'gas';
+    const dati=parseBolletta(raw,tipo);
 
-    document.getElementById('ops'+T(t)).style.display='block';
+    if(!dati.consumoAnn||!dati.spesaAnn){
+      showEr('⚠️ Dati non trovati nel PDF. Controlla che il file sia leggibile.\nAnteprima: '+raw.slice(0,200));
+      return;
+    }
+
+    BD[t]=dati;
+    document.getElementById('OP'+U(t)).style.display='block';
     const ua=t==='l'?'kWh':'Smc';
     showOk(
-      '✅ '+BD[t].operatore+
-      ' · '+BD[t].consumoAnn.toFixed(0)+' '+ua+'/anno'+
-      ' · € '+BD[t].spesaAnn.toFixed(2)+'/anno'+
-      (BD[t].qfAnn?' · Q.fissa € '+BD[t].qfAnn.toFixed(2)+'/anno':'')+
+      '✅ '+dati.op+
+      ' · '+dati.consumoAnn.toFixed(0)+' '+ua+'/anno'+
+      ' · € '+dati.spesaAnn.toFixed(2)+'/anno'+
+      (dati.qfAnn?' · Q.fissa €'+dati.qfAnn.toFixed(2)+'/anno ✅':' · Q.fissa stimata ⚠️')+
       ' — Scegli operatore'
     );
-  }catch(err){console.error(err);showErr('Errore: '+err.message);sb.style.display='none';}
+  }catch(err){console.error(err);showEr('Errore lettura PDF: '+err.message);sb.style.display='none';}
 }
 
-// ── SELEZIONE ─────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+// PARSING BOLLETTA — TUTTO IN BROWSER, NIENTE API
+// ═══════════════════════════════════════════════════════════
+function parseBolletta(raw,tipo){
+  // Normalizza: metti tutto su una riga per regex multi-spazio
+  const t=raw.replace(/\s+/g,' ');
+  const tl=t.toLowerCase();
+
+  const out={
+    op:       detectOp(t),
+    consumoAnn: null,   // kWh o Smc annui
+    spesaAnn:   null,   // € annui totali (IVA incl.)
+    consumoPer: null,   // kWh o Smc del periodo
+    spesaPer:   null,   // € totali del periodo
+    mesi:       2,      // default bimestrale
+    qfAnn:      null,   // quota fissa annuale cliente (€)
+    qfFonte:    'stimata'
+  };
+
+  // ── MESI FATTURATI ─────────────────────────────────────
+  // "2 mesi x 19,55" → 2
+  const mM=tl.match(/(\d)\s+mes[ei]\s+x\s+[\d,\.]+/i);
+  if(mM){const v=parseInt(mM[1]);if(v>=1&&v<=12)out.mesi=v;}
+  else if(tl.includes('bimestrale'))out.mesi=2;
+  else if(tl.includes('trimestrale'))out.mesi=3;
+  else if(tl.match(/mensile(?!.*bimestrale)/i))out.mesi=1;
+  else{
+    // Da date "01/09/2025 - 31/10/2025"
+    const dm=[...t.matchAll(/(\d{2}\/\d{2}\/\d{4})\s*[-–]\s*(\d{2}\/\d{2}\/\d{4})/g)];
+    if(dm.length>0){
+      const a=pd(dm[0][1]),b=pd(dm[0][2]);
+      if(a&&b){const d=Math.round((b-a)/2592000000);if(d>=1&&d<=12)out.mesi=d;}
+    }
+  }
+
+  // ── CONSUMO ANNUO (fonte primaria: riquadro ARERA obbligatorio) ──
+  if(tipo==='luce'){
+    // IREN: "Consumo Annuo kWh Dal 01112024 Al 31102025 F1 155 F2 114 F3 174 TOTALE 443 kWh"
+    // Enel/altri: "Consumo Annuo kWh 443"
+    const caPatterns=[
+      /consumo\s+annuo\s+kwh[^]*?totale\s+([\d]+)\s*kwh/i,
+      /consumo\s+annuo\s+kwh\s*(?:dal[^\d]*al[^\d]*)?\s*([\d]{3,5})\s*kwh/i,
+      /consumo\s+annuo[^\d]*([\d]{3,5})\s*kwh/i,
+      /totale\s+([\d]{3,5})\s*kwh\b/i,
+    ];
+    for(const p of caPatterns){
+      const m=tl.match(p);
+      if(m){const v=pf(m[1]);if(v>=50&&v<=99999){out.consumoAnn=v;break;}}
+    }
+  } else {
+    const caP=[
+      /consumo\s+annuo[^\d]*([\d]{2,5}[,\.]?\d*)\s*(?:smc|sm3|mc)/i,
+      /consumo\s+annuo\s+([\d]{2,5})\s*(?:smc|sm3)/i,
+    ];
+    for(const p of caP){
+      const m=tl.match(p);
+      if(m){const v=pf(m[1]);if(v>=20&&v<=99999){out.consumoAnn=v;break;}}
+    }
+  }
+
+  // ── SPESA ANNUA (fonte primaria: riquadro ARERA "Informazioni storiche") ──
+  // IREN: "Spesa annua sostenuta iva compresa dal 01112024 al 31102025 ... 343,48"
+  const saPatterns=[
+    /spesa\s+annua\s+sostenuta[^\d]*([\d]{2,5}[,\.]\d{2})/i,
+    /spesa\s+annua[^\d]*([\d]{2,5}[,\.]\d{2})/i,
+    /importo\s+annuo[^\d]*([\d]{2,5}[,\.]\d{2})/i,
+    /spesa\s+(?:totale\s+)?annuale[^\d]*([\d]{2,5}[,\.]\d{2})/i,
+  ];
+  for(const p of saPatterns){
+    const m=tl.match(p);
+    if(m){const v=pf(m[1]);if(v>=30&&v<=9999){out.spesaAnn=v;break;}}
+  }
+
+  // ── CONSUMO E SPESA PERIODO (fallback) ─────────────────
+  if(tipo==='luce'){
+    // "86 kWh x 0,205" oppure "consumo totale fatturato ... 86 kWh"
+    const cpP=[
+      /consumo\s+totale\s+fatturato[^\d]*([\d]{2,4})\s*kwh/i,
+      /([\d]{2,4})\s*kwh\s+x\s+[\d,\.]+/i,
+      /consumo[^\d]*([\d]{2,3})\s*kwh/i,
+    ];
+    for(const p of cpP){
+      const m=tl.match(p);
+      if(m){const v=pf(m[1]);if(v>=5&&v<=9999){out.consumoPer=v;break;}}
+    }
+  } else {
+    const cpP=[
+      /consumo\s+(?:gas\s+)?(?:totale|fatturato)[^\d]*([\d]{1,5}[,\.]?\d*)\s*(?:smc|sm3)/i,
+      /volume\s+(?:convertito|fatturato)[^\d]*([\d]{1,4})\s*(?:smc|sm3)/i,
+    ];
+    for(const p of cpP){
+      const m=tl.match(p);
+      if(m){const v=pf(m[1]);if(v>=1&&v<=9999){out.consumoPer=v;break;}}
+    }
+  }
+
+  // Totale periodo
+  const tpP=[
+    /totale\s+da\s+pagare[^\d]*([\d]{1,5}[,\.]\d{2})/i,
+    /importo\s+da\s+pagare[^\d]*([\d]{1,5}[,\.]\d{2})/i,
+    /totale\s+bolletta[^\d€]*([\d]{1,5}[,\.]\d{2})/i,
+    /totale\s+fattura[^\d€]*([\d]{1,5}[,\.]\d{2})/i,
+  ];
+  for(const p of tpP){
+    const m=tl.match(p);
+    if(m){const v=pf(m[1]);if(v>=5&&v<=9999){out.spesaPer=v;break;}}
+  }
+
+  // Fallback annuale da periodo
+  if(!out.consumoAnn&&out.consumoPer)out.consumoAnn=Math.round(out.consumoPer*(12/out.mesi));
+  if(!out.spesaAnn&&out.spesaPer)out.spesaAnn=parseFloat((out.spesaPer*(12/out.mesi)).toFixed(2));
+
+  // ── QUOTA FISSA ANNUALE CLIENTE ──────────────────────
+  // Cerca "2 mesi x 19,55 €/mesi 39,10" → annualizza
+  const qf1=tl.match(/(\d)\s+mes[ei]\s+x\s+([\d,\.]+)\s*(?:€?\/?\s*mes[ei])\s+([\d,\.]+)/i);
+  if(qf1){
+    const nm=parseInt(qf1[1]);const totQF=pf(qf1[3]);
+    if(totQF>0&&totQF<500){out.qfAnn=parseFloat((totQF*(12/nm)).toFixed(2));out.qfFonte='reale';}
+  }
+  if(!out.qfAnn){
+    // "quota fissa ... €/mese" o "quota fissa N mesi ... importo"
+    const qf2=tl.match(/quota\s+fissa\s+(\d)\s+mes[ei][^\d]*([\d]{1,3}[,\.]\d{2})/i);
+    if(qf2){const nm=parseInt(qf2[1]);const v=pf(qf2[2]);if(v>0&&v<500){out.qfAnn=parseFloat((v*(12/nm)).toFixed(2));out.qfFonte='reale';}}
+  }
+  if(!out.qfAnn){
+    const qf3=tl.match(/quota\s+fissa[^\d]{0,20}([\d]{1,3}[,\.]\d{2})/i);
+    if(qf3){const v=pf(qf3[1]);if(v>0&&v<500&&out.mesi){out.qfAnn=parseFloat((v*(12/out.mesi)).toFixed(2));out.qfFonte='reale';}}
+  }
+  // Stima se non trovata
+  if(!out.qfAnn&&out.spesaAnn){
+    out.qfAnn=parseFloat((tipo==='luce'?out.spesaAnn*0.22:out.spesaAnn*0.14).toFixed(2));
+    out.qfFonte='stimata';
+  }
+
+  return out;
+}
+
+// ── OPERATOR DETECT ──────────────────────────────────────────
+function detectOp(t){
+  const tl=t.toLowerCase();
+  const ops=[['iren mercato','IREN Mercato'],['iren luce e gas','IREN'],['iren','IREN'],
+    ['plenitude','Plenitude (ENI)'],['enel energia','Enel Energia'],['enel','Enel'],
+    ['eni gas e luce','ENI Gas e Luce'],['eni ','ENI'],['a2a energia','A2A Energia'],
+    ['a2a','A2A'],['acea energia','ACEA Energia'],['acea','ACEA'],['sorgenia','Sorgenia'],
+    ['illumia','Illumia'],['e.on','E.ON'],['eon ','E.ON'],['edison energia','Edison'],
+    ['edison','Edison'],['hera comm','Hera Comm'],['hera','Hera'],['engie','ENGIE'],
+    ['bluenergy','Bluenergy'],['dolomiti energia','Dolomiti Energia'],['wekiwi','Wekiwi'],
+    ['optima energia','Optima Italia'],['optima','Optima Italia'],['duferco','Duferco'],
+    ['estra','Estra'],['2i rete gas','2i Rete Gas'],['italgas','Italgas']];
+  for(const[k,v]of ops)if(tl.includes(k))return v;
+  const m=t.match(/([A-ZÀÈÌÒÙ][A-Za-zÀ-ú\s&\.]{2,28})\s+S\.(?:p\.)?A\./);
+  return m?m[1].trim():'Operatore attuale';
+}
+
+// ── SELEZIONE ────────────────────────────────────────────────
 function selOp(t,op){
   resetOb(t);
-  document.getElementById('ob'+op.toUpperCase()[0]+T(t)).classList.add('sel');
+  document.getElementById('B'+op.toUpperCase()[0]+U(t)).classList.add('sel');
   SOP[t]=op;
-  document.getElementById('wt'+T(t)).style.display=op==='wt'?'block':'none';
-  document.getElementById('r'+T(t)).style.display='none';
-  if(op!=='wt'){SWT[t]=null;calc(t,op);}
+  document.getElementById('WT'+U(t)).style.display=op==='wt'?'block':'none';
+  document.getElementById('R'+U(t)).style.display='none';
+  if(op!=='wt'){SWT[t]=null;calcola(t,op);}
 }
 function resetOb(t){
-  ['W','O'].forEach(o=>document.getElementById('ob'+o+T(t)).classList.remove('sel'));
-  ['Y','N'].forEach(n=>{const el=document.getElementById('wt'+n+T(t));if(el)el.classList.remove('sel');});
+  ['W','O'].forEach(o=>document.getElementById('B'+o+U(t)).classList.remove('sel'));
+  ['Y','N'].forEach(n=>{const e=document.getElementById('W'+n+U(t));if(e)e.classList.remove('sel');});
 }
 function selWt(t,v){
   SWT[t]=v;
-  document.getElementById('wtY'+T(t)).classList.toggle('sel',v);
-  document.getElementById('wtN'+T(t)).classList.toggle('sel',!v);
-  calc(t,'wt');
+  document.getElementById('WY'+U(t)).classList.toggle('sel',v);
+  document.getElementById('WN'+U(t)).classList.toggle('sel',!v);
+  calcola(t,'wt');
 }
 
-// ═══════════════════════════════════════════════════════════════
-// ══  CALCOLO — BASE ANNUALE PURA  ══════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// CALCOLO — BASE ANNUALE PURA
 //
-//  FONTE DATI: "Spesa annua sostenuta" + "Consumo annuo kWh"
-//  presenti in tutte le bollette (obbligatori ARERA).
+// COSTO ATTUALE ANNUO (dalla bolletta):
+//   SpesaAnn = QFissaClienteAnn + MateriaVarAnn + FisseARERAAnn
+//              (rete + oneri + imposte — invariate al cambio)
 //
-//  STRUTTURA COSTO ANNUALE CLIENTE ATTUALE:
-//    SpesaAnn = MateriaVarAnn + QuotaFissaClienteAnn
-//             + ReteOneriAnn (ARERA, invariata)
-//             + ImposteAnn   (ARERA, invariata)
+// COSTO NOSTRA OFFERTA ANNUO:
+//   CostoNos = (Indice+Spread+VarCons)*(1+IVA)*ConsumoAnn
+//            + FissoNostroAnn
+//            + FisseARERAAnn  ← IDENTICHE (stesso distributore ARERA)
 //
-//  STRUTTURA COSTO ANNUALE NOSTRA OFFERTA:
-//    CostoNosAnn = (Indice + Spread + VarCons) × IVA × ConsumoAnn
-//               + FissoNosAnn
-//               + ReteOneriAnn  ← IDENTICA (stesso distributore)
-//               + ImposteAnn    ← IDENTICA
+// RISPARMIO = SpesaAnn − CostoNos
 //
-//  Risparmio = SpesaAnn − CostoNosAnn
-//
-//  Componenti ARERA stimate con proporzioni validate:
-//    LUCE: imposte ≈ 11.3%, rete ≈ 23%, oneri ≈ 21.5%
-//    GAS:  imposte ≈ 19.5%, rete ≈ 23.7%, oneri ≈ 7.5%
-//
-//  Quota fissa cliente:
-//    Se estratta dall'API → usa quella (badge ✅)
-//    Altrimenti → stimata come % della spesa annua (badge ⚠️)
-// ═══════════════════════════════════════════════════════════════
-function calc(t,op){
-  const d=BD[t]; if(!d) return;
-  const tipo=t==='l'?'luce':'gas';
-  const T2=TAR[t]; const O=T2[op];
+// Componenti ARERA (% validate su campione 2025-26 bollette ital.):
+//   LUCE: imposte≈11.3%,  rete≈22.8%, oneri≈21.4%  (tot ~55.5%)
+//   GAS:  imposte≈19.5%,  rete≈23.7%, oneri≈7.5%   (tot ~50.7%)
+// ═══════════════════════════════════════════════════════════
+function calcola(t,op){
+  const d=BD[t]; if(!d)return;
+  const T2=TAR[t];const O=T2[op];
   const ua=t==='l'?'kWh':'Smc';
+  const tipo=t==='l'?'luce':'gas';
   const isWt=op==='wt';
   const opN=isWt?'WindTre':'Optima';
   const opC=isWt?'or':'bl';
   const isWtCl=isWt&&SWT[t]===true;
   const fissoNos=isWt?(isWtCl?O.fWT:O.fNO):O.f;
 
-  // ── Prezzo unitario nostra offerta ──────────────────────────
-  const pzNetto = T2.idx + O.sp + (O.vc||0);
-  const pzLordo = pzNetto * (1 + T2.iva);
+  // Prezzo unitario nostra offerta (IVA inclusa)
+  const pzL=parseFloat(((T2.idx+O.sp+(O.vc||0))*(1+T2.iva)).toFixed(6));
 
-  // ── Costi annuali cliente ATTUALE ───────────────────────────
-  const spesaAnn   = d.spesaAnn;
-  const consumoAnn = d.consumoAnn;
+  // Valori annuali cliente attuale
+  const spAnn = d.spesaAnn;
+  const cAnn  = d.consumoAnn;
+  const qfAnn = d.qfAnn;   // quota fissa annuale cliente attuale
+  const mesi  = d.mesi;
 
-  // Componenti ARERA annuali (invariate)
-  let reteAnn, oneriAnn, impoAnn;
-  if (tipo==='luce') {
-    impoAnn  = spesaAnn * 0.113;
-    const b  = spesaAnn - impoAnn;
-    reteAnn  = b * 0.373;   // ~23% del totale lordo
-    oneriAnn = b * 0.348;   // ~21.5%
+  // Componenti ARERA annuali (invariate al cambio operatore)
+  let reteAnn,oneriAnn,impoAnn;
+  if(tipo==='luce'){
+    impoAnn  = spAnn*0.113;
+    const b  = spAnn-impoAnn;
+    reteAnn  = b*0.411;   // ~22.8% del totale
+    oneriAnn = b*0.385;   // ~21.4%
   } else {
-    impoAnn  = spesaAnn * 0.195;
-    const b  = spesaAnn - impoAnn;
-    reteAnn  = b * 0.295;
-    oneriAnn = b * 0.093;
+    impoAnn  = spAnn*0.195;
+    const b  = spAnn-impoAnn;
+    reteAnn  = b*0.295;
+    oneriAnn = b*0.093;
   }
-  const fisseAnn = reteAnn + oneriAnn + impoAnn;
+  const fisseAnn=parseFloat((reteAnn+oneriAnn+impoAnn).toFixed(2));
 
-  // Quota fissa annuale cliente
-  const qfAnnCl = d.qfAnn !== null
-    ? d.qfAnn
-    : parseFloat((tipo==='luce' ? spesaAnn*0.22 : spesaAnn*0.14).toFixed(2));
-  const qfFonte = d.qfAnn !== null ? 'reale' : 'stimata';
+  // Materia variabile attuale = tutto tranne ARERA e quota fissa
+  const matVarAnn=parseFloat((spAnn-fisseAnn-qfAnn).toFixed(2));
 
-  // Materia variabile annuale attuale (solo parte variabile, senza quota fissa)
-  const matVarAnn = parseFloat((spesaAnn - fisseAnn - qfAnnCl).toFixed(2));
+  // ── NOSTRA OFFERTA ────────────────────────────────────────
+  const enNos   = parseFloat((pzL*cAnn).toFixed(2));   // energia variabile annua
+  const costoNos= parseFloat((enNos+fissoNos+fisseAnn).toFixed(2)); // totale annuo
 
-  // ── Nostra offerta — annuale ─────────────────────────────────
-  const enNosAnn  = parseFloat((pzLordo * consumoAnn).toFixed(2));  // solo energia variabile
-  const matNosAnn = parseFloat((enNosAnn + fissoNos).toFixed(2));   // + quota fissa nostra
-  const costoNosAnn = parseFloat((matNosAnn + fisseAnn).toFixed(2));
+  // Dati periodo (per info)
+  const f      = mesi/12;
+  const spPer  = d.spesaPer||parseFloat((spAnn*f).toFixed(2));
+  const cNoPer = parseFloat((costoNos*f).toFixed(2));
 
-  // ── Nostra offerta — periodo (solo per info) ─────────────────
-  const mesi     = d.mesi;
-  const f        = mesi/12;                                         // frazione anno
-  const spesaPer = d.spesaPer || parseFloat((spesaAnn*f).toFixed(2));
-  const cNoPer   = parseFloat((costoNosAnn*f).toFixed(2));
+  // ── RISPARMI ─────────────────────────────────────────────
+  const rispAnn = parseFloat((spAnn-costoNos).toFixed(2));
+  const rispPer = parseFloat((spPer-cNoPer).toFixed(2));
+  const percAnn = parseFloat((rispAnn/spAnn*100).toFixed(1));
+  const rispQF  = parseFloat((qfAnn-fissoNos).toFixed(2));       // solo quota fissa
+  const rispVar = parseFloat((matVarAnn-enNos).toFixed(2));       // solo variabile
+  const isSav   = rispAnn>=0;
 
-  // ── Risparmi ─────────────────────────────────────────────────
-  const rispAnn  = parseFloat((spesaAnn - costoNosAnn).toFixed(2));
-  const rispPer  = parseFloat((spesaPer - cNoPer).toFixed(2));
-  const percAnn  = parseFloat((rispAnn / spesaAnn * 100).toFixed(1));
-  const rispQF   = parseFloat((qfAnnCl - fissoNos).toFixed(2));     // solo fisso
-  const rispVar  = parseFloat((matVarAnn - enNosAnn).toFixed(2));   // solo variabile
-  const isSav    = rispAnn >= 0;
+  const qfBadge = d.qfFonte==='reale'?'<span class="br">✅ reale</span>':'<span class="bs">⚠️ stimata</span>';
+  const indN    = t==='l'?'PUN GME':'PSV';
 
-  const indN = t==='l'?'PUN Index GME':'PSV';
-  const qfBadge = qfFonte==='reale'
-    ? '<span class="br">✅ reale</span>'
-    : '<span class="bs">⚠️ stimata</span>';
+  document.getElementById('R'+U(t)).innerHTML=`
 
-  document.getElementById('r'+T(t)).innerHTML = `
-
-    <!-- CHIPS INFO -->
     <div class="chips">
-      <div class="chip"><b>${consumoAnn.toFixed(0)}</b>${ua}/anno</div>
-      <div class="chip"><b>${d.operatore}</b>operatore att.</div>
-      <div class="chip"><b>€ ${spesaAnn.toFixed(2)}</b>/anno att.</div>
-      <div class="chip"><b>${mesi}</b>${mesi===1?'mese':'mesi'} boll.</div>
-      <div class="chip" style="${qfFonte==='reale'?'border-color:rgba(34,197,94,0.3)':'border-color:rgba(245,158,11,0.3)'}">
+      <div class="chip"><b>${cAnn.toFixed(0)}</b>${ua}/anno</div>
+      <div class="chip"><b>${d.op}</b>operatore att.</div>
+      <div class="chip"><b>€ ${spAnn.toFixed(2)}</b>/anno att.</div>
+      <div class="chip"><b>${mesi}</b>mes${mesi===1?'e':'i'} bolletta</div>
+      <div class="chip" style="${d.qfFonte==='reale'?'border-color:rgba(34,197,94,.28)':'border-color:rgba(245,158,11,.28)'}">
         Q.fissa ${qfBadge}
       </div>
     </div>
 
-    <!-- INFO OFFERTA -->
     <div class="oi ${isWt?'w':'o'}">
-      <div class="oi-t" style="color:${isWt?'#fdba74':'#7dd3fc'}">
-        ${isWt?'🌀':'🔵'} ${opN}${isWtCl?' · Cliente WindTre ✅':''}
-      </div>
+      <div class="oi-t" style="color:${isWt?'#fdba74':'#7dd3fc'}">${isWt?'🌀':'🔵'} ${opN}${isWtCl?' · Cliente WindTre ✅':''}</div>
       <div class="oi-r">
         <div class="oi-i">${indN}: <b class="${opC}">${T2.idx.toFixed(5)} €/${ua}</b></div>
         <div class="oi-i">Spread: <b class="${opC}">+${O.sp} €/${ua}</b></div>
         ${O.vc?`<div class="oi-i">Comm.var.: <b class="${opC}">+${O.vc} €/${ua}</b></div>`:''}
-        <div class="oi-i">Prezzo IVA incl.: <b class="${opC}">${pzLordo.toFixed(5)} €/${ua}</b></div>
-        <div class="oi-i">Fisso annuo: <b class="${opC}">€ ${fissoNos.toFixed(2)}${isWtCl?' 🏷️':''}</b></div>
+        <div class="oi-i">Prezzo IVA: <b class="${opC}">${pzL.toFixed(5)} €/${ua}</b></div>
+        <div class="oi-i">Fisso annuo: <b class="${opC}">€ ${fissoNos}${isWtCl?' 🏷️':''}</b></div>
       </div>
     </div>
 
-    <!-- BOX QUOTA FISSA -->
-    <div class="qfbox">
-      <div class="qfbox-t">📌 Confronto quota fissa annuale</div>
-      <div class="dr"><span class="dl">${d.operatore} ${qfBadge}</span>
-        <span class="dv r">€ ${qfAnnCl.toFixed(2)}/anno</span></div>
-      <div class="dr"><span class="dl">${opN}</span>
-        <span class="dv ${opC}">€ ${fissoNos.toFixed(2)}/anno</span></div>
-      <div class="dr" style="margin-top:4px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.06)">
-        <span class="dl">Risparmio solo quota fissa</span>
-        <span class="dv ${rispQF>=0?'g':'r'}" style="font-size:0.95rem;font-weight:800">
-          ${rispQF>=0?'− € ':'+ € '}${Math.abs(rispQF).toFixed(2)}/anno
+    <div class="qfb">
+      <div class="qfb-t">📌 Confronto quota fissa annuale</div>
+      <div class="dr"><span class="dl">${d.op} ${qfBadge}</span><span class="dv r">€ ${qfAnn.toFixed(2)}/anno</span></div>
+      <div class="dr"><span class="dl">${opN}</span><span class="dv ${opC}">€ ${fissoNos}/anno</span></div>
+      <div class="dr" style="margin-top:5px;padding-top:6px;border-top:1px solid rgba(255,255,255,.06)">
+        <span class="dl" style="font-weight:600;color:var(--tx)">Risparmio quota fissa</span>
+        <span class="dv ${rispQF>=0?'g':'r'}" style="font-size:.95rem">
+          ${rispQF>=0?'− ':'+ '}€ ${Math.abs(rispQF).toFixed(2)}/anno
         </span>
       </div>
     </div>
 
-    <!-- HERO -->
     <div class="hero ${isSav?'sav':'los'}">
-      <div class="h-tag">Risparmio stimato su 12 mesi</div>
+      <div class="h-tag">Risparmio totale stimato su 12 mesi</div>
       <div class="h-big ${isSav?'g':'r'}">${isSav?'':'− '}€ ${Math.abs(rispAnn).toFixed(2)}</div>
-      <div class="h-sub">
-        Con <strong>${d.operatore}</strong>: € ${spesaAnn.toFixed(2)}/anno
-        &rarr; Con <strong>${opN}</strong>: € ${costoNosAnn.toFixed(2)}/anno
-      </div>
+      <div class="h-sub">Con <strong>${d.op}</strong>: € ${spAnn.toFixed(2)}/anno → Con <strong>${opN}</strong>: € ${costoNos.toFixed(2)}/anno</div>
       <div class="pill ${isSav?'g':'r'}">${isSav?'−':'+'}${Math.abs(percAnn)}% annuo</div>
-      <div style="margin-top:11px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);
-                  font-size:0.8rem;color:var(--tx2);text-align:center">
-        Stima periodo (${mesi} ${mesi===1?'mese':'mesi'}):
-        <strong>${d.operatore} € ${spesaPer.toFixed(2)}</strong> →
-        <strong>${opN} € ${cNoPer.toFixed(2)}</strong>
-        · Risp. <strong style="color:${rispPer>=0?'var(--ok)':'var(--er)'}">
-          ${rispPer>=0?'− € ':'+ € '}${Math.abs(rispPer).toFixed(2)}</strong>
+      <div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06);font-size:.78rem;color:var(--tx2)">
+        Periodo (${mesi} mes${mesi===1?'e':'i'}): <strong>${d.op} € ${spPer.toFixed(2)}</strong> → <strong>${opN} € ${cNoPer.toFixed(2)}</strong>
+        · Risp. <strong style="color:${rispPer>=0?'var(--ok)':'var(--er)'}">${rispPer>=0?'− ':'+ '}€ ${Math.abs(rispPer).toFixed(2)}</strong>
       </div>
     </div>
 
-    <!-- GRID NUMERICA -->
     <div class="ng">
-      <div class="nc cr">
-        <div class="nc-l">Paga ora con</div>
-        <div class="nc-o">${d.operatore}</div>
-        <div class="nc-v r">€ ${spesaAnn.toFixed(2)}</div>
-        <div class="nc-u">/ anno</div>
-      </div>
-      <div class="nc ${isWt?'nw':'no'}">
-        <div class="nc-l">Con ${opN} pagherebbe</div>
+      <div class="nc cr"><div class="nc-l">Paga ora con</div><div class="nc-o">${d.op}</div>
+        <div class="nc-v r">€ ${spAnn.toFixed(2)}</div><div class="nc-u">/ anno</div></div>
+      <div class="nc ${isWt?'nw':'no'}"><div class="nc-l">Con ${opN} pagherebbe</div>
         <div class="nc-o">${opN}${isWtCl?' ✅':''}</div>
-        <div class="nc-v ${opC}">€ ${costoNosAnn.toFixed(2)}</div>
-        <div class="nc-u">/ anno</div>
-      </div>
+        <div class="nc-v ${opC}">€ ${costoNos.toFixed(2)}</div><div class="nc-u">/ anno</div></div>
     </div>
 
-    <!-- DUE GRAFICI -->
     <div class="ch-row">
       <div class="chc">
-        <h3>📋 Periodo (${mesi} ${mesi===1?'mese':'mesi'})</h3>
-        <div class="chw">
-          <canvas id="cP${t}" width="185" height="185"></canvas>
+        <h3>📋 Periodo (${mesi} mes${mesi===1?'e':'i'})</h3>
+        <div class="chw"><canvas id="CP${t}" width="175" height="175"></canvas>
           <div class="chcen">
-            <div class="cb ${rispPer>=0?'g':'r'}">
-              ${rispPer>=0?'−':'+'}${Math.abs(parseFloat((rispPer/spesaPer*100).toFixed(1)))}%
-            </div>
+            <div class="cb ${rispPer>=0?'g':'r'}">${rispPer>=0?'−':'+'}${Math.abs(parseFloat((rispPer/spPer*100).toFixed(1)))}%</div>
             <div class="cs">${rispPer>=0?'risparmio':'extra'}</div>
           </div>
         </div>
@@ -611,125 +608,82 @@ function calc(t,op){
       </div>
       <div class="chc">
         <h3>📅 Annuale (12 mesi)</h3>
-        <div class="chw">
-          <canvas id="cA${t}" width="185" height="185"></canvas>
+        <div class="chw"><canvas id="CA${t}" width="175" height="175"></canvas>
           <div class="chcen">
             <div class="cb ${isSav?'g':'r'}">${isSav?'−':'+'}${Math.abs(percAnn)}%</div>
             <div class="cs">${isSav?'risparmio':'extra'}</div>
           </div>
         </div>
         <div class="chl">
-          <span><span class="dot" style="background:${isWt?'#e07020':'#0ea5e9'}"></span>${opN} € ${costoNosAnn.toFixed(2)}</span>
+          <span><span class="dot" style="background:${isWt?'#e07020':'#0ea5e9'}"></span>${opN} € ${costoNos.toFixed(2)}</span>
           <span><span class="dot" style="background:${isSav?'#22c55e':'#ef4444'}"></span>${isSav?'Risp.':'Extra'} € ${Math.abs(rispAnn).toFixed(2)}</span>
         </div>
       </div>
     </div>
 
-    <!-- DETTAGLIO CALCOLO -->
     <div class="card">
       <div class="ctit">🔍 Dettaglio calcolo annuale</div>
 
-      <div class="ds">
-        <div class="ds-t">📌 ${d.operatore} — spesa annuale (fonte bolletta ARERA)</div>
-        <div class="dr"><span class="dl">Consumo annuo</span><span class="dv">${consumoAnn.toFixed(0)} ${ua}/anno</span></div>
-        <div class="dr"><span class="dl">Materia variabile (vendita)</span><span class="dv r">€ ${matVarAnn.toFixed(2)}/anno</span></div>
-        <div class="dr">
-          <span class="dl">Quota fissa cliente${qfBadge}</span>
-          <span class="dv r">€ ${qfAnnCl.toFixed(2)}/anno</span>
-        </div>
-        <div class="dr"><span class="dl">Rete + distribuzione + misura</span><span class="dv">€ ${reteAnn.toFixed(2)}/anno</span></div>
-        <div class="dr"><span class="dl">Oneri di sistema</span><span class="dv">€ ${oneriAnn.toFixed(2)}/anno</span></div>
-        <div class="dr"><span class="dl">Imposte (accise + IVA)</span><span class="dv">€ ${impoAnn.toFixed(2)}/anno</span></div>
-        <div class="tr c">
-          <span style="color:var(--tx2)">Totale annuo ${d.operatore}</span>
-          <span class="dv r">€ ${spesaAnn.toFixed(2)}</span>
-        </div>
-      </div>
+      <div class="dstit">📌 ${d.op} — spesa annua reale da bolletta</div>
+      <div class="dr"><span class="dl">Consumo annuo</span><span class="dv">${cAnn.toFixed(0)} ${ua}</span></div>
+      <div class="dr"><span class="dl">Materia variabile (vendita) annua</span><span class="dv r">€ ${matVarAnn.toFixed(2)}</span></div>
+      <div class="dr"><span class="dl">Quota fissa cliente annua ${qfBadge}</span><span class="dv r">€ ${qfAnn.toFixed(2)}</span></div>
+      <div class="dr"><span class="dl">Rete + distribuzione + misura</span><span class="dv">€ ${reteAnn.toFixed(2)}</span></div>
+      <div class="dr"><span class="dl">Oneri di sistema</span><span class="dv">€ ${oneriAnn.toFixed(2)}</span></div>
+      <div class="dr"><span class="dl">Imposte (accise + IVA)</span><span class="dv">€ ${impoAnn.toFixed(2)}</span></div>
+      <div class="trow c"><span style="color:var(--tx2)">TOTALE annuo ${d.op}</span><span class="dv r">€ ${spAnn.toFixed(2)}</span></div>
 
-      <div class="ds">
-        <div class="ds-t">${isWt?'🌀':'🔵'} ${opN}${isWtCl?' · Cliente WindTre ✅':''}</div>
-        <div class="dr">
-          <span class="dl">${indN} + spread + comm. var.</span>
-          <span class="dv ${opC}">${pzLordo.toFixed(5)} €/${ua} (IVA incl.)</span>
-        </div>
-        <div class="dr">
-          <span class="dl">Energia: ${consumoAnn.toFixed(0)} ${ua} × ${pzLordo.toFixed(5)}</span>
-          <span class="dv">€ ${enNosAnn.toFixed(2)}/anno</span>
-        </div>
-        <div class="dr">
-          <span class="dl">Quota fissa annua ${opN}${isWtCl?' 🏷️':''}</span>
-          <span class="dv ${opC}">€ ${fissoNos.toFixed(2)}/anno</span>
-        </div>
-        <div class="dr">
-          <span class="dl">Rete + oneri + imposte (invariate)</span>
-          <span class="dv">€ ${fisseAnn.toFixed(2)}/anno</span>
-        </div>
-        <div class="tr ${isWt?'w':'o'}">
-          <span style="color:var(--tx2)">Totale annuo ${opN}</span>
-          <span style="color:${isWt?'#fdba74':'#7dd3fc'}">€ ${costoNosAnn.toFixed(2)}</span>
-        </div>
-      </div>
+      <div class="dstit">${isWt?'🌀':'🔵'} ${opN}${isWtCl?' · Cliente WindTre ✅':''}</div>
+      <div class="dr"><span class="dl">${indN}+spread+comm. × IVA incl.</span><span class="dv ${opC}">${pzL.toFixed(5)} €/${ua}</span></div>
+      <div class="dr"><span class="dl">Energia: ${cAnn.toFixed(0)} ${ua} × ${pzL.toFixed(5)}</span><span class="dv">€ ${enNos.toFixed(2)}</span></div>
+      <div class="dr"><span class="dl">Quota fissa annua ${opN}${isWtCl?' 🏷️':''}</span><span class="dv ${opC}">€ ${fissoNos}</span></div>
+      <div class="dr"><span class="dl">Rete + oneri + imposte (invariate ARERA)</span><span class="dv">€ ${fisseAnn.toFixed(2)}</span></div>
+      <div class="trow ${isWt?'w':'o'}"><span style="color:var(--tx2)">TOTALE annuo ${opN}</span><span style="color:${isWt?'#fdba74':'#7dd3fc'}">€ ${costoNos.toFixed(2)}</span></div>
 
-      <div class="ds">
-        <div class="ds-t">✅ Risultato finale</div>
-        <div class="dr">
-          <span class="dl">Risparmio quota fissa</span>
-          <span class="dv ${rispQF>=0?'g':'r'}">
-            ${rispQF>=0?'− € ':'+ € '}${Math.abs(rispQF).toFixed(2)}/anno
-          </span>
-        </div>
-        <div class="dr">
-          <span class="dl">Risparmio materia variabile</span>
-          <span class="dv ${rispVar>=0?'g':'r'}">
-            ${rispVar>=0?'− € ':'+ € '}${Math.abs(rispVar).toFixed(2)}/anno
-          </span>
-        </div>
-        <div class="dr" style="font-size:0.95rem;padding:7px 0">
-          <span class="dl" style="font-weight:700;color:var(--tx)">Risparmio TOTALE annuale</span>
-          <span class="dv ${isSav?'g':'r'}" style="font-size:1.05rem">
-            ${isSav?'− € ':'+ € '}${Math.abs(rispAnn).toFixed(2)}/anno
-          </span>
-        </div>
-        <div class="dr">
-          <span class="dl">Variazione %</span>
-          <span class="dv ${isSav?'g':'r'}">${isSav?'−':'+'}${Math.abs(percAnn)}%</span>
-        </div>
-        ${isWtCl?`<div class="dr"><span class="dl">Di cui sconto cliente WindTre</span><span class="dv g">− € 66,00/anno</span></div>`:''}
+      <div class="dstit">✅ Risultato</div>
+      <div class="dr"><span class="dl">Risparmio quota fissa</span>
+        <span class="dv ${rispQF>=0?'g':'r'}">${rispQF>=0?'− ':'+ '}€ ${Math.abs(rispQF).toFixed(2)}/anno</span></div>
+      <div class="dr"><span class="dl">Risparmio materia variabile</span>
+        <span class="dv ${rispVar>=0?'g':'r'}">${rispVar>=0?'− ':'+ '}€ ${Math.abs(rispVar).toFixed(2)}/anno</span></div>
+      <div class="dr" style="font-size:.92rem;padding:6px 0">
+        <span class="dl" style="font-weight:700;color:var(--tx)">RISPARMIO TOTALE ANNUALE</span>
+        <span class="dv ${isSav?'g':'r'}" style="font-size:1rem">${isSav?'− ':'+ '}€ ${Math.abs(rispAnn).toFixed(2)}/anno</span>
       </div>
+      <div class="dr"><span class="dl">Variazione %</span>
+        <span class="dv ${isSav?'g':'r'}">${isSav?'−':'+'}${Math.abs(percAnn)}%</span></div>
+      ${isWtCl?`<div class="dr"><span class="dl">Di cui sconto cliente WindTre</span><span class="dv g">− € 66,00/anno</span></div>`:''}
     </div>
   `;
 
-  document.getElementById('r'+T(t)).style.display='block';
-  renderCh(t,op,cNoPer,rispPer,costoNosAnn,rispAnn,isSav,spesaPer);
-  window.scrollTo({top:document.getElementById('r'+T(t)).offsetTop-20,behavior:'smooth'});
+  document.getElementById('R'+U(t)).style.display='block';
+  mkCharts(t,op,cNoPer,rispPer,costoNos,rispAnn,isSav);
+  window.scrollTo({top:document.getElementById('R'+U(t)).offsetTop-16,behavior:'smooth'});
 }
 
 // ── GRAFICI ───────────────────────────────────────────────────
-function renderCh(t,op,cNoPer,rispPer,cNoAnn,rispAnn,isSav,spesaPer){
-  ['P','A'].forEach(k=>{if(CH[t+k])CH[t+k].destroy();});
-  const cO=op==='wt'?'rgba(224,112,32,0.85)':'rgba(14,165,233,0.85)';
+function mkCharts(t,op,cNoPer,rispPer,costoNos,rispAnn,isSav){
+  ['CP','CA'].forEach(k=>{if(CH[k+t])CH[k+t].destroy();});
+  const cO=op==='wt'?'rgba(224,112,32,.85)':'rgba(14,165,233,.85)';
   function mk(id,val,diff){
-    const ctx=document.getElementById(id);
-    if(!ctx) return null;
+    const ctx=document.getElementById(id);if(!ctx)return null;
     return new Chart(ctx.getContext('2d'),{
       type:'doughnut',
-      data:{datasets:[{
-        data:[val,Math.max(Math.abs(diff),0.01)],
-        backgroundColor:[cO,diff>=0?'rgba(34,197,94,0.82)':'rgba(239,68,68,0.75)'],
-        borderColor:'#0a0a14',borderWidth:3,hoverOffset:6
-      }]},
-      options:{cutout:'66%',animation:{duration:900},
-        plugins:{legend:{display:false},
-          tooltip:{callbacks:{label:c=>' € '+c.parsed.toFixed(2)}}}}
+      data:{datasets:[{data:[val,Math.max(Math.abs(diff),.01)],
+        backgroundColor:[cO,diff>=0?'rgba(34,197,94,.82)':'rgba(239,68,68,.75)'],
+        borderColor:'#090912',borderWidth:3,hoverOffset:5}]},
+      options:{cutout:'66%',animation:{duration:800},
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' € '+c.parsed.toFixed(2)}}}}
     });
   }
-  CH[t+'P']=mk('cP'+t,cNoPer,rispPer);
-  CH[t+'A']=mk('cA'+t,cNoAnn,rispAnn);
+  CH['CP'+t]=mk('CP'+t,cNoPer,rispPer);
+  CH['CA'+t]=mk('CA'+t,costoNos,rispAnn);
 }
 
-// ── MESSAGGI ──────────────────────────────────────────────────
-function showErr(m){const e=document.getElementById('mErr');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',7000);}
-function showOk(m){const e=document.getElementById('mOk');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',7000);}
+// ── UTILITY ───────────────────────────────────────────────────
+function pf(s){return parseFloat(String(s||0).replace(/\./g,'').replace(',','.'))||0;}
+function pd(s){const p=s.split('/');return p.length===3?new Date(`${p[2]}-${p[1]}-${p[0]}`):null;}
+function showEr(m){const e=document.getElementById('mEr');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',8000);}
+function showOk(m){const e=document.getElementById('mOk');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',8000);}
 </script>
 </body>
 </html>
