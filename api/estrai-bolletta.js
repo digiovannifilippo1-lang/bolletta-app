@@ -1,5 +1,4 @@
 // api/estrai-bolletta.js
-
 module.exports = async function handler(req, res) {
 
   if (req.method !== 'POST') {
@@ -8,57 +7,37 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const apiKey = process.env.OCR_SPACE_API_KEY;
-    if (!apiKey) {
-      res.status(500).json({ success: false, error: 'OCR key non configurata' });
-      return;
-    }
-
     const tipo = (req.query.tipo || 'luce').toLowerCase();
 
     const chunks = [];
     for await (const chunk of req) {
       chunks.push(chunk);
     }
-
     const bodyBuffer = Buffer.concat(chunks);
+    const bodyText = bodyBuffer.toString('utf8');
 
-    const contentType = req.headers['content-type'] || '';
-    const boundaryMatch = contentType.match(/boundary=(.+)$/);
-    if (!boundaryMatch) {
-      res.status(400).json({ success: false, error: 'Form-data non valido' });
+    // Il testo estratto arriva come campo "text" nel body JSON
+    let testo = '';
+    try {
+      const parsed = JSON.parse(bodyText);
+      testo = parsed.text || '';
+    } catch (e) {
+      res.status(400).json({ success: false, error: 'Body non valido' });
       return;
     }
 
-    const boundary = boundaryMatch[1];
-
-    const ocrResp = await fetch('https://api.ocr.space/parse/image', {
-      method: 'POST',
-      headers: {
-        'Content-Type': `multipart/form-data; boundary=${boundary}`,
-        'apikey': apiKey
-      },
-      body: bodyBuffer
-    });
-
-    const ocrJson = await ocrResp.json();
-
-    if (ocrJson.IsErroredOnProcessing) {
-      res.status(500).json({
-        success: false,
-        error: ocrJson.ErrorMessage || 'Errore OCR'
-      });
+    if (!testo || testo.length < 20) {
+      res.json({ success: false, error: 'Testo della bolletta troppo corto o vuoto' });
       return;
     }
 
-    const parsedText = ocrJson.ParsedResults?.[0]?.ParsedText || '';
-    const dati = parseInvoiceText(parsedText, tipo);
+    const dati = parseInvoiceText(testo, tipo);
 
     if (!dati || !dati.consumo || !dati.totale) {
       res.json({
         success: false,
-        error: 'Consumo/totale non trovati nel testo OCR',
-        rawTextPreview: parsedText.slice(0, 500)
+        error: 'Consumo o totale non trovati nella bolletta',
+        rawTextPreview: testo.slice(0, 500)
       });
       return;
     }
@@ -80,8 +59,7 @@ module.exports = async function handler(req, res) {
 function parseInvoiceText(text, type) {
   if (!text || text.length < 20) return null;
   let data = { consumo: null, totale: null };
-  const normalizedText = text.toLowerCase();
-  const cleanedText = normalizedText.replace(/\s+/g, ' ');
+  const cleanedText = text.toLowerCase().replace(/\s+/g, ' ');
 
   if (type === 'luce') {
     const kwhPatterns = [
@@ -93,10 +71,7 @@ function parseInvoiceText(text, type) {
       const match = cleanedText.match(pattern);
       if (match && match[1]) {
         const val = parseFloat(match[1].replace(',', '.'));
-        if (val > 50 && val < 50000) {
-          data.consumo = parseFloat(val.toFixed(2));
-          break;
-        }
+        if (val > 50 && val < 50000) { data.consumo = parseFloat(val.toFixed(2)); break; }
       }
     }
     const euroPatterns = [
@@ -108,10 +83,7 @@ function parseInvoiceText(text, type) {
       const match = cleanedText.match(pattern);
       if (match && match[1]) {
         const val = parseFloat(match[1].replace(',', '.'));
-        if (val > 5 && val < 10000) {
-          data.totale = parseFloat(val.toFixed(2));
-          break;
-        }
+        if (val > 5 && val < 10000) { data.totale = parseFloat(val.toFixed(2)); break; }
       }
     }
   } else {
@@ -124,10 +96,7 @@ function parseInvoiceText(text, type) {
       const match = cleanedText.match(pattern);
       if (match && match[1]) {
         const val = parseFloat(match[1].replace(',', '.'));
-        if (val > 20 && val < 50000) {
-          data.consumo = parseFloat(val.toFixed(2));
-          break;
-        }
+        if (val > 20 && val < 50000) { data.consumo = parseFloat(val.toFixed(2)); break; }
       }
     }
     const euroPatterns = [
@@ -139,10 +108,7 @@ function parseInvoiceText(text, type) {
       const match = cleanedText.match(pattern);
       if (match && match[1]) {
         const val = parseFloat(match[1].replace(',', '.'));
-        if (val > 5 && val < 5000) {
-          data.totale = parseFloat(val.toFixed(2));
-          break;
-        }
+        if (val > 5 && val < 5000) { data.totale = parseFloat(val.toFixed(2)); break; }
       }
     }
   }
