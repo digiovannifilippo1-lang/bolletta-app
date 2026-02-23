@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/estrai-bolletta.js": {
+      "maxDuration": 30
+    }
+  }
+}
