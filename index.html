@@ -1,1146 +1,804 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confronto Tariffe Energetiche</title>
-    <style>
-        :root {
-            --color-primary: #38bdf8;
-            --color-primary-hover: #0284c7;
-            --color-success: #22c55e;
-            --color-warning: #f59e0b;
-            --color-error: #ef4444;
-            --color-bg: #0f172a;
-            --color-surface: #1e293b;
-            --color-text: #f1f5f9;
-            --color-text-secondary: #cbd5e1;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--color-bg);
-            color: var(--color-text);
-            padding: 20px;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #38bdf8, #06b6d4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .header p {
-            color: var(--color-text-secondary);
-            font-size: 1.1rem;
-        }
-
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        @media (max-width: 1024px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .section {
-            background-color: var(--color-surface);
-            border-radius: 12px;
-            padding: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            margin-bottom: 25px;
-            color: var(--color-primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            font-size: 0.95rem;
-            color: var(--color-text);
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px 15px;
-            background-color: rgba(30, 41, 59, 0.8);
-            border: 2px solid rgba(56, 189, 248, 0.3);
-            border-radius: 8px;
-            color: var(--color-text);
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
-        }
-
-        .input-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 12px;
-            margin-top: 25px;
-        }
-
-        button {
-            flex: 1;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background-color: var(--color-primary);
-            color: #0f172a;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--color-primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(56, 189, 248, 0.3);
-        }
-
-        .btn-secondary {
-            background-color: rgba(56, 189, 248, 0.2);
-            color: var(--color-primary);
-            border: 2px solid var(--color-primary);
-        }
-
-        .btn-secondary:hover {
-            background-color: rgba(56, 189, 248, 0.3);
-        }
-
-        .results-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        @media (max-width: 768px) {
-            .results-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .result-card {
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(34, 197, 94, 0.1));
-            border: 2px solid rgba(56, 189, 248, 0.3);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .result-label {
-            color: var(--color-text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .result-value {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--color-primary);
-            margin-bottom: 5px;
-        }
-
-        .result-unit {
-            color: var(--color-text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .savings {
-            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1));
-            border: 2px solid rgba(34, 197, 94, 0.5);
-        }
-
-        .savings .result-value {
-            color: var(--color-success);
-        }
-
-        .danger {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
-            border: 2px solid rgba(239, 68, 68, 0.5);
-        }
-
-        .danger .result-value {
-            color: var(--color-error);
-        }
-
-        .comparison-section {
-            background-color: var(--color-surface);
-            border-radius: 12px;
-            padding: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .comparison-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .comparison-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .comparison-card {
-            background-color: rgba(30, 41, 59, 0.6);
-            border-radius: 10px;
-            padding: 20px;
-            border: 2px solid rgba(56, 189, 248, 0.2);
-        }
-
-        .comparison-card h3 {
-            color: var(--color-primary);
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-        }
-
-        .comparison-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 0.95rem;
-        }
-
-        .comparison-row:last-child {
-            border-bottom: none;
-        }
-
-        .comparison-label {
-            color: var(--color-text-secondary);
-        }
-
-        .comparison-value {
-            font-weight: 600;
-            color: var(--color-text);
-        }
-
-        .total-row {
-            background-color: rgba(56, 189, 248, 0.2);
-            border-radius: 6px;
-            padding: 12px;
-            margin-top: 10px;
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        .divider {
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.3), transparent);
-            margin: 40px 0;
-        }
-
-        .summary {
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(6, 182, 212, 0.1));
-            border: 2px solid var(--color-primary);
-            border-radius: 12px;
-            padding: 25px;
-            text-align: center;
-        }
-
-        .summary h2 {
-            margin-bottom: 15px;
-            color: var(--color-primary);
-        }
-
-        .summary p {
-            font-size: 1.1rem;
-            color: var(--color-text-secondary);
-            margin-bottom: 10px;
-        }
-
-        .summary .highlight {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--color-success);
-        }
-
-        .error-message {
-            background-color: rgba(239, 68, 68, 0.2);
-            border: 2px solid var(--color-error);
-            border-radius: 8px;
-            padding: 15px;
-            color: var(--color-error);
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .success-message {
-            background-color: rgba(34, 197, 94, 0.2);
-            border: 2px solid var(--color-success);
-            border-radius: 8px;
-            padding: 15px;
-            color: var(--color-success);
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid rgba(56, 189, 248, 0.2);
-        }
-
-        .tab-button {
-            padding: 12px 20px;
-            background: none;
-            border: none;
-            color: var(--color-text-secondary);
-            cursor: pointer;
-            font-size: 1rem;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
-        }
-
-        .tab-button.active {
-            color: var(--color-primary);
-            border-bottom-color: var(--color-primary);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .upload-area {
-            border: 3px dashed rgba(56, 189, 248, 0.5);
-            border-radius: 12px;
-            padding: 40px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            background-color: rgba(56, 189, 248, 0.05);
-        }
-
-        .upload-area:hover {
-            border-color: var(--color-primary);
-            background-color: rgba(56, 189, 248, 0.1);
-        }
-
-        .upload-area.dragover {
-            border-color: var(--color-success);
-            background-color: rgba(34, 197, 94, 0.1);
-        }
-
-        .upload-area p {
-            margin: 10px 0;
-            color: var(--color-text-secondary);
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .upload-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(56, 189, 248, 0.3);
-            border-top: 3px solid var(--color-primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .extraction-info {
-            background-color: rgba(56, 189, 248, 0.1);
-            border-left: 4px solid var(--color-primary);
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            font-size: 0.9rem;
-            color: var(--color-text-secondary);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confronto Tariffe Energetiche</title>
+  <style>
+    :root {
+      --color-primary: #38bdf8;
+      --color-primary-hover: #0284c7;
+      --color-success: #22c55e;
+      --color-warning: #f59e0b;
+      --color-error: #ef4444;
+      --color-bg: #0f172a;
+      --color-surface: #1e293b;
+      --color-text: #f1f5f9;
+      --color-text-secondary: #cbd5e1;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .container { max-width: 1400px; margin: 0 auto; }
+    .header { text-align: center; margin-bottom: 40px; }
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #38bdf8, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header p { color: var(--color-text-secondary); font-size: 1.1rem; }
+    .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
+    @media (max-width: 1024px) { .main-grid { grid-template-columns: 1fr; } }
+    .section {
+      background-color: var(--color-surface);
+      border-radius: 12px;
+      padding: 30px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .section-title {
+      font-size: 1.5rem;
+      margin-bottom: 25px;
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 0.95rem; color: var(--color-text); }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 12px 15px;
+      background-color: rgba(30,41,59,0.8);
+      border: 2px solid rgba(56,189,248,0.3);
+      border-radius: 8px;
+      color: var(--color-text);
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(56,189,248,0.1);
+    }
+    .button-group { display: flex; gap: 12px; margin-top: 25px; }
+    button {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-primary { background-color: var(--color-primary); color: #0f172a; }
+    .btn-primary:hover {
+      background-color: var(--color-primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(56,189,248,0.3);
+    }
+    .btn-secondary {
+      background-color: rgba(56,189,248,0.2);
+      color: var(--color-primary);
+      border: 2px solid var(--color-primary);
+    }
+    .btn-secondary:hover { background-color: rgba(56,189,248,0.3); }
+    .results-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+    @media (max-width: 768px) { .results-grid { grid-template-columns: 1fr; } }
+    .result-card {
+      background: linear-gradient(135deg, rgba(56,189,248,0.1), rgba(34,197,94,0.1));
+      border: 2px solid rgba(56,189,248,0.3);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+    .result-label { color: var(--color-text-secondary); font-size: 0.9rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+    .result-value { font-size: 2.2rem; font-weight: 700; color: var(--color-primary); margin-bottom: 5px; }
+    .result-unit { color: var(--color-text-secondary); font-size: 0.9rem; }
+    .savings {
+      background: linear-gradient(135deg, rgba(34,197,94,0.2), rgba(34,197,94,0.1));
+      border: 2px solid rgba(34,197,94,0.5);
+    }
+    .savings .result-value { color: var(--color-success); }
+    .danger {
+      background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(239,68,68,0.1));
+      border: 2px solid rgba(239,68,68,0.5);
+    }
+    .danger .result-value { color: var(--color-error); }
+    .comparison-section {
+      background-color: var(--color-surface);
+      border-radius: 12px;
+      padding: 30px;
+      border: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 30px;
+    }
+    .comparison-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px; }
+    @media (max-width: 768px) { .comparison-grid { grid-template-columns: 1fr; } }
+    .comparison-card {
+      background-color: rgba(30,41,59,0.6);
+      border-radius: 10px;
+      padding: 20px;
+      border: 2px solid rgba(56,189,248,0.2);
+    }
+    .comparison-card h3 { color: var(--color-primary); margin-bottom: 15px; font-size: 1.1rem; }
+    .comparison-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.95rem;
+    }
+    .comparison-row:last-child { border-bottom: none; }
+    .comparison-label { color: var(--color-text-secondary); }
+    .comparison-value { font-weight: 600; color: var(--color-text); }
+    .total-row {
+      background-color: rgba(56,189,248,0.2);
+      border-radius: 6px;
+      padding: 12px;
+      margin-top: 10px;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(56,189,248,0.3), transparent);
+      margin: 40px 0;
+    }
+    .summary {
+      background: linear-gradient(135deg, rgba(56,189,248,0.1), rgba(6,182,212,0.1));
+      border: 2px solid var(--color-primary);
+      border-radius: 12px;
+      padding: 25px;
+      text-align: center;
+    }
+    .summary h2 { margin-bottom: 15px; color: var(--color-primary); }
+    .summary p { font-size: 1.1rem; color: var(--color-text-secondary); margin-bottom: 10px; }
+    .summary .highlight { font-size: 1.3rem; font-weight: 700; color: var(--color-success); }
+    .error-message {
+      background-color: rgba(239,68,68,0.2);
+      border: 2px solid var(--color-error);
+      border-radius: 8px;
+      padding: 15px;
+      color: var(--color-error);
+      margin-bottom: 20px;
+      display: none;
+    }
+    .success-message {
+      background-color: rgba(34,197,94,0.2);
+      border: 2px solid var(--color-success);
+      border-radius: 8px;
+      padding: 15px;
+      color: var(--color-success);
+      margin-bottom: 20px;
+      display: none;
+    }
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid rgba(56,189,248,0.2); }
+    .tab-button {
+      padding: 12px 20px;
+      background: none;
+      border: none;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      font-size: 1rem;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    .tab-button.active { color: var(--color-primary); border-bottom-color: var(--color-primary); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .upload-area {
+      border: 3px dashed rgba(56,189,248,0.5);
+      border-radius: 12px;
+      padding: 40px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      background-color: rgba(56,189,248,0.05);
+    }
+    .upload-area:hover { border-color: var(--color-primary); background-color: rgba(56,189,248,0.1); }
+    .upload-area.dragover { border-color: var(--color-success); background-color: rgba(34,197,94,0.1); }
+    .upload-area p { margin: 10px 0; color: var(--color-text-secondary); }
+    .file-input { display: none; }
+    .upload-icon { font-size: 2rem; margin-bottom: 10px; }
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(56,189,248,0.3);
+      border-top: 3px solid var(--color-primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .extraction-info {
+      background-color: rgba(56,189,248,0.1);
+      border-left: 4px solid var(--color-primary);
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>⚡ Confronto Tariffe Energetiche PRO</h1>
-            <p>Analisi completa della bolletta energetica con tutti i parametri</p>
-            <p style="font-size: 0.9rem; color: var(--color-text-secondary); margin-top: 5px;">ℹ️ Upload bolletta PDF • Estrazione AI • Analisi istantanea</p>
-        </div>
+  <div class="container">
 
-        <div class="error-message" id="errorMessage"></div>
-        <div class="success-message" id="successMessage"></div>
-
-        <div class="tabs">
-            <button class="tab-button active" onclick="switchTab('luce')">💡 LUCE</button>
-            <button class="tab-button" onclick="switchTab('gas')">🔥 GAS</button>
-            <button class="tab-button" onclick="switchTab('parametri')">⚙️ PARAMETRI</button>
-        </div>
-
-        <div id="luce" class="tab-content active">
-            <div class="section" style="margin-bottom: 30px;">
-                <div class="section-title">📤 Carica Bolletta LUCE (PDF)</div>
-                <div class="extraction-info">
-                    💡 Carica il PDF della tua bolletta. L'IA estrarrà automaticamente consumo, totale e componenti tariffarie.
-                </div>
-                <div class="upload-area" id="uploadAreaLuce" ondrop="handleDropLuce(event)" ondragover="handleDragOverLuce(event)" ondragleave="handleDragLeaveLuce(event)" onclick="document.getElementById('fileLuce').click()">
-                    <div class="upload-icon">📄</div>
-                    <p style="font-weight: 600; color: var(--color-text);">Trascina il PDF qui o clicca per selezionare</p>
-                    <p>File supportati: PDF • Dimensione massima: 5 MB</p>
-                    <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin-top: 8px;">💡 Se il file non si carica, inserisci i dati manualmente nei campi sottostanti</p>
-                    <input type="file" id="fileLuce" class="file-input" accept=".pdf" onchange="handleFileLuce(event)">
-                </div>
-                <div id="luceExtractionStatus" style="margin-top: 15px; display: none;">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <div class="loading-spinner"></div>
-                        <span id="luceStatusText">Estrazione dati in corso...</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="main-grid">
-                <div class="section">
-                    <div class="section-title">🎯 Tua Offerta LUCE</div>
-                    <div class="form-group">
-                        <label>PUN (Prezzo Energia Ingrosso - €/kWh)</label>
-                        <input type="number" id="luce-pun" placeholder="Es: 0.1535" min="0" step="0.0001" value="0.1535">
-                        <span style="font-size: 0.85rem; color: var(--color-text-secondary);">da GME - aggiornato automaticamente</span>
-                    </div>
-                    <div class="form-group">
-                        <label>Margine Commerciale Gestore (€/kWh)</label>
-                        <input type="number" id="luce-margine" placeholder="Es: 0.04" min="0" step="0.001" value="0.04">
-                        <span style="font-size: 0.85rem; color: var(--color-text-secondary);">la tua percentuale di guadagno</span>
-                    </div>
-                    <div class="form-group">
-                        <label>Usa Consumi Cliente</label>
-                        <input type="checkbox" id="luce-use-same" checked style="width: auto; margin-right: 10px;">
-                        <span style="color: var(--color-text-secondary);">Applica gli stessi consumi</span>
-                    </div>
-                    <div class="form-group" id="luce-custom-kwh-group" style="display: none;">
-                        <label>Consumo Personalizzato (kWh)</label>
-                        <input type="number" id="luce-kwh-custom" placeholder="Es: 2500" min="0" step="0.01">
-                    </div>
-                    <div class="form-group">
-                        <label>Consumo Cliente (kWh)</label>
-                        <input type="number" id="luce-kwh-actual" placeholder="Es: 2500" min="0" step="0.01">
-                    </div>
-                    <div class="form-group">
-                        <label>Costo Totale Attuale (€)</label>
-                        <input type="number" id="luce-cost-actual" placeholder="Es: 800" min="0" step="0.01">
-                    </div>
-                    <div class="form-group">
-                        <label>Media €/kWh Cliente</label>
-                        <div id="luce-avg-price" style="font-size: 1.1rem; color: var(--color-text-secondary);">--</div>
-                    </div>
-                    <button class="btn-primary" onclick="calculateLuceActual()" style="width: 100%; margin-top: 10px; margin-bottom: 10px;">✓ Conferma Dati Cliente</button>
-                    <button class="btn-primary" onclick="calculateLuceOffer()" style="width: 100%; margin-top: 5px;">Calcola Preventivo</button>
-                </div>
-            </div>
-
-            <div class="comparison-section">
-                <h2 style="color: var(--color-primary); margin-bottom: 20px;">📋 Scomposizione Fattura LUCE</h2>
-                <div class="comparison-grid">
-                    <div class="comparison-card">
-                        <h3>Cliente Attuale</h3>
-                        <div class="comparison-row">
-                            <span class="comparison-label">Consumo</span>
-                            <span class="comparison-value" id="luce-decomp-kwh">-- kWh</span>
-                        </div>
-                        <div class="comparison-row">
-                            <span class="comparison-label">Totale Pagato</span>
-                            <span class="comparison-value" id="luce-decomp-actual">-- €</span>
-                        </div>
-                        <div class="comparison-row">
-                            <span class="comparison-label">Media €/kWh</span>
-                            <span class="comparison-value" id="luce-decomp-avg">--</span>
-                        </div>
-                    </div>
-                    <div class="comparison-card">
-                        <h3>Con Tua Offerta</h3>
-                        <div class="comparison-row">
-                            <span class="comparison-label">Energia (PUN + Margine)</span>
-                            <span class="comparison-value" id="luce-decomp-energy">-- €</span>
-                        </div>
-                        <div class="comparison-row">
-                            <span class="comparison-label">Rete + Oneri</span>
-                            <span class="comparison-value" id="luce-decomp-network">-- €</span>
-                        </div>
-                        <div class="comparison-row">
-                            <span class="comparison-label">Totale Offerta</span>
-                            <span class="comparison-value" id="luce-decomp-offer">-- €</span>
-                        </div>
-                    </div>
-                    <div class="comparison-card">
-                        <h3>Risparmio Annuale</h3>
-                        <div class="comparison-row" style="font-size: 1.2rem; padding: 15px 0;">
-                            <span class="comparison-label" style="font-size: 1rem;">Importo</span>
-                            <span class="comparison-value savings" id="luce-decomp-savings" style="color: var(--color-success);">-- €</span>
-                        </div>
-                        <div class="comparison-row">
-                            <span class="comparison-label">Percentuale</span>
-                            <span class="comparison-value" id="luce-decomp-percent" style="color: var(--color-success);">--%</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="results-grid">
-                <div class="result-card">
-                    <div class="result-label">Costo Attuale</div>
-                    <div class="result-value" id="luce-result-actual">--</div>
-                    <div class="result-unit">€/anno</div>
-                </div>
-                <div class="result-card">
-                    <div class="result-label">Tua Offerta</div>
-                    <div class="result-value" id="luce-result-offer">--</div>
-                    <div class="result-unit">€/anno</div>
-                </div>
-                <div class="result-card savings" id="luce-savings-card">
-                    <div class="result-label">Risparmio Potenziale</div>
-                    <div class="result-value" id="luce-result-savings">--</div>
-                    <div class="result-unit">€/anno</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="gas" class="tab-content">
-            <div class="section" style="margin-bottom: 30px;">
-                <div class="section-title">📤 Carica Bolletta GAS (PDF)</div>
-                <div class="extraction-info">
-                    💡 Carica il PDF della tua bolletta. L'IA estrarrà automaticamente consumo, totale e componenti tariffarie.
-                </div>
-                <div class="upload-area" id="uploadAreaGas" ondrop="handleDropGas(event)" ondragover="handleDragOverGas(event)" ondragleave="handleDragLeaveGas(event)" onclick="document.getElementById('fileGas').click()">
-                    <div class="upload-icon">📄</div>
-                    <p style="font-weight: 600; color: var(--color-text);">Trascina il PDF qui o clicca per selezionare</p>
-                    <p>File supportati: PDF • Dimensione massima: 5 MB</p>
-                    <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin-top: 8px;">💡 Se il file non si carica, inserisci i dati manualmente nei campi sottostanti</p>
-                    <input type="file" id="fileGas" class="file-input" accept=".pdf" onchange="handleFileGas(event)">
-                </div>
-                <div id="gasExtractionStatus" style="margin-top: 15px; display: none;">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <div class="loading-spinner"></div>
-                        <span id="gasStatusText">Estrazione dati in corso...</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="main-grid">
-                <div class="section">
-                    <div class="section-title">🎯 Tua Offerta GAS</div>
-                    <div class="form-group">
-                        <label>PSV (Prezzo Gas Ingrosso - €/Smc)</label>
-                        <input type="number" id="gas-psv" placeholder="Es: 0.40" min="0" step="0.0001" value="0.40">
-                        <span style="font-size: 0.85rem; color: var(--color-text-secondary);">da GME - aggiornato automaticamente</span>
-                    </div>
-                    <div class="form-group">
-                        <label>Margine Commerciale Gestore (€/Smc)</label>
-                        <input type="number" id="gas-margine" placeholder="Es: 0.08" min="0" step="0.001" value="0.08">
-                        <span style="font-size: 0.85rem; color: var(--color-text-secondary);">la tua percentuale di guadagno</span>
-                    </div>
-                    <div class="form-group">
-                        <label>Usa Consumi Cliente</label>
-                        <input type="checkbox" id="gas-use-same" checked style="width: auto; margin-right: 10px;">
-                        <span style="color: var(--color-text-secondary);">Applica gli stessi consumi</span>
-                    </div>
-                    <div class="form-group" id="gas-custom-smc-group" style="display: none;">
-                        <label>Consumo Personalizzato (Smc)</label>
-                        <input type="number" id="gas-smc-custom" placeholder="Es: 800" min="0" step="0.01">
-                    </div>
-                    <div class="form-group">
-                        <label>Consumo Cliente (Smc)</label>
-                        <input type="number" id="gas-smc-actual" placeholder="Es: 800" min="0" step="0.01">
-                    </div>
-                    <div class="form-group">
-                        <label>Costo Totale Attuale (€)</label>
-                        <input type="number" id="gas-cost-actual" placeholder="Es: 800" min="0" step="0.01">
-                    </div>
-                    <div class="form-group">
-                        <label>Media €/Smc Cliente</label>
-                        <div id="gas-avg-price" style="font-size: 1.1rem; color: var(--color-text-secondary);">--</div>
-                    </div>
-                    <button class="btn-primary" onclick="calculateGasActual()" style="width: 100%; margin-top: 10px; margin-bottom: 10px;">✓ Conferma Dati Cliente</button>
-                    <button class="btn-primary" onclick="calculateGasOffer()" style="width: 100%; margin-top: 5px;">Calcola Preventivo</button>
-                </div>
-            </div>
-
-            <div class="comparison-section">
-                <h2 style="color: var(--color-primary); margin-bottom: 20px;">📋 Scomposizione Fattura GAS</h2>
-                <div class="comparison-grid">
-                    <div class="comparison-card">
-                        <h3>Cliente Attuale</h3>
-                        <div class="comparison-row">
-                            <span class="comparison-label">Consumo</span>
-                            <span class="comparison-value" id="gas-decomp-smc">-- Smc</span>
-                        </div>
-                        <div class="comparison-row">
-                            <span class="comparison-label">Totale Pagato</span>
-                            <span class="comparison-value" id="gas-decomp-actual">-- €</span>
-                        </div>
-                        <div class="comparison-row">
-                            <span class="comparison-label">Media €/Smc</span>
-                            <span class="comparison-value" id="gas-decomp-avg">--</span>
-                        </div>
-                    </div>
-                    <div class="comparison-card">
-                        <h3>Con Tua Offerta</h3>
-                        <div class="comparison-row">
-                            <span class="comparison-label">Gas (PSV + Margine)</span>
-                            <span class="comparison-value" id="gas-decomp-energy">-- €</span>
-                        </div>
-                        <div class="comparison-row">
-                            <span class="comparison-label">Rete + Oneri</span>
-                            <span class="comparison-value" id="gas-decomp-network">-- €</span>
-                        </div>
-                        <div class="comparison-row">
-                            <span class="comparison-label">Totale Offerta</span>
-                            <span class="comparison-value" id="gas-decomp-offer">-- €</span>
-                        </div>
-                    </div>
-                    <div class="comparison-card">
-                        <h3>Risparmio Annuale</h3>
-                        <div class="comparison-row" style="font-size: 1.2rem; padding: 15px 0;">
-                            <span class="comparison-label" style="font-size: 1rem;">Importo</span>
-                            <span class="comparison-value savings" id="gas-decomp-savings" style="color: var(--color-success);">-- €</span>
-                        </div>
-                        <div class="comparison-row">
-                            <span class="comparison-label">Percentuale</span>
-                            <span class="comparison-value" id="gas-decomp-percent" style="color: var(--color-success);">--%</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="results-grid">
-                <div class="result-card">
-                    <div class="result-label">Costo Attuale</div>
-                    <div class="result-value" id="gas-result-actual">--</div>
-                    <div class="result-unit">€/anno</div>
-                </div>
-                <div class="result-card">
-                    <div class="result-label">Tua Offerta</div>
-                    <div class="result-value" id="gas-result-offer">--</div>
-                    <div class="result-unit">€/anno</div>
-                </div>
-                <div class="result-card savings" id="gas-savings-card">
-                    <div class="result-label">Risparmio Potenziale</div>
-                    <div class="result-value" id="gas-result-savings">--</div>
-                    <div class="result-unit">€/anno</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="parametri" class="tab-content">
-            <div class="section" style="max-width: 800px; margin: 0 auto;">
-                <h2 style="color: var(--color-primary); margin-bottom: 20px;">⚙️ Parametri Tariffari ARERA</h2>
-                
-                <div style="background-color: rgba(56, 189, 248, 0.1); border-left: 4px solid var(--color-primary); padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-                    <p style="margin: 0; color: var(--color-text-secondary); font-size: 0.9rem;">
-                        ℹ️ <strong>Nota importante:</strong> I parametri sottostanti sono i valori medi dalle tue fatture analizzate. La rete, distribuzione e oneri variano a seconda della provincia e del distributore. Se necessario, puoi aggiornarli manualmente dai dati della bolletta del cliente.
-                    </p>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div>
-                        <h3 style="color: var(--color-primary); margin-bottom: 15px;">💡 LUCE (Parametri per kWh)</h3>
-                        <div class="form-group">
-                            <label>Rete di Trasmissione</label>
-                            <input type="number" id="param-luce-rete" placeholder="0.020" min="0" step="0.001" value="0.020">
-                            <span style="font-size: 0.85rem; color: var(--color-text-secondary);">€/kWh</span>
-                        </div>
-                        <div class="form-group">
-                            <label>Distribuzione</label>
-                            <input type="number" id="param-luce-dist" placeholder="0.030" min="0" step="0.001" value="0.030">
-                            <span style="font-size: 0.85rem; color: var(--color-text-secondary);">€/kWh</span>
-                        </div>
-                        <div class="form-group">
-                            <label>Accise (ARERA)</label>
-                            <input type="number" id="param-luce-accise" placeholder="0.0227" min="0" step="0.0001" value="0.0227">
-                            <span style="font-size: 0.85rem; color: var(--color-text-secondary);">€/kWh</span>
-                        </div>
-                        <div class="form-group">
-                            <label>IVA sulla componente energia</label>
-                            <input type="number" id="param-luce-iva" placeholder="10" min="0" step="0.1" value="10">
-                            <span style="font-size: 0.85rem; color: var(--color-text-secondary);">%</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h3 style="color: var(--color-primary); margin-bottom: 15px;">🔥 GAS (Parametri per Smc)</h3>
-                        <div class="form-group">
-                            <label>Trasporto</label>
-                            <input type="number" id="param-gas-trasporto" placeholder="0.060" min="0" step="0.001" value="0.060">
-                            <span style="font-size: 0.85rem; color: var(--color-text-secondary);">€/Smc</span>
-                        </div>
-                        <div class="form-group">
-                            <label>Distribuzione</label>
-                            <input type="number" id="param-gas-dist" placeholder="0.050" min="0" step="0.001" value="0.050">
-                            <span style="font-size: 0.85rem; color: var(--color-text-secondary);">€/Smc</span>
-                        </div>
-                        <div class="form-group">
-                            <label>Accise (ARERA)</label>
-                            <input type="number" id="param-gas-accise" placeholder="0.175" min="0" step="0.001" value="0.175">
-                            <span style="font-size: 0.85rem; color: var(--color-text-secondary);">€/Smc</span>
-                        </div>
-                        <div class="form-group">
-                            <label>IVA sulla componente energia</label>
-                            <input type="number" id="param-gas-iva" placeholder="22" min="0" step="0.1" value="22">
-                            <span style="font-size: 0.85rem; color: var(--color-text-secondary);">%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <button class="btn-primary" onclick="salvaCampagn()" style="width: 100%; margin-top: 30px; padding: 15px;">💾 Salva Parametri</button>
-            </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="comparison-section">
-            <h2 style="color: var(--color-primary); margin-bottom: 20px;">📈 Confronto Completo Annuale</h2>
-            <div class="comparison-grid">
-                <div class="comparison-card">
-                    <h3>💡 LUCE</h3>
-                    <div class="comparison-row">
-                        <span class="comparison-label">Costo Attuale</span>
-                        <span class="comparison-value" id="compare-luce-actual">--</span>
-                    </div>
-                    <div class="comparison-row">
-                        <span class="comparison-label">Tua Offerta</span>
-                        <span class="comparison-value" id="compare-luce-offer">--</span>
-                    </div>
-                    <div class="total-row" style="color: var(--color-success);">
-                        Risparmio: <span id="compare-luce-savings">--</span>
-                    </div>
-                </div>
-
-                <div class="comparison-card">
-                    <h3>🔥 GAS</h3>
-                    <div class="comparison-row">
-                        <span class="comparison-label">Costo Attuale</span>
-                        <span class="comparison-value" id="compare-gas-actual">--</span>
-                    </div>
-                    <div class="comparison-row">
-                        <span class="comparison-label">Tua Offerta</span>
-                        <span class="comparison-value" id="compare-gas-offer">--</span>
-                    </div>
-                    <div class="total-row" style="color: var(--color-success);">
-                        Risparmio: <span id="compare-gas-savings">--</span>
-                    </div>
-                </div>
-
-                <div class="comparison-card">
-                    <h3>⚡ TOTALE</h3>
-                    <div class="comparison-row">
-                        <span class="comparison-label">Costo Attuale</span>
-                        <span class="comparison-value" id="compare-total-actual">--</span>
-                    </div>
-                    <div class="comparison-row">
-                        <span class="comparison-label">Tua Offerta</span>
-                        <span class="comparison-value" id="compare-total-offer">--</span>
-                    </div>
-                    <div class="total-row" style="color: var(--color-success);">
-                        Risparmio: <span id="compare-total-savings">--</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="summary" id="summarySection" style="display: none;">
-            <h2>✅ Preventivo Generato</h2>
-            <p id="summaryText"></p>
-            <div class="highlight" id="summaryHighlight"></div>
-        </div>
+    <div class="header">
+      <h1>Confronto Tariffe Energetiche PRO</h1>
+      <p>Analisi completa della bolletta energetica con tutti i parametri</p>
+      <p style="font-size:0.9rem;color:var(--color-text-secondary);margin-top:5px;">ℹ️ Upload bolletta PDF • Estrazione AI • Analisi istantanea</p>
     </div>
 
-    <script>
-        async function extractPdfData(file, type) {
-            const statusDiv = document.getElementById(type === 'luce' ? 'luceExtractionStatus' : 'gasExtractionStatus');
-            const statusText = document.getElementById(type === 'luce' ? 'luceStatusText' : 'gasStatusText');
-            
-            statusDiv.style.display = 'block';
-            statusText.textContent = 'Caricamento PDF...';
+    <div class="error-message" id="errorMessage"></div>
+    <div class="success-message" id="successMessage"></div>
 
-            try {
-                if (file.size > 5242880) {
-                    showError('❌ File troppo grande (max 5MB)');
-                    statusDiv.style.display = 'none';
-                    return;
-                }
+    <div class="tabs">
+      <button class="tab-button active" onclick="switchTab('luce', event)">💡 LUCE</button>
+      <button class="tab-button" onclick="switchTab('gas', event)">🔥 GAS</button>
+      <button class="tab-button" onclick="switchTab('parametri', event)">⚙️ PARAMETRI</button>
+    </div>
 
-                const formData = new FormData();
-                formData.append('file', file);
+    <!-- ===== TAB LUCE ===== -->
+    <div id="luce" class="tab-content active">
+      <div class="section" style="margin-bottom:30px;">
+        <div class="section-title">📤 Carica Bolletta LUCE PDF</div>
+        <div class="extraction-info">Carica il PDF della tua bolletta. L'IA estrarrà automaticamente consumo e totale da qualsiasi numero di pagine.</div>
+        <div class="upload-area" id="uploadAreaLuce"
+          ondrop="handleDropLuce(event)"
+          ondragover="handleDragOverLuce(event)"
+          ondragleave="handleDragLeaveLuce(event)"
+          onclick="document.getElementById('fileLuce').click()">
+          <div class="upload-icon">📄</div>
+          <p style="font-weight:600;color:var(--color-text);">Trascina il PDF qui o clicca per selezionare</p>
+          <p>File supportati: PDF • Dimensione massima: 10 MB</p>
+          <p style="font-size:0.85rem;color:var(--color-text-secondary);margin-top:8px;">💡 Se il file non si carica, inserisci i dati manualmente nei campi sottostanti</p>
+        </div>
+        <input type="file" id="fileLuce" class="file-input" accept=".pdf" onchange="handleFileLuce(event)">
+        <div id="luceExtractionStatus" style="margin-top:15px;display:none;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="loading-spinner"></div>
+            <span id="luceStatusText">Estrazione dati in corso...</span>
+          </div>
+        </div>
+      </div>
 
-                statusText.textContent = 'Invio al servizio OCR...';
+      <div class="main-grid">
+        <div class="section">
+          <div class="section-title">⚡ Tua Offerta LUCE</div>
+          <div class="form-group">
+            <label>PUN Prezzo Energia Ingrosso - €/kWh</label>
+            <input type="number" id="luce-pun" placeholder="Es. 0.1535" min="0" step="0.0001" value="0.1535">
+            <span style="font-size:0.85rem;color:var(--color-text-secondary);">da GME - aggiornato automaticamente</span>
+          </div>
+          <div class="form-group">
+            <label>Margine Commerciale Gestore €/kWh</label>
+            <input type="number" id="luce-margine" placeholder="Es. 0.04" min="0" step="0.001" value="0.04">
+            <span style="font-size:0.85rem;color:var(--color-text-secondary);">la tua percentuale di guadagno</span>
+          </div>
+          <div class="form-group">
+            <label>Usa Consumi Cliente</label>
+            <input type="checkbox" id="luce-use-same" checked style="width:auto;margin-right:10px;">
+            <span style="color:var(--color-text-secondary);">Applica gli stessi consumi</span>
+          </div>
+          <div class="form-group" id="luce-custom-kwh-group" style="display:none;">
+            <label>Consumo Personalizzato kWh</label>
+            <input type="number" id="luce-kwh-custom" placeholder="Es. 2500" min="0" step="0.01">
+          </div>
+          <div class="form-group">
+            <label>Consumo Cliente kWh</label>
+            <input type="number" id="luce-kwh-actual" placeholder="Es. 2500" min="0" step="0.01">
+          </div>
+          <div class="form-group">
+            <label>Costo Totale Attuale €</label>
+            <input type="number" id="luce-cost-actual" placeholder="Es. 800" min="0" step="0.01">
+          </div>
+          <div class="form-group">
+            <label>Media €/kWh Cliente</label>
+            <div id="luce-avg-price" style="font-size:1.1rem;color:var(--color-text-secondary);">--</div>
+          </div>
+          <button class="btn-primary" onclick="calculateLuceActual()" style="width:100%;margin-top:10px;margin-bottom:10px;">Conferma Dati Cliente</button>
+          <button class="btn-primary" onclick="calculateLuceOffer()" style="width:100%;margin-top:5px;">Calcola Preventivo</button>
+        </div>
 
-                const resp = await fetch(`/api/estrai-bolletta?tipo=${type}`, {
-                    method: 'POST',
-                    body: formData
-                });
+        <div class="section" style="display:flex;flex-direction:column;justify-content:center;">
+          <div style="display:grid;grid-template-columns:1fr;gap:15px;">
+            <div class="result-card">
+              <div class="result-label">Costo Attuale</div>
+              <div class="result-value" id="luce-result-actual">--</div>
+              <div class="result-unit">anno</div>
+            </div>
+            <div class="result-card">
+              <div class="result-label">Tua Offerta</div>
+              <div class="result-value" id="luce-result-offer">--</div>
+              <div class="result-unit">anno</div>
+            </div>
+            <div class="result-card savings" id="luce-savings-card">
+              <div class="result-label">Risparmio Potenziale</div>
+              <div class="result-value" id="luce-result-savings">--</div>
+              <div class="result-unit">anno</div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-                const data = await resp.json();
+      <div class="comparison-section">
+        <h2 style="color:var(--color-primary);margin-bottom:20px;">Scomposizione Fattura LUCE</h2>
+        <div class="comparison-grid">
+          <div class="comparison-card">
+            <h3>Cliente Attuale</h3>
+            <div class="comparison-row"><span class="comparison-label">Consumo</span><span class="comparison-value" id="luce-decomp-kwh">-- kWh</span></div>
+            <div class="comparison-row"><span class="comparison-label">Totale Pagato</span><span class="comparison-value" id="luce-decomp-actual">--</span></div>
+            <div class="comparison-row"><span class="comparison-label">Media €/kWh</span><span class="comparison-value" id="luce-decomp-avg">--</span></div>
+          </div>
+          <div class="comparison-card">
+            <h3>Con Tua Offerta</h3>
+            <div class="comparison-row"><span class="comparison-label">Energia (PUN + Margine)</span><span class="comparison-value" id="luce-decomp-energy">--</span></div>
+            <div class="comparison-row"><span class="comparison-label">Rete + Oneri</span><span class="comparison-value" id="luce-decomp-network">--</span></div>
+            <div class="comparison-row"><span class="comparison-label">Totale Offerta</span><span class="comparison-value" id="luce-decomp-offer">--</span></div>
+          </div>
+          <div class="comparison-card">
+            <h3>Risparmio Annuale</h3>
+            <div class="comparison-row" style="font-size:1.2rem;padding:15px 0;">
+              <span class="comparison-label" style="font-size:1rem;">Importo</span>
+              <span class="comparison-value" id="luce-decomp-savings" style="color:var(--color-success);">--</span>
+            </div>
+            <div class="comparison-row"><span class="comparison-label">Percentuale</span><span class="comparison-value" id="luce-decomp-percent" style="color:var(--color-success);">--</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-                if (!data.success) {
-                    showError('⚠️ ' + (data.error || 'Impossibile estrarre i dati. Inserisci manualmente.'));
-                    statusDiv.style.display = 'none';
-                    return;
-                }
+    <!-- ===== TAB GAS ===== -->
+    <div id="gas" class="tab-content">
+      <div class="section" style="margin-bottom:30px;">
+        <div class="section-title">📤 Carica Bolletta GAS PDF</div>
+        <div class="extraction-info">Carica il PDF della tua bolletta. L'IA estrarrà automaticamente consumo e totale da qualsiasi numero di pagine.</div>
+        <div class="upload-area" id="uploadAreaGas"
+          ondrop="handleDropGas(event)"
+          ondragover="handleDragOverGas(event)"
+          ondragleave="handleDragLeaveGas(event)"
+          onclick="document.getElementById('fileGas').click()">
+          <div class="upload-icon">📄</div>
+          <p style="font-weight:600;color:var(--color-text);">Trascina il PDF qui o clicca per selezionare</p>
+          <p>File supportati: PDF • Dimensione massima: 10 MB</p>
+          <p style="font-size:0.85rem;color:var(--color-text-secondary);margin-top:8px;">💡 Se il file non si carica, inserisci i dati manualmente nei campi sottostanti</p>
+        </div>
+        <input type="file" id="fileGas" class="file-input" accept=".pdf" onchange="handleFileGas(event)">
+        <div id="gasExtractionStatus" style="margin-top:15px;display:none;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="loading-spinner"></div>
+            <span id="gasStatusText">Estrazione dati in corso...</span>
+          </div>
+        </div>
+      </div>
 
-                statusText.textContent = '✅ Estrazione completata!';
+      <div class="main-grid">
+        <div class="section">
+          <div class="section-title">🔥 Tua Offerta GAS</div>
+          <div class="form-group">
+            <label>PSV Prezzo Gas Ingrosso - €/Smc</label>
+            <input type="number" id="gas-psv" placeholder="Es. 0.40" min="0" step="0.0001" value="0.40">
+            <span style="font-size:0.85rem;color:var(--color-text-secondary);">da GME - aggiornato automaticamente</span>
+          </div>
+          <div class="form-group">
+            <label>Margine Commerciale Gestore €/Smc</label>
+            <input type="number" id="gas-margine" placeholder="Es. 0.08" min="0" step="0.001" value="0.08">
+            <span style="font-size:0.85rem;color:var(--color-text-secondary);">la tua percentuale di guadagno</span>
+          </div>
+          <div class="form-group">
+            <label>Usa Consumi Cliente</label>
+            <input type="checkbox" id="gas-use-same" checked style="width:auto;margin-right:10px;">
+            <span style="color:var(--color-text-secondary);">Applica gli stessi consumi</span>
+          </div>
+          <div class="form-group" id="gas-custom-smc-group" style="display:none;">
+            <label>Consumo Personalizzato Smc</label>
+            <input type="number" id="gas-smc-custom" placeholder="Es. 800" min="0" step="0.01">
+          </div>
+          <div class="form-group">
+            <label>Consumo Cliente Smc</label>
+            <input type="number" id="gas-smc-actual" placeholder="Es. 800" min="0" step="0.01">
+          </div>
+          <div class="form-group">
+            <label>Costo Totale Attuale €</label>
+            <input type="number" id="gas-cost-actual" placeholder="Es. 800" min="0" step="0.01">
+          </div>
+          <div class="form-group">
+            <label>Media €/Smc Cliente</label>
+            <div id="gas-avg-price" style="font-size:1.1rem;color:var(--color-text-secondary);">--</div>
+          </div>
+          <button class="btn-primary" onclick="calculateGasActual()" style="width:100%;margin-top:10px;margin-bottom:10px;">Conferma Dati Cliente</button>
+          <button class="btn-primary" onclick="calculateGasOffer()" style="width:100%;margin-top:5px;">Calcola Preventivo</button>
+        </div>
 
-                if (type === 'luce') {
-                    document.getElementById('luce-kwh-actual').value = data.consumo;
-                    document.getElementById('luce-cost-actual').value = data.totale;
-                    calculateLuceActual();
-                } else {
-                    document.getElementById('gas-smc-actual').value = data.consumo;
-                    document.getElementById('gas-cost-actual').value = data.totale;
-                    calculateGasActual();
-                }
+        <div class="section" style="display:flex;flex-direction:column;justify-content:center;">
+          <div style="display:grid;grid-template-columns:1fr;gap:15px;">
+            <div class="result-card">
+              <div class="result-label">Costo Attuale</div>
+              <div class="result-value" id="gas-result-actual">--</div>
+              <div class="result-unit">anno</div>
+            </div>
+            <div class="result-card">
+              <div class="result-label">Tua Offerta</div>
+              <div class="result-value" id="gas-result-offer">--</div>
+              <div class="result-unit">anno</div>
+            </div>
+            <div class="result-card savings" id="gas-savings-card">
+              <div class="result-label">Risparmio Potenziale</div>
+              <div class="result-value" id="gas-result-savings">--</div>
+              <div class="result-unit">anno</div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-                showSuccess(`Dati estratti: ${data.consumo} ${type === 'luce' ? 'kWh' : 'Smc'} • €${data.totale}`);
+      <div class="comparison-section">
+        <h2 style="color:var(--color-primary);margin-bottom:20px;">Scomposizione Fattura GAS</h2>
+        <div class="comparison-grid">
+          <div class="comparison-card">
+            <h3>Cliente Attuale</h3>
+            <div class="comparison-row"><span class="comparison-label">Consumo</span><span class="comparison-value" id="gas-decomp-smc">-- Smc</span></div>
+            <div class="comparison-row"><span class="comparison-label">Totale Pagato</span><span class="comparison-value" id="gas-decomp-actual">--</span></div>
+            <div class="comparison-row"><span class="comparison-label">Media €/Smc</span><span class="comparison-value" id="gas-decomp-avg">--</span></div>
+          </div>
+          <div class="comparison-card">
+            <h3>Con Tua Offerta</h3>
+            <div class="comparison-row"><span class="comparison-label">Gas (PSV + Margine)</span><span class="comparison-value" id="gas-decomp-energy">--</span></div>
+            <div class="comparison-row"><span class="comparison-label">Rete + Oneri</span><span class="comparison-value" id="gas-decomp-network">--</span></div>
+            <div class="comparison-row"><span class="comparison-label">Totale Offerta</span><span class="comparison-value" id="gas-decomp-offer">--</span></div>
+          </div>
+          <div class="comparison-card">
+            <h3>Risparmio Annuale</h3>
+            <div class="comparison-row" style="font-size:1.2rem;padding:15px 0;">
+              <span class="comparison-label" style="font-size:1rem;">Importo</span>
+              <span class="comparison-value" id="gas-decomp-savings" style="color:var(--color-success);">--</span>
+            </div>
+            <div class="comparison-row"><span class="comparison-label">Percentuale</span><span class="comparison-value" id="gas-decomp-percent" style="color:var(--color-success);">--</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-                setTimeout(() => {
-                    statusDiv.style.display = 'none';
-                }, 3000);
-            } catch (err) {
-                console.error(err);
-                showError('❌ Errore durante la chiamata al servizio OCR');
-                statusDiv.style.display = 'none';
-            }
+    <!-- ===== TAB PARAMETRI ===== -->
+    <div id="parametri" class="tab-content">
+      <div class="section" style="max-width:800px;margin:0 auto;">
+        <h2 style="color:var(--color-primary);margin-bottom:20px;">Parametri Tariffari ARERA</h2>
+        <div style="background-color:rgba(56,189,248,0.1);border-left:4px solid var(--color-primary);padding:15px;border-radius:6px;margin-bottom:20px;">
+          <p style="margin:0;color:var(--color-text-secondary);font-size:0.9rem;"><strong>Nota importante:</strong> I parametri sottostanti sono i valori medi dalle tue fatture analizzate. La rete, distribuzione e oneri variano a seconda della provincia e del distributore. Se necessario, puoi aggiornarli manualmente dai dati della bolletta del cliente.</p>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div>
+            <h3 style="color:var(--color-primary);margin-bottom:15px;">LUCE - Parametri per kWh</h3>
+            <div class="form-group">
+              <label>Rete di Trasmissione</label>
+              <input type="number" id="param-luce-rete" placeholder="0.020" min="0" step="0.001" value="0.020">
+              <span style="font-size:0.85rem;color:var(--color-text-secondary);">€/kWh</span>
+            </div>
+            <div class="form-group">
+              <label>Distribuzione</label>
+              <input type="number" id="param-luce-dist" placeholder="0.030" min="0" step="0.001" value="0.030">
+              <span style="font-size:0.85rem;color:var(--color-text-secondary);">€/kWh</span>
+            </div>
+            <div class="form-group">
+              <label>Accise ARERA</label>
+              <input type="number" id="param-luce-accise" placeholder="0.0227" min="0" step="0.0001" value="0.0227">
+              <span style="font-size:0.85rem;color:var(--color-text-secondary);">€/kWh</span>
+            </div>
+            <div class="form-group">
+              <label>IVA sulla componente energia</label>
+              <input type="number" id="param-luce-iva" placeholder="10" min="0" step="0.1" value="10">
+              <span style="font-size:0.85rem;color:var(--color-text-secondary);">%</span>
+            </div>
+          </div>
+          <div>
+            <h3 style="color:var(--color-primary);margin-bottom:15px;">GAS - Parametri per Smc</h3>
+            <div class="form-group">
+              <label>Trasporto</label>
+              <input type="number" id="param-gas-trasporto" placeholder="0.060" min="0" step="0.001" value="0.060">
+              <span style="font-size:0.85rem;color:var(--color-text-secondary);">€/Smc</span>
+            </div>
+            <div class="form-group">
+              <label>Distribuzione</label>
+              <input type="number" id="param-gas-dist" placeholder="0.050" min="0" step="0.001" value="0.050">
+              <span style="font-size:0.85rem;color:var(--color-text-secondary);">€/Smc</span>
+            </div>
+            <div class="form-group">
+              <label>Accise ARERA</label>
+              <input type="number" id="param-gas-accise" placeholder="0.175" min="0" step="0.001" value="0.175">
+              <span style="font-size:0.85rem;color:var(--color-text-secondary);">€/Smc</span>
+            </div>
+            <div class="form-group">
+              <label>IVA sulla componente energia</label>
+              <input type="number" id="param-gas-iva" placeholder="22" min="0" step="0.1" value="22">
+              <span style="font-size:0.85rem;color:var(--color-text-secondary);">%</span>
+            </div>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="salvaCampagn()" style="width:100%;margin-top:30px;padding:15px;">Salva Parametri</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="comparison-section">
+      <h2 style="color:var(--color-primary);margin-bottom:20px;">Confronto Completo Annuale</h2>
+      <div class="comparison-grid">
+        <div class="comparison-card">
+          <h3>⚡ LUCE</h3>
+          <div class="comparison-row"><span class="comparison-label">Costo Attuale</span><span class="comparison-value" id="compare-luce-actual">--</span></div>
+          <div class="comparison-row"><span class="comparison-label">Tua Offerta</span><span class="comparison-value" id="compare-luce-offer">--</span></div>
+          <div class="total-row" style="color:var(--color-success);">Risparmio <span id="compare-luce-savings">--</span></div>
+        </div>
+        <div class="comparison-card">
+          <h3>🔥 GAS</h3>
+          <div class="comparison-row"><span class="comparison-label">Costo Attuale</span><span class="comparison-value" id="compare-gas-actual">--</span></div>
+          <div class="comparison-row"><span class="comparison-label">Tua Offerta</span><span class="comparison-value" id="compare-gas-offer">--</span></div>
+          <div class="total-row" style="color:var(--color-success);">Risparmio <span id="compare-gas-savings">--</span></div>
+        </div>
+        <div class="comparison-card">
+          <h3>📊 TOTALE</h3>
+          <div class="comparison-row"><span class="comparison-label">Costo Attuale</span><span class="comparison-value" id="compare-total-actual">--</span></div>
+          <div class="comparison-row"><span class="comparison-label">Tua Offerta</span><span class="comparison-value" id="compare-total-offer">--</span></div>
+          <div class="total-row" style="color:var(--color-success);">Risparmio <span id="compare-total-savings">--</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary" id="summarySection" style="display:none;">
+      <h2>Preventivo Generato</h2>
+      <p id="summaryText"></p>
+      <div class="highlight" id="summaryHighlight"></div>
+    </div>
+
+  </div>
+
+  <!-- PDF.js: legge il testo da PDF direttamente nel browser, senza limiti di pagine -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  </script>
+
+  <script>
+
+    async function extractPdfData(file, type) {
+      const statusDiv = document.getElementById(type === 'luce' ? 'luceExtractionStatus' : 'gasExtractionStatus');
+      const statusText = document.getElementById(type === 'luce' ? 'luceStatusText' : 'gasStatusText');
+      statusDiv.style.display = 'block';
+      statusText.textContent = 'Caricamento PDF...';
+      try {
+        if (file.size > 10485760) {
+          showError('File troppo grande (max 10MB)');
+          statusDiv.style.display = 'none';
+          return;
         }
 
-        function handleDragOverLuce(e) {
-            e.preventDefault();
-            document.getElementById('uploadAreaLuce').classList.add('dragover');
+        statusText.textContent = 'Lettura PDF in corso...';
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+        let fullText = '';
+        statusText.textContent = 'Analisi ' + pdf.numPages + ' pagine...';
+        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+          const page = await pdf.getPage(pageNum);
+          const textContent = await page.getTextContent();
+          const pageText = textContent.items.map(item => item.str).join(' ');
+          fullText += pageText + '\n';
         }
 
-        function handleDragLeaveLuce(e) {
-            e.preventDefault();
-            document.getElementById('uploadAreaLuce').classList.remove('dragover');
+        if (!fullText || fullText.trim().length < 20) {
+          showError('Impossibile leggere il testo dal PDF. Inserisci manualmente i dati.');
+          statusDiv.style.display = 'none';
+          return;
         }
 
-        function handleDropLuce(e) {
-            e.preventDefault();
-            document.getElementById('uploadAreaLuce').classList.remove('dragover');
-            
-            const files = e.dataTransfer.files;
-            if (files.length > 0 && files[0].type === 'application/pdf') {
-                extractPdfData(files[0], 'luce');
-            } else {
-                showError('❌ Per favore carica un file PDF valido');
-            }
-        }
-
-        function handleFileLuce(e) {
-            if (e.target.files.length > 0) {
-                extractPdfData(e.target.files[0], 'luce');
-            }
-        }
-
-        function handleDragOverGas(e) {
-            e.preventDefault();
-            document.getElementById('uploadAreaGas').classList.add('dragover');
-        }
-
-        function handleDragLeaveGas(e) {
-            e.preventDefault();
-            document.getElementById('uploadAreaGas').classList.remove('dragover');
-        }
-
-        function handleDropGas(e) {
-            e.preventDefault();
-            document.getElementById('uploadAreaGas').classList.remove('dragover');
-            
-            const files = e.dataTransfer.files;
-            if (files.length > 0 && files[0].type === 'application/pdf') {
-                extractPdfData(files[0], 'gas');
-            } else {
-                showError('❌ Per favore carica un file PDF valido');
-            }
-        }
-
-        function handleFileGas(e) {
-            if (e.target.files.length > 0) {
-                extractPdfData(e.target.files[0], 'gas');
-            }
-        }
-
-        document.getElementById('luce-use-same').addEventListener('change', function() {
-            document.getElementById('luce-custom-kwh-group').style.display = this.checked ? 'none' : 'block';
+        statusText.textContent = 'Analisi dati bolletta...';
+        const resp = await fetch('/api/estrai-bolletta?tipo=' + type, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: fullText })
         });
 
-        document.getElementById('gas-use-same').addEventListener('change', function() {
-            document.getElementById('gas-custom-smc-group').style.display = this.checked ? 'none' : 'block';
-        });
-
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
-            document.getElementById(tab).classList.add('active');
-            event.target.classList.add('active');
+        const data = await resp.json();
+        if (!data.success) {
+          showError(data.error || 'Impossibile estrarre i dati. Inserisci manualmente.');
+          statusDiv.style.display = 'none';
+          return;
         }
 
-        function salvaCampagn() {
-            showSuccess('✅ Parametri aggiornati. Prova a calcolare di nuovo.');
+        statusText.textContent = 'Estrazione completata! ✅';
+        if (type === 'luce') {
+          document.getElementById('luce-kwh-actual').value = data.consumo;
+          document.getElementById('luce-cost-actual').value = data.totale;
+          calculateLuceActual();
+        } else {
+          document.getElementById('gas-smc-actual').value = data.consumo;
+          document.getElementById('gas-cost-actual').value = data.totale;
+          calculateGasActual();
         }
+        showSuccess('✅ Dati estratti: ' + data.consumo + ' ' + (type === 'luce' ? 'kWh' : 'Smc') + ' — €' + data.totale);
+        setTimeout(function() { statusDiv.style.display = 'none'; }, 3000);
+      } catch(err) {
+        console.error(err);
+        showError('Errore durante la lettura del PDF: ' + err.message);
+        statusDiv.style.display = 'none';
+      }
+    }
 
-        function calculateLuceActual() {
-            const kwh = parseFloat(document.getElementById('luce-kwh-actual').value);
-            const cost = parseFloat(document.getElementById('luce-cost-actual').value);
+    function handleDragOverLuce(e) { e.preventDefault(); document.getElementById('uploadAreaLuce').classList.add('dragover'); }
+    function handleDragLeaveLuce(e) { e.preventDefault(); document.getElementById('uploadAreaLuce').classList.remove('dragover'); }
+    function handleDropLuce(e) {
+      e.preventDefault();
+      document.getElementById('uploadAreaLuce').classList.remove('dragover');
+      const files = e.dataTransfer.files;
+      if (files.length > 0 && files[0].type === 'application/pdf') extractPdfData(files[0], 'luce');
+      else showError('Per favore carica un file PDF valido');
+    }
+    function handleFileLuce(e) { if (e.target.files.length > 0) extractPdfData(e.target.files[0], 'luce'); }
 
-            if (isNaN(kwh) || isNaN(cost) || kwh <= 0) {
-                showError('Inserisci valori validi per kWh e costo');
-                return;
-            }
+    function handleDragOverGas(e) { e.preventDefault(); document.getElementById('uploadAreaGas').classList.add('dragover'); }
+    function handleDragLeaveGas(e) { e.preventDefault(); document.getElementById('uploadAreaGas').classList.remove('dragover'); }
+    function handleDropGas(e) {
+      e.preventDefault();
+      document.getElementById('uploadAreaGas').classList.remove('dragover');
+      const files = e.dataTransfer.files;
+      if (files.length > 0 && files[0].type === 'application/pdf') extractPdfData(files[0], 'gas');
+      else showError('Per favore carica un file PDF valido');
+    }
+    function handleFileGas(e) { if (e.target.files.length > 0) extractPdfData(e.target.files[0], 'gas'); }
 
-            const avgPrice = (cost / kwh).toFixed(4);
-            document.getElementById('luce-avg-price').textContent = avgPrice;
-            document.getElementById('luce-result-actual').textContent = cost.toFixed(2);
-            
-            document.getElementById('luce-decomp-kwh').textContent = kwh.toFixed(0) + ' kWh';
-            document.getElementById('luce-decomp-actual').textContent = cost.toFixed(2) + ' €';
-            document.getElementById('luce-decomp-avg').textContent = avgPrice + ' €/kWh';
+    document.getElementById('luce-use-same').addEventListener('change', function() {
+      document.getElementById('luce-custom-kwh-group').style.display = this.checked ? 'none' : 'block';
+    });
+    document.getElementById('gas-use-same').addEventListener('change', function() {
+      document.getElementById('gas-custom-smc-group').style.display = this.checked ? 'none' : 'block';
+    });
 
-            updateComparison();
+    function switchTab(tab, event) {
+      document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.remove('active'); });
+      document.querySelectorAll('.tab-button').forEach(function(el) { el.classList.remove('active'); });
+      document.getElementById(tab).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    function salvaCampagn() { showSuccess('Parametri aggiornati. Prova a calcolare di nuovo.'); }
+
+    function calculateLuceActual() {
+      const kwh = parseFloat(document.getElementById('luce-kwh-actual').value);
+      const cost = parseFloat(document.getElementById('luce-cost-actual').value);
+      if (isNaN(kwh) || isNaN(cost) || kwh <= 0) { showError('Inserisci valori validi per kWh e costo'); return; }
+      const avgPrice = (cost / kwh).toFixed(4);
+      document.getElementById('luce-avg-price').textContent = avgPrice;
+      document.getElementById('luce-result-actual').textContent = cost.toFixed(2);
+      document.getElementById('luce-decomp-kwh').textContent = kwh.toFixed(0) + ' kWh';
+      document.getElementById('luce-decomp-actual').textContent = '€' + cost.toFixed(2);
+      document.getElementById('luce-decomp-avg').textContent = avgPrice + ' €/kWh';
+      updateComparison();
+    }
+
+    function calculateLuceOffer() {
+      const pun = parseFloat(document.getElementById('luce-pun').value);
+      const margine = parseFloat(document.getElementById('luce-margine').value);
+      const useSame = document.getElementById('luce-use-same').checked;
+      const kwh = useSame
+        ? parseFloat(document.getElementById('luce-kwh-actual').value)
+        : parseFloat(document.getElementById('luce-kwh-custom').value);
+      if (isNaN(pun) || isNaN(margine) || isNaN(kwh) || kwh <= 0) { showError('Inserisci valori validi per PUN, margine e consumo'); return; }
+      const energyPrice = pun + margine;
+      const energyTotal = energyPrice * kwh;
+      const actualCost = parseFloat(document.getElementById('luce-result-actual').textContent);
+      const avgPrice = parseFloat(document.getElementById('luce-avg-price').textContent);
+      const networkOneri = (avgPrice - energyPrice) * kwh;
+      const offerCost = parseFloat((energyTotal + networkOneri).toFixed(2));
+      const savings = parseFloat((actualCost - offerCost).toFixed(2));
+      document.getElementById('luce-result-offer').textContent = offerCost.toFixed(2);
+      document.getElementById('luce-result-savings').textContent = Math.abs(savings).toFixed(2);
+      document.getElementById('luce-decomp-energy').textContent = '€' + energyTotal.toFixed(2);
+      document.getElementById('luce-decomp-network').textContent = '€' + (networkOneri > 0 ? networkOneri : 0).toFixed(2);
+      document.getElementById('luce-decomp-offer').textContent = '€' + offerCost.toFixed(2);
+      const percent = (savings / actualCost * 100).toFixed(1);
+      document.getElementById('luce-decomp-savings').textContent = '€' + Math.abs(savings).toFixed(2);
+      document.getElementById('luce-decomp-percent').textContent = Math.abs(percent) + '%';
+      const card = document.getElementById('luce-savings-card');
+      if (savings > 0) { card.classList.remove('danger'); card.classList.add('savings'); }
+      else if (savings < 0) { card.classList.remove('savings'); card.classList.add('danger'); }
+      updateComparison();
+      showSuccess('Preventivo LUCE calcolato!');
+    }
+
+    function calculateGasActual() {
+      const smc = parseFloat(document.getElementById('gas-smc-actual').value);
+      const cost = parseFloat(document.getElementById('gas-cost-actual').value);
+      if (isNaN(smc) || isNaN(cost) || smc <= 0) { showError('Inserisci valori validi per Smc e costo'); return; }
+      const avgPrice = (cost / smc).toFixed(4);
+      document.getElementById('gas-avg-price').textContent = avgPrice;
+      document.getElementById('gas-result-actual').textContent = cost.toFixed(2);
+      document.getElementById('gas-decomp-smc').textContent = smc.toFixed(0) + ' Smc';
+      document.getElementById('gas-decomp-actual').textContent = '€' + cost.toFixed(2);
+      document.getElementById('gas-decomp-avg').textContent = avgPrice + ' €/Smc';
+      updateComparison();
+    }
+
+    function calculateGasOffer() {
+      const psv = parseFloat(document.getElementById('gas-psv').value);
+      const margine = parseFloat(document.getElementById('gas-margine').value);
+      const useSame = document.getElementById('gas-use-same').checked;
+      const smc = useSame
+        ? parseFloat(document.getElementById('gas-smc-actual').value)
+        : parseFloat(document.getElementById('gas-smc-custom').value);
+      if (isNaN(psv) || isNaN(margine) || isNaN(smc) || smc <= 0) { showError('Inserisci valori validi per PSV, margine e consumo'); return; }
+      const gasPrice = psv + margine;
+      const gasTotal = gasPrice * smc;
+      const actualCost = parseFloat(document.getElementById('gas-result-actual').textContent);
+      const avgPrice = parseFloat(document.getElementById('gas-avg-price').textContent);
+      const networkOneri = (avgPrice - gasPrice) * smc;
+      const offerCost = parseFloat((gasTotal + networkOneri).toFixed(2));
+      const savings = parseFloat((actualCost - offerCost).toFixed(2));
+      document.getElementById('gas-result-offer').textContent = offerCost.toFixed(2);
+      document.getElementById('gas-result-savings').textContent = Math.abs(savings).toFixed(2);
+      document.getElementById('gas-decomp-energy').textContent = '€' + gasTotal.toFixed(2);
+      document.getElementById('gas-decomp-network').textContent = '€' + (networkOneri > 0 ? networkOneri : 0).toFixed(2);
+      document.getElementById('gas-decomp-offer').textContent = '€' + offerCost.toFixed(2);
+      const percent = (savings / actualCost * 100).toFixed(1);
+      document.getElementById('gas-decomp-savings').textContent = '€' + Math.abs(savings).toFixed(2);
+      document.getElementById('gas-decomp-percent').textContent = Math.abs(percent) + '%';
+      const card = document.getElementById('gas-savings-card');
+      if (savings > 0) { card.classList.remove('danger'); card.classList.add('savings'); }
+      else if (savings < 0) { card.classList.remove('savings'); card.classList.add('danger'); }
+      updateComparison();
+      showSuccess('Preventivo GAS calcolato!');
+    }
+
+    function updateComparison() {
+      const luceActual = document.getElementById('luce-result-actual').textContent;
+      const luceOffer  = document.getElementById('luce-result-offer').textContent;
+      const luceSavings= document.getElementById('luce-result-savings').textContent;
+      const gasActual  = document.getElementById('gas-result-actual').textContent;
+      const gasOffer   = document.getElementById('gas-result-offer').textContent;
+      const gasSavings = document.getElementById('gas-result-savings').textContent;
+      document.getElementById('compare-luce-actual').textContent  = luceActual  !== '--' ? '€' + luceActual  : '--';
+      document.getElementById('compare-luce-offer').textContent   = luceOffer   !== '--' ? '€' + luceOffer   : '--';
+      document.getElementById('compare-luce-savings').textContent = luceSavings !== '--' ? '€' + luceSavings : '--';
+      document.getElementById('compare-gas-actual').textContent   = gasActual   !== '--' ? '€' + gasActual   : '--';
+      document.getElementById('compare-gas-offer').textContent    = gasOffer    !== '--' ? '€' + gasOffer    : '--';
+      document.getElementById('compare-gas-savings').textContent  = gasSavings  !== '--' ? '€' + gasSavings  : '--';
+      if (luceActual !== '--' && gasActual !== '--') {
+        document.getElementById('compare-total-actual').textContent = '€' + (parseFloat(luceActual) + parseFloat(gasActual)).toFixed(2);
+      }
+      if (luceOffer !== '--' && gasOffer !== '--') {
+        document.getElementById('compare-total-offer').textContent = '€' + (parseFloat(luceOffer) + parseFloat(gasOffer)).toFixed(2);
+      }
+      if (luceSavings !== '--' && gasSavings !== '--') {
+        const totalSavings = (parseFloat(luceSavings) + parseFloat(gasSavings)).toFixed(2);
+        document.getElementById('compare-total-savings').textContent = '€' + totalSavings;
+        if (parseFloat(totalSavings) > 0) {
+          document.getElementById('summarySection').style.display = 'block';
+          document.getElementById('summaryText').textContent = 'Con la tua offerta, il cliente potrebbe risparmiare annualmente:';
+          document.getElementById('summaryHighlight').textContent = '€' + totalSavings + ' all\'anno';
         }
+      }
+    }
 
-        function calculateLuceOffer() {
-            const pun = parseFloat(document.getElementById('luce-pun').value);
-            const margine = parseFloat(document.getElementById('luce-margine').value);
-            const useSame = document.getElementById('luce-use-same').checked;
-            let kwh = 0;
+    function showError(message) {
+      const el = document.getElementById('errorMessage');
+      el.textContent = message; el.style.display = 'block';
+      setTimeout(function() { el.style.display = 'none'; }, 4000);
+    }
+    function showSuccess(message) {
+      const el = document.getElementById('successMessage');
+      el.textContent = message; el.style.display = 'block';
+      setTimeout(function() { el.style.display = 'none'; }, 4000);
+    }
 
-            if (useSame) {
-                kwh = parseFloat(document.getElementById('luce-kwh-actual').value);
-            } else {
-                kwh = parseFloat(document.getElementById('luce-kwh-custom').value);
-            }
-
-            if (isNaN(pun) || isNaN(margine) || isNaN(kwh) || kwh <= 0) {
-                showError('Inserisci valori validi per PUN, margine e consumo');
-                return;
-            }
-
-            const energyPrice = pun + margine;
-            const energyTotal = energyPrice * kwh;
-
-            const actualCost = parseFloat(document.getElementById('luce-result-actual').textContent);
-            const avgPrice = parseFloat(document.getElementById('luce-avg-price').textContent);
-            const networkOneri = (avgPrice - energyPrice) * kwh;
-
-            const offerCost = (energyTotal + networkOneri).toFixed(2);
-            const savings = (actualCost - offerCost).toFixed(2);
-
-            document.getElementById('luce-result-offer').textContent = offerCost;
-            document.getElementById('luce-result-savings').textContent = Math.abs(savings);
-
-            document.getElementById('luce-decomp-energy').textContent = energyTotal.toFixed(2) + ' €';
-            document.getElementById('luce-decomp-network').textContent = (networkOneri > 0 ? networkOneri : 0).toFixed(2) + ' €';
-            document.getElementById('luce-decomp-offer').textContent = offerCost + ' €';
-            
-            const percent = ((savings / actualCost) * 100).toFixed(1);
-            document.getElementById('luce-decomp-savings').textContent = Math.abs(savings) + ' €';
-            document.getElementById('luce-decomp-percent').textContent = Math.abs(percent) + '%';
-
-            if (savings > 0) {
-                document.getElementById('luce-savings-card').classList.remove('danger');
-                document.getElementById('luce-savings-card').classList.add('savings');
-            } else if (savings < 0) {
-                document.getElementById('luce-savings-card').classList.remove('savings');
-                document.getElementById('luce-savings-card').classList.add('danger');
-            }
-
-            updateComparison();
-            showSuccess('✅ Preventivo LUCE calcolato!');
-        }
-
-        function calculateGasActual() {
-            const smc = parseFloat(document.getElementById('gas-smc-actual').value);
-            const cost = parseFloat(document.getElementById('gas-cost-actual').value);
-
-            if (isNaN(smc) || isNaN(cost) || smc <= 0) {
-                showError('Inserisci valori validi per Smc e costo');
-                return;
-            }
-
-            const avgPrice = (cost / smc).toFixed(4);
-            document.getElementById('gas-avg-price').textContent = avgPrice;
-            document.getElementById('gas-result-actual').textContent = cost.toFixed(2);
-            
-            document.getElementById('gas-decomp-smc').textContent = smc.toFixed(0) + ' Smc';
-            document.getElementById('gas-decomp-actual').textContent = cost.toFixed(2) + ' €';
-            document.getElementById('gas-decomp-avg').textContent = avgPrice + ' €/Smc';
-
-            updateComparison();
-        }
-
-        function calculateGasOffer() {
-            const psv = parseFloat(document.getElementById('gas-psv').value);
-            const margine = parseFloat(document.getElementById('gas-margine').value);
-            const useSame = document.getElementById('gas-use-same').checked;
-            let smc = 0;
-
-            if (useSame) {
-                smc = parseFloat(document.getElementById('gas-smc-actual').value);
-            } else {
-                smc = parseFloat(document.getElementById('gas-smc-custom').value);
-            }
-
-            if (isNaN(psv) || isNaN(margine) || isNaN(smc) || smc <= 0) {
-                showError('Inserisci valori validi per PSV, margine e consumo');
-                return;
-            }
-
-            const gasPrice = psv + margine;
-            const gasTotal = gasPrice * smc;
-
-            const actualCost = parseFloat(document.getElementById('gas-result-actual').textContent);
-            const avgPrice = parseFloat(document.getElementById('gas-avg-price').textContent);
-            const networkOneri = (avgPrice - gasPrice) * smc;
-
-            const offerCost = (gasTotal + networkOneri).toFixed(2);
-            const savings = (actualCost - offerCost).toFixed(2);
-
-            document.getElementById('gas-result-offer').textContent = offerCost;
-            document.getElementById('gas-result-savings').textContent = Math.abs(savings);
-
-            document.getElementById('gas-decomp-energy').textContent = gasTotal.toFixed(2) + ' €';
-            document.getElementById('gas-decomp-network').textContent = (networkOneri > 0 ? networkOneri : 0).toFixed(2) + ' €';
-            document.getElementById('gas-decomp-offer').textContent = offerCost + ' €';
-            
-            const percent = ((savings / actualCost) * 100).toFixed(1);
-            document.getElementById('gas-decomp-savings').textContent = Math.abs(savings) + ' €';
-            document.getElementById('gas-decomp-percent').textContent = Math.abs(percent) + '%';
-
-            if (savings > 0) {
-                document.getElementById('gas-savings-card').classList.remove('danger');
-                document.getElementById('gas-savings-card').classList.add('savings');
-            } else if (savings < 0) {
-                document.getElementById('gas-savings-card').classList.remove('savings');
-                document.getElementById('gas-savings-card').classList.add('danger');
-            }
-
-            updateComparison();
-            showSuccess('✅ Preventivo GAS calcolato!');
-        }
-
-        function updateComparison() {
-            const luceActual = document.getElementById('luce-result-actual').textContent;
-            const luceOffer = document.getElementById('luce-result-offer').textContent;
-            const luceSavings = document.getElementById('luce-result-savings').textContent;
-
-            const gasActual = document.getElementById('gas-result-actual').textContent;
-            const gasOffer = document.getElementById('gas-result-offer').textContent;
-            const gasSavings = document.getElementById('gas-result-savings').textContent;
-
-            document.getElementById('compare-luce-actual').textContent = luceActual !== '--' ? `€ ${luceActual}` : '--';
-            document.getElementById('compare-luce-offer').textContent = luceOffer !== '--' ? `€ ${luceOffer}` : '--';
-            document.getElementById('compare-luce-savings').textContent = luceSavings !== '--' ? `€ ${luceSavings}` : '--';
-
-            document.getElementById('compare-gas-actual').textContent = gasActual !== '--' ? `€ ${gasActual}` : '--';
-            document.getElementById('compare-gas-offer').textContent = gasOffer !== '--' ? `€ ${gasOffer}` : '--';
-            document.getElementById('compare-gas-savings').textContent = gasSavings !== '--' ? `€ ${gasSavings}` : '--';
-
-            if (luceActual !== '--' && gasActual !== '--') {
-                const totalActual = (parseFloat(luceActual) + parseFloat(gasActual)).toFixed(2);
-                document.getElementById('compare-total-actual').textContent = `€ ${totalActual}`;
-            }
-
-            if (luceOffer !== '--' && gasOffer !== '--') {
-                const totalOffer = (parseFloat(luceOffer) + parseFloat(gasOffer)).toFixed(2);
-                document.getElementById('compare-total-offer').textContent = `€ ${totalOffer}`;
-            }
-
-            if (luceSavings !== '--' && gasSavings !== '--') {
-                const totalSavings = (parseFloat(luceSavings) + parseFloat(gasSavings)).toFixed(2);
-                document.getElementById('compare-total-savings').textContent = `€ ${totalSavings}`;
-
-                if (totalSavings > 0) {
-                    document.getElementById('summarySection').style.display = 'block';
-                    document.getElementById('summaryText').textContent = `Con la tua offerta, il cliente potrebbe risparmiare annualmente:`;
-                    document.getElementById('summaryHighlight').textContent = `€ ${totalSavings} all'anno`;
-                }
-            }
-        }
-
-        function showError(message) {
-            const el = document.getElementById('errorMessage');
-            el.textContent = '❌ ' + message;
-            el.style.display = 'block';
-            setTimeout(() => el.style.display = 'none', 4000);
-        }
-
-        function showSuccess(message) {
-            const el = document.getElementById('successMessage');
-            el.textContent = '✅ ' + message;
-            el.style.display = 'block';
-            setTimeout(() => el.style.display = 'none', 4000);
-        }
-    </script>
+  </script>
 </body>
 </html>
