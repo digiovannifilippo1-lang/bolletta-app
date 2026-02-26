@@ -1,0 +1,13 @@
+{
+  "name": "bolletta-app",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "echo \"static\"",
+    "start": "echo \"static\""
+  },
+  "dependencies": {
+    "openai": "^4.34.0"
+  }
+}
