@@ -54,7 +54,7 @@ input[type=file]{display:none;}
 .wtsb{flex:1;padding:9px 7px;border-radius:8px;border:2px solid transparent;cursor:pointer;font-size:.84rem;font-weight:700;transition:all .18s;background:var(--sf2);color:var(--tx2);text-align:center;}
 .wtsb small{font-size:.67rem;color:var(--tx2);display:block;margin-top:2px;}
 .wtsb.y.sel,.wtsb.y:hover{background:rgba(224,112,32,.16);border-color:var(--wt);color:#fdba74;}
-.wtsb.n.sel,.wtsb.n:hover{background:rgba(148,163,184,.08);border-color:#94a3b8;color:#var(--tx);}
+.wtsb.n.sel,.wtsb.n:hover{background:rgba(148,163,184,.08);border-color:#94a3b8;color:var(--tx);}
 /* MSG */
 .msg{border-radius:7px;padding:9px 12px;margin-bottom:12px;display:none;font-weight:500;font-size:.87rem;}
 .msg.er{background:rgba(239,68,68,.08);border:1.5px solid var(--er);color:var(--er);}
@@ -65,7 +65,7 @@ input[type=file]{display:none;}
 .hero{border-radius:12px;padding:22px 16px;text-align:center;margin-bottom:12px;border:2px solid;}
 .hero.sav{background:linear-gradient(135deg,rgba(34,197,94,.08),rgba(34,197,94,.01));border-color:rgba(34,197,94,.26);}
 .hero.los{background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(239,68,68,.01));border-color:rgba(239,68,68,.24);}
-.h-tag{font-size:.68rem;text-transform:uppercase;letter-spacing:1.2px;color:#var(--tx2);margin-bottom:3px;}
+.h-tag{font-size:.68rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--tx2);margin-bottom:3px;}
 .h-big{font-size:2.7rem;font-weight:900;line-height:1.}
 .h-big.g{color:var(--ok);}.h-big.r{color:var(--er);}
 .h-sub{font-size:.79rem;color:var(--tx2);margin-top:5px;} .h-sub strong{color:var(--tx);}
@@ -235,6 +235,32 @@ const SOP={l:null,g:null};
 const SWT={l:null,g:null};
 const CH={};
 
+// ── ANALISI IA DEL TESTO BOLLETTA ───────────────────────────
+async function analyzeWithAI(rawText, tipo) {
+  const resp = await fetch('/api/bolletta-ai?tipo=' + tipo, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ text: rawText })
+  });
+
+  const data = await resp.json();
+  if (!resp.ok || !data.success) {
+    throw new Error(data.error || 'Errore analisi IA');
+  }
+
+  return {
+    op: data.operatore || 'Operatore attuale',
+    periodo: data.periodo || '',
+    mesi: data.mesi || 2,
+    consumoPer: data.consumoPeriodo,
+    spesaPer: data.spesaPeriodo,
+    consumoAnn: data.consumoAnnuo,
+    spesaAnn: data.spesaAnnua,
+    qfAnn: data.quotaFissaAnnua,
+    qfFonte: data.quotaFissaAnnua ? 'reale' : 'stimata'
+  };
+}
+
 // ── UI ──────────────────────────────────────────────────────
 function sTab(t,e){
   ['l','g'].forEach(x=>document.getElementById('T'+x.toUpperCase()).style.display='none');
@@ -248,7 +274,7 @@ function onLv(e,t){e.preventDefault();document.getElementById('D'+U(t)).classLis
 function onDrop(e,t){e.preventDefault();onLv(e,t);const f=e.dataTransfer.files[0];if(f&&f.type==='application/pdf')readPDF(f,t);else showEr('Carica un PDF valido.');}
 function onFile(e,t){if(e.target.files[0])readPDF(e.target.files[0],t);}
 
-// ── LETTURA PDF + PARSING IN BROWSER ────────────────────────
+// ── LETTURA PDF + ANALISI IA ────────────────────────────────
 async function readPDF(file,t){
   const sb=document.getElementById('SB'+U(t));
   const st=document.getElementById('ST'+U(t));
@@ -269,13 +295,15 @@ async function readPDF(file,t){
       const c=await pg.getTextContent();
       raw+=c.items.map(i=>i.str).join(' ')+'\n';
     }
-    sb.style.display='none';
+    st.textContent='Analisi IA...';
 
     const tipo=t==='l'?'luce':'gas';
-    const dati=parseBolletta(raw,tipo);
+    const dati=await analyzeWithAI(raw,tipo);
 
-    if(!dati.consumoPer||!dati.spesaPer){
-      showEr('⚠️ Dati principali non trovati nel PDF. Controlla che il file sia leggibile.\nAnteprima: '+raw.slice(0,200));
+    sb.style.display='none';
+
+    if(!dati.consumoPer || !dati.spesaPer){
+      showEr('⚠️ IA: non è riuscita a trovare consumo o spesa nel periodo.');
       return;
     }
 
@@ -284,139 +312,16 @@ async function readPDF(file,t){
     const ua=t==='l'?'kWh':'Smc';
     showOk(
       '✅ '+dati.op+
-      ' · Periodo '+dati.periodo+
+      (dati.periodo?' · Periodo '+dati.periodo:'')+
       ' · '+dati.consumoPer.toFixed(0)+' '+ua+
       ' · € '+dati.spesaPer.toFixed(2)+' nel periodo'+
-      (dati.qfAnn?' · Canone stimato €'+dati.qfAnn.toFixed(2)+'/anno':'')
-      +' — Scegli operatore'
+      (dati.qfAnn?' · Canone €'+dati.qfAnn.toFixed(2)+'/anno':'')+
+      ' — Scegli operatore'
     );
-  }catch(err){console.error(err);showEr('Errore lettura PDF: '+err.message);sb.style.display='none';}
+  }catch(err){console.error(err);showEr('Errore lettura/analisi PDF: '+err.message);sb.style.display='none';}
 }
 
-// ── PARSING BOLLETTA ────────────────────────────────────────
-function parseBolletta(raw,tipo){
-  const t=raw.replace(/\s+/g,' ');
-  const tl=t.toLowerCase();
-
-  const out={
-    op:       detectOp(t),
-    periodo:  '',
-    consumoAnn: null,
-    spesaAnn:   null,
-    consumoPer: null,
-    spesaPer:   null,
-    mesi:       2,
-    qfAnn:      null,
-    qfFonte:    'stimata'
-  };
-
-  const dm=[...t.matchAll(/(\d{2}\/\d{2}\/\d{4})\s*[-–]\s*(\d{2}\/\d{2}\/\d{4})/g)];
-  if(dm.length>0){
-    out.periodo=dm[0][1]+' - '+dm[0][2];
-    const a=pd(dm[0][1]),b=pd(dm[0][2]);
-    if(a&&b){
-      const mesi=Math.max(1,Math.round((b-a)/2592000000));
-      if(mesi>=1&&mesi<=12)out.mesi=mesi;
-    }
-  }
-  const mM=tl.match(/(\d)\s+mes[ei]\s+x\s+[\d,\.]+/i);
-  if(mM){const v=parseInt(mM[1]);if(v>=1&&v<=12)out.mesi=v;}
-  else if(tl.includes('bimestrale'))out.mesi=2;
-  else if(tl.includes('trimestrale'))out.mesi=3;
-  else if(tl.match(/mensile(?!.*bimestrale)/i))out.mesi=1;
-
-  if(tipo==='luce'){
-    const caPatterns=[
-      /consumo\s+annuo\s+kwh[^]*?totale\s+([\d]+)\s*kwh/i,
-      /consumo\s+annuo\s+kwh\s*(?:dal[^\d]*al[^\d]*)?\s*([\d]{3,5})\s*kwh/i
-    ];
-    for(const p of caPatterns){
-      const m=tl.match(p);
-      if(m){const v=pf(m[1]);if(v>=50&&v<=99999){out.consumoAnn=v;break;}}
-    }
-  }else{
-    const caP=[
-      /consumo\s+annuo[^\d]*([\d]{2,5}[,\.]?\d*)\s*(?:smc|sm3|mc)/i
-    ];
-    for(const p of caP){
-      const m=tl.match(p);
-      if(m){const v=pf(m[1]);if(v>=20&&v<=99999){out.consumoAnn=v;break;}}
-    }
-  }
-
-  if(tipo==='luce'){
-    const cpP=[
-      /consumo\s+totale\s+fatturato[^\d]*([\d]{2,5})\s*kwh/i,
-      /totale\s+consumo\s*\(kwh\)\s*([\d]{2,5})/i,
-      /([\d]{2,4})\s*kwh\s+x\s+[\d,\.]+/i
-    ];
-    for(const p of cpP){
-      const m=tl.match(p);
-      if(m){const v=pf(m[1]);if(v>=5&&v<=99999){out.consumoPer=v;break;}}
-    }
-  }else{
-    const cpP=[
-      /consumo\s+(?:gas\s+)?(?:totale|fatturato)[^\d]*([\d]{1,5}[,\.]?\d*)\s*(?:smc|sm3)/i
-    ];
-    for(const p of cpP){
-      const m=tl.match(p);
-      if(m){const v=pf(m[1]);if(v>=1&&v<=99999){out.consumoPer=v;break;}}
-    }
-  }
-  if(!out.consumoPer&&out.consumoAnn)out.consumoPer=Math.round(out.consumoAnn*(out.mesi/12));
-
-  const tpP=[
-    /totale\s+da\s+pagare[^\d]*([\d]{1,5}[,\.]\d{2})/i,
-    /totale\s+bolletta[^\d€]*([\d]{1,5}[,\.]\d{2})/i
-  ];
-  for(const p of tpP){
-    const m=tl.match(p);
-    if(m){const v=pf(m[1]);if(v>=5&&v<=99999){out.spesaPer=v;break;}}
-  }
-
-  const saPatterns=[
-    /spesa\s+annua\s+sostenuta[^\d]*([\d]{2,5}[,\.]\d{2})/i
-  ];
-  for(const p of saPatterns){
-    const m=tl.match(p);
-    if(m){const v=pf(m[1]);if(v>=30&&v<=99999){out.spesaAnn=v;break;}}
-  }
-  if(!out.spesaAnn&&out.spesaPer)out.spesaAnn=parseFloat((out.spesaPer*(12/out.mesi)).toFixed(2));
-
-  const qf1=tl.match(/(\d)\s+mes[ei]\s+x\s+([\d,\.]+)\s*(?:€?\/?\s*mes[ei])\s+([\d,\.]+)/i);
-  if(qf1){
-    const nm=parseInt(qf1[1]);const totQF=pf(qf1[3]);
-    if(totQF>0&&totQF<500){out.qfAnn=parseFloat((totQF*(12/nm)).toFixed(2));out.qfFonte='reale';}
-  }
-  if(!out.qfAnn){
-    const qf2=tl.match(/quota\s+fissa[^\d]{0,20}([\d]{1,3}[,\.]\d{2})/i);
-    if(qf2){
-      const v=pf(qf2[1]);
-      if(v>0&&v<500){out.qfAnn=parseFloat((v*(12/out.mesi)).toFixed(2));out.qfFonte='reale';}
-    }
-  }
-
-  return out;
-}
-
-// ── OPERATOR DETECT ──────────────────────────────────────────
-function detectOp(t){
-  const tl=t.toLowerCase();
-  const ops=[['iren mercato','IREN Mercato'],['iren luce e gas','IREN'],['iren','IREN'],
-    ['plenitude','Plenitude (ENI)'],['enel energia','Enel Energia'],['enel','Enel'],
-    ['eni gas e luce','ENI Gas e Luce'],['eni ','ENI'],['a2a energia','A2A Energia'],
-    ['a2a','A2A'],['acea energia','ACEA Energia'],['acea','ACEA'],['sorgenia','Sorgenia'],
-    ['illumia','Illumia'],['e.on','E.ON'],['eon ','E.ON'],['edison energia','Edison'],
-    ['edison','Edison'],['hera comm','Hera Comm'],['hera','Hera'],['engie','ENGIE'],
-    ['bluenergy','Bluenergy'],['dolomiti energia','Dolomiti Energia'],['wekiwi','Wekiwi'],
-    ['optima energia','Optima Italia'],['optima','Optima Italia'],['duferco','Duferco'],
-    ['estra','Estra'],['2i rete gas','2i Rete Gas'],['italgas','Italgas']];
-  for(const[k,v]of ops)if(tl.includes(k))return v;
-  const m=t.match(/([A-ZÀÈÌÒÙ][A-Za-zÀ-ú\s&\.]{2,28})\s+S\.(?:p\.)?A\./);
-  return m?m[1].trim():'Operatore attuale';
-}
-
-// ── SELEZIONE ────────────────────────────────────────────────
+// ── SELEZIONE OPERATORE / WINDTRE ───────────────────────────
 function selOp(t,op){
   resetOb(t);
   document.getElementById('B'+op.toUpperCase()[0]+U(t)).classList.add('sel');
@@ -436,11 +341,12 @@ function selWt(t,v){
   calcola(t,'wt');
 }
 
-// ── CALCOLO SOLO SUL PERIODO ────────────────────────────────
+// ── CALCOLO (stesso periodo) ────────────────────────────────
 function calcola(t,op){
   const d=BD[t]; if(!d)return;
   const T2=TAR[t];const O=T2[op];
   const ua=t==='l'?'kWh':'Smc';
+  const tipo=t==='l'?'luce':'gas';
   const isWt=op==='wt';
   const opN=isWt?'WindTre':'Optima';
   const opC=isWt?'or':'bl';
@@ -458,7 +364,7 @@ function calcola(t,op){
   const costoFissoPer=parseFloat((fissoAnn*(mesi/12)).toFixed(2));
   const costoPer=costoVarPer+costoFissoPer;
 
-  const spesaAnnAttuale=parseFloat((spesaPer*fattore).toFixed(2));
+  const spesaAnnAttuale=d.spesaAnn!=null ? d.spesaAnn : parseFloat((spesaPer*fattore).toFixed(2));
   const costoAnn=parseFloat((costoPer*fattore).toFixed(2));
 
   const rispPer=parseFloat((spesaPer-costoPer).toFixed(2));
@@ -469,7 +375,7 @@ function calcola(t,op){
 
   const qfBadge=d.qfAnn?'<span class="br">✓ da bolletta</span>':'<span class="bs">stima</span>';
   const indN=t==='l'?'PUN GME':'PSV';
-  const consumoAnnStima=(d.consumoAnn||consumoPer*fattore).toFixed(0);
+  const consumoAnnStima=(d.consumoAnn!=null?d.consumoAnn:consumoPer*fattore).toFixed(0);
 
   document.getElementById('R'+U(t)).innerHTML=`
 
@@ -556,7 +462,7 @@ function calcola(t,op){
       <div class="dr"><span class="dl">Canone fisso annuo ${opN}</span><span class="dv ${opC}">€ ${fissoAnn}</span></div>
       <div class="trow ${isWt?'w':'o'}"><span style="color:var(--tx2)">TOTALE annuo ${opN} (consumi+canone)</span><span style="color:${isWt?'#fdba74':'#7dd3fc'}">€ ${costoAnn.toFixed(2)}</span></div>
 
-      <div class="dstit">✅ Risultato sul periodo</div>
+      <div class="dstit">✅ Risultato</div>
       <div class="dr"><span class="dl">Risparmio/extra stesso periodo</span>
         <span class="dv ${isSav?'g':'r'}">${isSav?'− ':'+ '}€ ${Math.abs(rispPer).toFixed(2)}</span></div>
       <div class="dr"><span class="dl">Variazione % sul periodo</span>
@@ -571,7 +477,7 @@ function calcola(t,op){
   window.scrollTo({top:document.getElementById('R'+U(t)).offsetTop-16,behavior:'smooth'});
 }
 
-// ── GRAFICI ───────────────────────────────────────────────────
+// ── GRAFICI ─────────────────────────────────────────────────
 function mkCharts(t,op,cNoPer,rispPer,costoNos,rispAnn,isSav){
   ['CP','CA'].forEach(k=>{if(CH[k+t])CH[k+t].destroy();});
   const cO=op==='wt'?'rgba(224,112,32,.85)':'rgba(14,165,233,.85)';
@@ -590,9 +496,7 @@ function mkCharts(t,op,cNoPer,rispPer,costoNos,rispAnn,isSav){
   CH['CA'+t]=mk('CA'+t,costoNos,rispAnn);
 }
 
-// ── UTILITY ───────────────────────────────────────────────────
-function pf(s){return parseFloat(String(s||0).replace(/\./g,'').replace(',','.'))||0;}
-function pd(s){const p=s.split('/');return p.length===3?new Date(`${p[2]}-${p[1]}-${p[0]}`):null;}
+// ── UTILITY ─────────────────────────────────────────────────
 function showEr(m){const e=document.getElementById('mEr');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',8000);}
 function showOk(m){const e=document.getElementById('mOk');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',8000);}
 </script>
