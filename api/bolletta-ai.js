@@ -1,8 +1,7 @@
 // api/bolletta-ai.js
-
 import OpenAI from "openai";
 
-// Usa la chiave che hai messo in Vercel come OPENAI_API_KEY
+// Legge la chiave IA da Vercel / variabili d'ambiente
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -25,7 +24,10 @@ export default async function handler(req, res) {
       });
     }
 
+    // Prompt IA
     const prompt = buildPrompt(text, tipo);
+
+    // Chiamata modello (blindata)
     const rawAnswer = await callModel(prompt);
 
     let parsed;
@@ -81,6 +83,7 @@ export default async function handler(req, res) {
   }
 }
 
+// Prompt con esempio di bolletta italiana
 function buildPrompt(text, tipo) {
   return `
 Sei un esperto di bollette italiane di energia ${
@@ -88,12 +91,7 @@ Sei un esperto di bollette italiane di energia ${
   }.
 Ricevi il TESTO ESTRATTO (solo testo, niente tabelle) di una bolletta.
 
-Il tuo obiettivo è estrarre i dati chiave in modo robusto, anche se:
-- le frasi cambiano da operatore a operatore,
-- l'ordine dei campi è diverso,
-- ci sono più importi (es. rate, saldi, pagamenti precedenti).
-
-DEVI RESTITUIRE SOLO un JSON valido con queste chiavi (niente testo fuori dal JSON):
+Devi estrarre questi dati e restituirli SOLO come JSON:
 
 {
   "operatore": string,
@@ -107,17 +105,17 @@ DEVI RESTITUIRE SOLO un JSON valido con queste chiavi (niente testo fuori dal JS
 }
 
 REGOLE:
-- "spesaPeriodo" è il TOTALE DA PAGARE per il PERIODO corrente (euro, IVA inclusa).
-  Cerca diciture come "TOTALE DA PAGARE", "TOTALE BOLLETTA", "IMPORTO DA PAGARE".
-  Se ci sono più totali, scegli quello riferito alla bolletta corrente, non saldi pregressi.
-- "consumoPeriodo" è il consumo usato per questa bolletta (kWh/Smc periodo), non l'annuo.
-- "periodo": se trovi date tipo "dal 01/11/2024 al 31/12/2024", scrivi "01/11/2024 - 31/12/2024".
-- "mesi": calcolalo dal periodo (es. 2 mesi per 01/11-31/12) oppure usa "fatturazione bimestrale/trimestrale/mensile".
-- Se vedi "Consumo annuo" o "Spesa annua sostenuta", usali per "consumoAnnuo" e "spesaAnnua".
-- "quotaFissaAnnua": se vedi un canone per N mesi, annualizzalo: importo_periodo * (12 / N).
-- Se non trovi un valore con sicurezza, metti null e NON inventare.
+- "spesaPeriodo": TOTALE DA PAGARE relativo alla bolletta corrente (euro, IVA inclusa).
+  Cerca frasi come "TOTALE DA PAGARE", "TOTALE BOLLETTA", "IMPORTO DA PAGARE".
+  Se ci sono più totali, scegli quello riferito al periodo corrente, non saldi pregressi.
+- "consumoPeriodo": consumo (kWh/Smc) usato per questa bolletta.
+- "periodo": se trovi "dal 01/11/2024 al 31/12/2024", usa "01/11/2024 - 31/12/2024".
+- "mesi": calcolo dal periodo o da frasi tipo "fatturazione bimestrale/trimestrale/mensile".
+- "consumoAnnuo" e "spesaAnnua": usa eventuali riquadri storici (ARERA, "spesa annua sostenuta", "consumo annuo").
+- "quotaFissaAnnua": canone fisso annuo del cliente. Se vedi 2 mesi x 19,55 €, annualizza: 39,10 € * (12/2) = 234,60 €.
+- Se non trovi un valore con sicurezza, metti null. Non inventare.
 - Tutti i numeri devono usare il punto come separatore decimale, senza simbolo €.
-- NON aggiungere spiegazioni: restituisci SOLO il JSON finale.
+- NON aggiungere testo fuori dal JSON.
 
 ESEMPIO:
 
@@ -128,7 +126,7 @@ Spesa annua sostenuta iva compresa ... 471,12 € ...
 Quota fissa 2 mesi x 19,55 € = 39,10 € ...
 TOTALE DA PAGARE 78,52 € ..."
 
-JSON CORRETTO:
+JSON:
 {
   "operatore": "IREN Mercato",
   "periodo": "01/11/2024 - 31/12/2024",
@@ -140,21 +138,40 @@ JSON CORRETTO:
   "quotaFissaAnnua": 234.60
 }
 
-ADESSO ANALIZZA QUESTA BOLLETTA:
+ORA ANALIZZA QUESTA BOLLETTA:
 
 TESTO:
 """${text.slice(0, 15000)}"""
 `;
 }
 
+// Chiamata OpenAI blindata
 async function callModel(prompt) {
-  const response = await client.responses.create({
-    model: "gpt-4.1-mini",
-    input: prompt,
-    response_format: { type: "json_object" }, // <-- JSON obbligatorio
-  });
+  try {
+    const response = await client.responses.create({
+      model: "gpt-4.1-mini",
+      input: prompt,
+      response_format: { type: "json_object" },
+    });
 
-  // Con response_format=json_object l’output è già una stringa JSON valida
-  const content = response.output[0].content[0].json;
-  return typeof content === "string" ? content.trim() : JSON.stringify(content);
+    const content = response.output[0]?.content[0];
+    if (!content) {
+      throw new Error("Risposta IA vuota");
+    }
+
+    if (content.json) {
+      return typeof content.json === "string"
+        ? content.json.trim()
+        : JSON.stringify(content.json);
+    }
+
+    if (content.text) {
+      return content.text.trim();
+    }
+
+    throw new Error("Formato risposta IA inatteso");
+  } catch (err) {
+    console.error("Errore chiamata OpenAI:", err);
+    throw new Error("Chiamata a OpenAI fallita: " + err.message);
+  }
 }
