@@ -11,23 +11,19 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--tx);padding:16px;min-height:100vh;}
 .wrap{max-width:900px;margin:0 auto;}
-/* HEADER */
 .hdr{text-align:center;padding:22px 16px 16px;background:var(--sf);border-radius:14px;border:1px solid var(--bd);margin-bottom:14px;}
 .logo{font-size:1.8rem;font-weight:900;background:linear-gradient(135deg,#7c3aed,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .hdr p{color:var(--tx2);margin-top:4px;font-size:.88rem;}
-/* INDICI */
 .indici{display:flex;flex-wrap:wrap;gap:12px;align-items:center;background:var(--sf);border-radius:11px;padding:10px 15px;border:1px solid var(--bd);margin-bottom:14px;font-size:.82rem;}
-.ic{display:flex;align-items:center;gap:5px;} .ic b{color:#a78bfa;}
+.ic{display:flex;align-items:center;gap:5px;}
+.ic b{color:#a78bfa;}
 .ic-tag{font-size:.68rem;background:rgba(120,80,255,.16);border-radius:4px;padding:1px 6px;color:#c4b5fd;}
 .ic-note{margin-left:auto;font-size:.68rem;color:var(--tx2);font-style:italic;}
-/* TABS */
 .tabs{display:flex;background:var(--sf);border-radius:11px;padding:3px;border:1px solid var(--bd);margin-bottom:14px;}
 .tb{flex:1;padding:9px;background:none;border:none;color:var(--tx2);cursor:pointer;font-size:.95rem;font-weight:600;border-radius:9px;transition:all .2s;}
 .tb.on{background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;}
-/* CARD */
 .card{background:var(--sf);border-radius:12px;padding:18px;border:1px solid var(--bd);margin-bottom:13px;}
 .ctit{font-size:.95rem;font-weight:700;color:#a78bfa;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
-/* UPLOAD */
 .dropz{border:2px dashed rgba(120,80,255,.32);border-radius:10px;padding:28px 16px;text-align:center;cursor:pointer;transition:all .25s;background:rgba(120,80,255,.03);}
 .dropz:hover,.dropz.over{border-color:#7c3aed;background:rgba(120,80,255,.08);}
 .dropz .ico{font-size:2rem;margin-bottom:6px;}
@@ -37,7 +33,6 @@ input[type=file]{display:none;}
 .stbar{display:none;flex-direction:row;align-items:center;gap:10px;margin-top:10px;background:rgba(120,80,255,.09);border-radius:7px;padding:8px 12px;font-size:.85rem;}
 .spin{width:14px;height:14px;border:2.5px solid rgba(120,80,255,.28);border-top:2.5px solid #7c3aed;border-radius:50%;animation:spin 1s linear infinite;flex-shrink:0;}
 @keyframes spin{to{transform:rotate(360deg)}}
-/* OP SELECTOR */
 .ops{display:none;margin-bottom:13px;}
 .ops-t{color:var(--tx2);font-size:.84rem;margin-bottom:8px;text-align:center;}
 .op-btns{display:flex;gap:10px;}
@@ -45,9 +40,12 @@ input[type=file]{display:none;}
 .ob:hover{transform:translateY(-2px);}
 .ob .nm{font-size:.9rem;font-weight:700;color:var(--tx2);}
 .ob .sb{font-size:.68rem;color:var(--tx2);line-height:1.5;}
-.ob.wt{border-color:rgba(224,112,32,.2);}.ob.wt.sel,.ob.wt:hover{background:rgba(224,112,32,.1);border-color:var(--wt);}.ob.wt.sel .nm,.ob.wt:hover .nm{color:#fdba74;}
-.ob.opt{border-color:rgba(14,165,233,.2);}.ob.opt.sel,.ob.opt:hover{background:rgba(14,165,233,.1);border-color:var(--opt);}.ob.opt.sel .nm,.ob.opt:hover .nm{color:#7dd3fc;}
-/* WT TOGGLE */
+.ob.wt{border-color:rgba(224,112,32,.2);}
+.ob.wt.sel,.ob.wt:hover{background:rgba(224,112,32,.1);border-color:var(--wt);}
+.ob.wt.sel .nm,.ob.wt:hover .nm{color:#fdba74;}
+.ob.opt{border-color:rgba(14,165,233,.2);}
+.ob.opt.sel,.ob.opt:hover{background:rgba(14,165,233,.1);border-color:var(--opt);}
+.ob.opt.sel .nm,.ob.opt:hover .nm{color:#7dd3fc;}
 .wttog{display:none;background:rgba(224,112,32,.06);border:1px solid rgba(224,112,32,.25);border-radius:10px;padding:12px 14px;margin-bottom:13px;}
 .wttog-t{font-size:.87rem;font-weight:600;color:#fdba74;margin-bottom:9px;}
 .wt-bs{display:flex;gap:9px;}
@@ -55,63 +53,70 @@ input[type=file]{display:none;}
 .wtsb small{font-size:.67rem;color:var(--tx2);display:block;margin-top:2px;}
 .wtsb.y.sel,.wtsb.y:hover{background:rgba(224,112,32,.16);border-color:var(--wt);color:#fdba74;}
 .wtsb.n.sel,.wtsb.n:hover{background:rgba(148,163,184,.08);border-color:#94a3b8;color:var(--tx);}
-/* MSG */
 .msg{border-radius:7px;padding:9px 12px;margin-bottom:12px;display:none;font-weight:500;font-size:.87rem;}
 .msg.er{background:rgba(239,68,68,.08);border:1.5px solid var(--er);color:var(--er);}
 .msg.ok{background:rgba(34,197,94,.08);border:1.5px solid var(--ok);color:var(--ok);}
-/* RESULTS */
 .res{display:none;}
-/* HERO */
 .hero{border-radius:12px;padding:22px 16px;text-align:center;margin-bottom:12px;border:2px solid;}
 .hero.sav{background:linear-gradient(135deg,rgba(34,197,94,.08),rgba(34,197,94,.01));border-color:rgba(34,197,94,.26);}
 .hero.los{background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(239,68,68,.01));border-color:rgba(239,68,68,.24);}
 .h-tag{font-size:.68rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--tx2);margin-bottom:3px;}
-.h-big{font-size:2.7rem;font-weight:900;line-height:1.}
-.h-big.g{color:var(--ok);}.h-big.r{color:var(--er);}
-.h-sub{font-size:.79rem;color:var(--tx2);margin-top:5px;} .h-sub strong{color:var(--tx);}
+.h-big{font-size:2.7rem;font-weight:900;line-height:1.;}
+.h-big.g{color:var(--ok);}
+.h-big.r{color:var(--er);}
+.h-sub{font-size:.79rem;color:var(--tx2);margin-top:5px;}
+.h-sub strong{color:var(--tx);}
 .pill{display:inline-block;padding:3px 14px;border-radius:20px;font-weight:800;font-size:.9rem;margin-top:8px;}
 .pill.g{background:rgba(34,197,94,.12);color:var(--ok);border:1.5px solid rgba(34,197,94,.22);}
 .pill.r{background:rgba(239,68,68,.1);color:var(--er);border:1.5px solid rgba(239,68,68,.22);}
-/* GRID */
 .ng{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
 @media(max-width:460px){.ng{grid-template-columns:1fr;}}
 .nc{background:var(--sf2);border-radius:10px;padding:14px;border:1.5px solid var(--bd);}
-.nc.cr{border-color:rgba(239,68,68,.18);}.nc.nw{border-color:rgba(224,112,32,.26);}.nc.no{border-color:rgba(14,165,233,.26);}
+.nc.cr{border-color:rgba(239,68,68,.18);}
+.nc.nw{border-color:rgba(224,112,32,.26);}
+.nc.no{border-color:rgba(14,165,233,.26);}
 .nc-l{font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:var(--tx2);margin-bottom:2px;}
 .nc-o{font-size:.68rem;color:var(--tx2);font-style:italic;margin-bottom:4px;}
 .nc-v{font-size:1.5rem;font-weight:800;}
-.nc-v.r{color:#f87171;}.nc-v.or{color:#fdba74;}.nc-v.bl{color:#7dd3fc;}
+.nc-v.r{color:#f87171;}
+.nc-v.or{color:#fdba74;}
+.nc-v.bl{color:#7dd3fc;}
 .nc-u{font-size:.69rem;color:var(--tx2);margin-top:2px;}
-/* CHARTS */
 .ch-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
 @media(max-width:520px){.ch-row{grid-template-columns:1fr;}}
 .chc{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:14px;}
 .chc h3{color:#a78bfa;margin-bottom:10px;font-size:.83rem;text-align:center;}
 .chw{position:relative;max-width:175px;margin:0 auto 8px;}
 .chcen{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
-.chcen .cb{font-size:1.35rem;font-weight:900;}.chcen .cb.g{color:var(--ok);}.chcen .cb.r{color:var(--er);}
+.chcen .cb{font-size:1.35rem;font-weight:900;}
+.chcen .cb.g{color:var(--ok);}
+.chcen .cb.r{color:var(--er);}
 .chcen .cs{font-size:.65rem;color:var(--tx2);}
 .chl{display:flex;justify-content:center;gap:10px;font-size:.71rem;color:var(--tx2);flex-wrap:wrap;}
 .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:2px;vertical-align:middle;}
-/* DETTAGLIO */
 .dstit{font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:var(--tx2);margin:12px 0 6px;padding-bottom:3px;border-bottom:1px solid rgba(255,255,255,.05);}
 .dr{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.81rem;}
 .dr:last-child{border-bottom:none;}
-.dl{color:var(--tx2);}.dv{font-weight:600;}
-.dv.g{color:var(--ok);}.dv.r{color:#f87171;}.dv.or{color:#fdba74;}.dv.bl{color:#7dd3fc;}
+.dl{color:var(--tx2);}
+.dv{font-weight:600;}
+.dv.g{color:var(--ok);}
+.dv.r{color:#f87171;}
+.dv.or{color:#fdba74;}
+.dv.bl{color:#7dd3fc;}
 .trow{border-radius:7px;padding:6px 10px;margin-top:5px;display:flex;justify-content:space-between;font-weight:700;font-size:.87rem;}
-.trow.c{background:rgba(239,68,68,.06);}.trow.w{background:rgba(224,112,32,.08);}.trow.o{background:rgba(14,165,233,.08);}
-/* QF BOX */
+.trow.c{background:rgba(239,68,68,.06);}
+.trow.w{background:rgba(224,112,32,.08);}
+.trow.o{background:rgba(14,165,233,.08);}
 .qfb{background:rgba(120,80,255,.05);border:1px solid rgba(120,80,255,.18);border-radius:9px;padding:11px 14px;margin-bottom:12px;}
 .qfb-t{font-size:.69rem;text-transform:uppercase;letter-spacing:1px;color:#a78bfa;margin-bottom:7px;}
-/* OI */
 .oi{border-radius:8px;padding:10px 13px;margin-bottom:12px;font-size:.79rem;}
 .oi.w{background:rgba(224,112,32,.05);border:1px solid rgba(224,112,32,.18);}
 .oi.o{background:rgba(14,165,233,.05);border:1px solid rgba(14,165,233,.18);}
 .oi-t{font-weight:700;margin-bottom:5px;font-size:.88rem;}
-.oi-r{display:flex;gap:11px;flex-wrap:wrap;} .oi-i{color:var(--tx2);}
-.oi-i b.or{color:#fdba74;} .oi-i b.bl{color:#7dd3fc;}
-/* CHIPS */
+.oi-r{display:flex;gap:11px;flex-wrap:wrap;}
+.oi-i{color:var(--tx2);}
+.oi-i b.or{color:#fdba74;}
+.oi-i b.bl{color:#7dd3fc;}
 .chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:11px;}
 .chip{background:rgba(120,80,255,.08);border:1px solid var(--bd);border-radius:6px;padding:4px 10px;font-size:.75rem;}
 .chip b{color:#a78bfa;display:block;font-size:.88rem;}
@@ -121,87 +126,85 @@ input[type=file]{display:none;}
 </head>
 <body>
 <div class="wrap">
+  <div class="hdr">
+    <div class="logo">⚡ Preventivo Energia PRO</div>
+    <p>Carica la bolletta PDF — confronto automatico WindTre / Optima</p>
+  </div>
 
-<div class="hdr">
-  <div class="logo">⚡ Preventivo Energia PRO</div>
-  <p>Carica la bolletta PDF — confronto automatico WindTre / Optima</p>
+  <div class="indici">
+    <div class="ic">💡 PUN GME: <b id="pV">0,13266</b> €/kWh <span class="ic-tag" id="pM">Gen 2026</span></div>
+    <div class="ic">🔥 PSV: <b id="sV">0,40423</b> €/Smc <span class="ic-tag" id="sM">Gen 2026</span></div>
+    <div class="ic-note">Media mensile GME · aggiornata mensilmente</div>
+  </div>
+
+  <div class="msg er" id="mEr"></div>
+  <div class="msg ok" id="mOk"></div>
+
+  <div class="tabs">
+    <button class="tb on" onclick="sTab('l',event)">💡 LUCE</button>
+    <button class="tb"    onclick="sTab('g',event)">🔥 GAS</button>
+  </div>
+
+  <div id="TL">
+    <div class="card">
+      <div class="ctit">📄 Bolletta LUCE (PDF)</div>
+      <div class="dropz" id="DL" ondrop="onDrop(event,'l')" ondragover="onOv(event,'l')" ondragleave="onLv(event,'l')" onclick="document.getElementById('FL').click()">
+        <div class="ico">📋</div>
+        <h3>Trascina PDF o clicca per selezionare</h3>
+        <p>Qualsiasi operatore italiano · Max 10 MB</p>
+      </div>
+      <input type="file" id="FL" accept=".pdf" onchange="onFile(event,'l')">
+      <div class="stbar" id="SBL"><div class="spin"></div><span id="STL">Lettura...</span></div>
+    </div>
+    <div class="ops" id="OPL">
+      <div class="ops-t">Scegli operatore per il preventivo:</div>
+      <div class="op-btns">
+        <div class="ob wt" id="BWL" onclick="selOp('l','wt')"><span style="font-size:1.3rem">🌀</span><span class="nm">WindTre</span><span class="sb">PUN+0,0278 €/kWh<br>Canone 90–156 €/anno</span></div>
+        <div class="ob opt" id="BOL" onclick="selOp('l','opt')"><span style="font-size:1.3rem">🔵</span><span class="nm">Optima</span><span class="sb">PUN+0,0396 €/kWh<br>Canone 154,80 €/anno</span></div>
+      </div>
+    </div>
+    <div class="wttog" id="WTL">
+      <div class="wttog-t">🌀 Il cliente è già cliente WindTre?</div>
+      <div class="wt-bs">
+        <div class="wtsb y" id="WYL" onclick="selWt('l',true)">✅ Sì, cliente WindTre<small>Canone 90 €/anno</small></div>
+        <div class="wtsb n" id="WNL" onclick="selWt('l',false)">❌ No, non è cliente<small>Canone 156 €/anno</small></div>
+      </div>
+    </div>
+    <div class="res" id="RL"></div>
+  </div>
+
+  <div id="TG" style="display:none">
+    <div class="card">
+      <div class="ctit">📄 Bolletta GAS (PDF)</div>
+      <div class="dropz" id="DG" ondrop="onDrop(event,'g')" ondragover="onOv(event,'g')" ondragleave="onLv(event,'g')" onclick="document.getElementById('FG').click()">
+        <div class="ico">📋</div>
+        <h3>Trascina PDF o clicca per selezionare</h3>
+        <p>Qualsiasi operatore italiano · Max 10 MB</p>
+      </div>
+      <input type="file" id="FG" accept=".pdf" onchange="onFile(event,'g')">
+      <div class="stbar" id="SBG"><div class="spin"></div><span id="STG">Lettura...</span></div>
+    </div>
+    <div class="ops" id="OPG">
+      <div class="ops-t">Scegli operatore per il preventivo:</div>
+      <div class="op-btns">
+        <div class="ob wt" id="BWG" onclick="selOp('g','wt')"><span style="font-size:1.3rem">🌀</span><span class="nm">WindTre</span><span class="sb">PSV+0,0965 €/Smc<br>Canone 90–156 €/anno</span></div>
+        <div class="ob opt" id="BOG" onclick="selOp('g','opt')"><span style="font-size:1.3rem">🔵</span><span class="nm">Optima</span><span class="sb">PSV+0,12 €/Smc<br>Canone 162 €/anno</span></div>
+      </div>
+    </div>
+    <div class="wttog" id="WTG">
+      <div class="wttog-t">🌀 Il cliente è già cliente WindTre?</div>
+      <div class="wt-bs">
+        <div class="wtsb y" id="WYG" onclick="selWt('g',true)">✅ Sì, cliente WindTre<small>Canone 90 €/anno</small></div>
+        <div class="wtsb n" id="WNG" onclick="selWt('g',false)">❌ No, non è cliente<small>Canone 156 €/anno</small></div>
+      </div>
+    </div>
+    <div class="res" id="RG"></div>
+  </div>
 </div>
 
-<div class="indici">
-  <div class="ic">💡 PUN GME: <b id="pV">0,13266</b> €/kWh <span class="ic-tag" id="pM">Gen 2026</span></div>
-  <div class="ic">🔥 PSV: <b id="sV">0,40423</b> €/Smc <span class="ic-tag" id="sM">Gen 2026</span></div>
-  <div class="ic-note">Media mensile GME · aggiornata mensilmente</div>
-</div>
-
-<div class="msg er" id="mEr"></div>
-<div class="msg ok" id="mOk"></div>
-
-<div class="tabs">
-  <button class="tb on" onclick="sTab('l',event)">💡 LUCE</button>
-  <button class="tb"    onclick="sTab('g',event)">🔥 GAS</button>
-</div>
-
-<!-- LUCE -->
-<div id="TL">
-  <div class="card">
-    <div class="ctit">📄 Bolletta LUCE (PDF)</div>
-    <div class="dropz" id="DL" ondrop="onDrop(event,'l')" ondragover="onOv(event,'l')" ondragleave="onLv(event,'l')" onclick="document.getElementById('FL').click()">
-      <div class="ico">📋</div><h3>Trascina PDF o clicca per selezionare</h3>
-      <p>Qualsiasi operatore italiano · Max 10 MB</p>
-    </div>
-    <input type="file" id="FL" accept=".pdf" onchange="onFile(event,'l')">
-    <div class="stbar" id="SBL"><div class="spin"></div><span id="STL">Lettura...</span></div>
-  </div>
-  <div class="ops" id="OPL">
-    <div class="ops-t">Scegli operatore per il preventivo:</div>
-    <div class="op-btns">
-      <div class="ob wt" id="BWL" onclick="selOp('l','wt')"><span style="font-size:1.3rem">🌀</span><span class="nm">WindTre</span><span class="sb">PUN+0,0278 €/kWh<br>Canone 90–156 €/anno</span></div>
-      <div class="ob opt" id="BOL" onclick="selOp('l','opt')"><span style="font-size:1.3rem">🔵</span><span class="nm">Optima</span><span class="sb">PUN+0,0396 €/kWh<br>Canone 154,80 €/anno</span></div>
-    </div>
-  </div>
-  <div class="wttog" id="WTL">
-    <div class="wttog-t">🌀 Il cliente è già cliente WindTre?</div>
-    <div class="wt-bs">
-      <div class="wtsb y" id="WYL" onclick="selWt('l',true)">✅ Sì, cliente WindTre<small>Canone 90 €/anno</small></div>
-      <div class="wtsb n" id="WNL" onclick="selWt('l',false)">❌ No, non è cliente<small>Canone 156 €/anno</small></div>
-    </div>
-  </div>
-  <div class="res" id="RL"></div>
-</div>
-
-<!-- GAS -->
-<div id="TG" style="display:none">
-  <div class="card">
-    <div class="ctit">📄 Bolletta GAS (PDF)</div>
-    <div class="dropz" id="DG" ondrop="onDrop(event,'g')" ondragover="onOv(event,'g')" ondragleave="onLv(event,'g')" onclick="document.getElementById('FG').click()">
-      <div class="ico">📋</div><h3>Trascina PDF o clicca per selezionare</h3>
-      <p>Qualsiasi operatore italiano · Max 10 MB</p>
-    </div>
-    <input type="file" id="FG" accept=".pdf" onchange="onFile(event,'g')">
-    <div class="stbar" id="SBG"><div class="spin"></div><span id="STG">Lettura...</span></div>
-  </div>
-  <div class="ops" id="OPG">
-    <div class="ops-t">Scegli operatore per il preventivo:</div>
-    <div class="op-btns">
-      <div class="ob wt" id="BWG" onclick="selOp('g','wt')"><span style="font-size:1.3rem">🌀</span><span class="nm">WindTre</span><span class="sb">PSV+0,0965 €/Smc<br>Canone 90–156 €/anno</span></div>
-      <div class="ob opt" id="BOG" onclick="selOp('g','opt')"><span style="font-size:1.3rem">🔵</span><span class="nm">Optima</span><span class="sb">PSV+0,12 €/Smc<br>Canone 162 €/anno</span></div>
-    </div>
-  </div>
-  <div class="wttog" id="WTG">
-    <div class="wttog-t">🌀 Il cliente è già cliente WindTre?</div>
-    <div class="wt-bs">
-      <div class="wtsb y" id="WYG" onclick="selWt('g',true)">✅ Sì, cliente WindTre<small>Canone 90 €/anno</small></div>
-      <div class="wtsb n" id="WNG" onclick="selWt('g',false)">❌ No, non è cliente<small>Canone 156 €/anno</small></div>
-    </div>
-  </div>
-  <div class="res" id="RG"></div>
-</div>
-
-</div><!-- /wrap -->
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-// ── INDICI ──────────────────────────────────────────────────
 const IND={pun:0.132660,psv:0.404227,mese:'Gen 2026'};
 (async()=>{
   try{
@@ -219,23 +222,27 @@ const IND={pun:0.132660,psv:0.404227,mese:'Gen 2026'};
   document.getElementById('sM').textContent=IND.mese;
 })();
 
-// ── TARIFFE ─────────────────────────────────────────────────
 const TAR={
-  l:{get idx(){return IND.pun;},iva:0.10,
-     wt:{sp:0.0278,vc:0.0154,fWT:90,fNO:156},
-     opt:{sp:0.0396,vc:0.0154,f:154.80}},
-  g:{get idx(){return IND.psv;},iva:0.22,
-     wt:{sp:0.0965,vc:0,fWT:90,fNO:156},
-     opt:{sp:0.12,vc:0.11,f:162}}
+  l:{get idx(){return IND.pun;},iva:0.10,wt:{sp:0.0278,vc:0.0154,fWT:90,fNO:156},opt:{sp:0.0396,vc:0.0154,f:154.80}},
+  g:{get idx(){return IND.psv;},iva:0.22,wt:{sp:0.0965,vc:0,fWT:90,fNO:156},opt:{sp:0.12,vc:0.11,f:162}}
 };
-
-// ── STATO ───────────────────────────────────────────────────
 const BD={l:null,g:null};
 const SOP={l:null,g:null};
 const SWT={l:null,g:null};
 const CH={};
 
-// ── ANALISI IA DEL TESTO BOLLETTA ───────────────────────────
+function sTab(t,e){
+  ['l','g'].forEach(x=>document.getElementById('T'+x.toUpperCase()).style.display='none');
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('T'+t.toUpperCase()).style.display='block';
+  e.target.classList.add('on');
+}
+const U=t=>t.toUpperCase();
+function onOv(e,t){e.preventDefault();document.getElementById('D'+U(t)).classList.add('over');}
+function onLv(e,t){e.preventDefault();document.getElementById('D'+U(t)).classList.remove('over');}
+function onDrop(e,t){e.preventDefault();onLv(e,t);const f=e.dataTransfer.files[0];if(f&&f.type==='application/pdf')readPDF(f,t);else showEr('Carica un PDF valido.');}
+function onFile(e,t){if(e.target.files[0])readPDF(e.target.files[0],t);}
+
 async function analyzeWithAI(rawText, tipo) {
   const resp = await fetch('/api/bolletta-ai?tipo=' + tipo, {
     method: 'POST',
@@ -244,6 +251,7 @@ async function analyzeWithAI(rawText, tipo) {
   });
 
   const data = await resp.json();
+
   if (!resp.ok || !data.success) {
     throw new Error(data.error || 'Errore analisi IA');
   }
@@ -261,20 +269,6 @@ async function analyzeWithAI(rawText, tipo) {
   };
 }
 
-// ── UI ──────────────────────────────────────────────────────
-function sTab(t,e){
-  ['l','g'].forEach(x=>document.getElementById('T'+x.toUpperCase()).style.display='none');
-  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
-  document.getElementById('T'+t.toUpperCase()).style.display='block';
-  e.target.classList.add('on');
-}
-const U=t=>t.toUpperCase();
-function onOv(e,t){e.preventDefault();document.getElementById('D'+U(t)).classList.add('over');}
-function onLv(e,t){e.preventDefault();document.getElementById('D'+U(t)).classList.remove('over');}
-function onDrop(e,t){e.preventDefault();onLv(e,t);const f=e.dataTransfer.files[0];if(f&&f.type==='application/pdf')readPDF(f,t);else showEr('Carica un PDF valido.');}
-function onFile(e,t){if(e.target.files[0])readPDF(e.target.files[0],t);}
-
-// ── LETTURA PDF + ANALISI IA ────────────────────────────────
 async function readPDF(file,t){
   const sb=document.getElementById('SB'+U(t));
   const st=document.getElementById('ST'+U(t));
@@ -296,10 +290,8 @@ async function readPDF(file,t){
       raw+=c.items.map(i=>i.str).join(' ')+'\n';
     }
     st.textContent='Analisi IA...';
-
     const tipo=t==='l'?'luce':'gas';
     const dati=await analyzeWithAI(raw,tipo);
-
     sb.style.display='none';
 
     if(!dati.consumoPer || !dati.spesaPer){
@@ -318,10 +310,13 @@ async function readPDF(file,t){
       (dati.qfAnn?' · Canone €'+dati.qfAnn.toFixed(2)+'/anno':'')+
       ' — Scegli operatore'
     );
-  }catch(err){console.error(err);showEr('Errore lettura/analisi PDF: '+err.message);sb.style.display='none';}
+  }catch(err){
+    console.error(err);
+    showEr('Errore lettura/analisi PDF: '+err.message);
+    sb.style.display='none';
+  }
 }
 
-// ── SELEZIONE OPERATORE / WINDTRE ───────────────────────────
 function selOp(t,op){
   resetOb(t);
   document.getElementById('B'+op.toUpperCase()[0]+U(t)).classList.add('sel');
@@ -331,8 +326,8 @@ function selOp(t,op){
   if(op!=='wt'){SWT[t]=null;calcola(t,op);}
 }
 function resetOb(t){
-  ['W','O'].forEach(o=>document.getElementById('B'+o+U(t)).classList.remove('sel'));
-  ['Y','N'].forEach(n=>{const e=document.getElementById('W'+n+U(t));if(e)e.classList.remove('sel');});
+  ['W','O'].forEach(o=>{const el=document.getElementById('B'+o+U(t));if(el)el.classList.remove('sel');});
+  ['Y','N'].forEach(n=>{const el=document.getElementById('W'+n+U(t));if(el)el.classList.remove('sel');});
 }
 function selWt(t,v){
   SWT[t]=v;
@@ -341,12 +336,10 @@ function selWt(t,v){
   calcola(t,'wt');
 }
 
-// ── CALCOLO (stesso periodo) ────────────────────────────────
 function calcola(t,op){
   const d=BD[t]; if(!d)return;
   const T2=TAR[t];const O=T2[op];
   const ua=t==='l'?'kWh':'Smc';
-  const tipo=t==='l'?'luce':'gas';
   const isWt=op==='wt';
   const opN=isWt?'WindTre':'Optima';
   const opC=isWt?'or':'bl';
@@ -378,7 +371,6 @@ function calcola(t,op){
   const consumoAnnStima=(d.consumoAnn!=null?d.consumoAnn:consumoPer*fattore).toFixed(0);
 
   document.getElementById('R'+U(t)).innerHTML=`
-
     <div class="chips">
       <div class="chip"><b>${consumoPer.toFixed(0)}</b>${ua} nel periodo</div>
       <div class="chip"><b>${consumoAnnStima}</b>${ua}/anno (stima)</div>
@@ -386,117 +378,10 @@ function calcola(t,op){
       <div class="chip"><b>${mesi}</b>mes${mesi===1?'e':'i'} fatturazione</div>
       <div class="chip">${d.qfAnn?`Canone attuale: € ${d.qfAnn.toFixed(2)}/anno ${qfBadge}`:'Canone attuale non disponibile'}</div>
     </div>
-
-    <div class="oi ${isWt?'w':'o'}">
-      <div class="oi-t" style="color:${isWt?'#fdba74':'#7dd3fc'}">${isWt?'🌀':'🔵'} ${opN}${isWtCl?' · Cliente WindTre ✅':''}</div>
-      <div class="oi-r">
-        <div class="oi-i">${indN}: <b class="${opC}">${T2.idx.toFixed(5)} €/${ua}</b></div>
-        <div class="oi-i">Spread: <b class="${opC}">+${O.sp} €/${ua}</b></div>
-        ${O.vc?`<div class="oi-i">Comm.var.: <b class="${opC}">+${O.vc} €/${ua}</b></div>`:''}
-        <div class="oi-i">Prezzo IVA: <b class="${opC}">${pzL.toFixed(5)} €/${ua}</b></div>
-        <div class="oi-i">Canone annuo: <b class="${opC}">€ ${fissoAnn}${isWtCl?' 🏷️':''}</b></div>
-      </div>
-    </div>
-
-    <div class="hero ${isSav?'sav':'los'}">
-      <div class="h-tag">Risparmio periodo fatturazione (${mesi} mes${mesi===1?'e':'i'})</div>
-      <div class="h-big ${isSav?'g':'r'}">${isSav?'':'− '}€ ${Math.abs(rispPer).toFixed(2)}</div>
-      <div class="h-sub">Con <strong>${d.op}</strong>: € ${spesaPer.toFixed(2)} · Con <strong>${opN}</strong>: € ${costoPer.toFixed(2)}</div>
-      <div class="pill ${isSav?'g':'r'}">${isSav?'−':'+'}${Math.abs(percPer)}% sul periodo</div>
-      <div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06);font-size:.78rem;color:var(--tx2)">
-        Proiezione annua: <strong>${d.op} € ${spesaAnnAttuale.toFixed(2)}/anno</strong> → <strong>${opN} € ${costoAnn.toFixed(2)}/anno</strong>
-        · Δ <strong style="color:${rispAnn>=0?'var(--ok)':'var(--er)'}">${rispAnn>=0?'− ':'+ '}€ ${Math.abs(rispAnn).toFixed(2)}/anno</strong>
-      </div>
-    </div>
-
-    <div class="ng">
-      <div class="nc cr"><div class="nc-l">Periodo corrente</div><div class="nc-o">${d.op}</div>
-        <div class="nc-v r">€ ${spesaPer.toFixed(2)}</div><div class="nc-u">stesso periodo</div></div>
-      <div class="nc ${isWt?'nw':'no'}"><div class="nc-l">Con ${opN} stesso periodo</div>
-        <div class="nc-o">${opN}${isWtCl?' ✅':''}</div>
-        <div class="nc-v ${opC}">€ ${costoPer.toFixed(2)}</div><div class="nc-u">stesso periodo</div></div>
-    </div>
-
-    <div class="ch-row">
-      <div class="chc">
-        <h3>📋 Periodo di fatturazione</h3>
-        <div class="chw"><canvas id="CP${t}" width="175" height="175"></canvas>
-          <div class="chcen">
-            <div class="cb ${isSav?'g':'r'}">${isSav?'−':'+'}${Math.abs(percPer)}%</div>
-            <div class="cs">${isSav?'risparmio':'extra'}</div>
-          </div>
-        </div>
-        <div class="chl">
-          <span><span class="dot" style="background:${isWt?'#e07020':'#0ea5e9'}"></span>${opN} € ${costoPer.toFixed(2)}</span>
-          <span><span class="dot" style="background:${isSav?'#22c55e':'#ef4444'}"></span>${isSav?'Risp.':'Extra'} € ${Math.abs(rispPer).toFixed(2)}</span>
-        </div>
-      </div>
-      <div class="chc">
-        <h3>📅 Proiezione annuale</h3>
-        <div class="chw"><canvas id="CA${t}" width="175" height="175"></canvas>
-          <div class="chcen">
-            <div class="cb ${rispAnn>=0?'g':'r'}">${rispAnn>=0?'−':'+'}${Math.abs(percAnn)}%</div>
-            <div class="cs">${rispAnn>=0?'risparmio':'extra'}</div>
-          </div>
-        </div>
-        <div class="chl">
-          <span><span class="dot" style="background:${isWt?'#e07020':'#0ea5e9'}"></span>${opN} € ${costoAnn.toFixed(2)}/anno</span>
-          <span><span class="dot" style="background:${rispAnn>=0?'#22c55e':'#ef4444'}"></span>${rispAnn>=0?'Risp.':'Extra'} € ${Math.abs(rispAnn).toFixed(2)}/anno</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="ctit">🔍 Dettaglio consumi e canone (annuo stimato)</div>
-
-      <div class="dstit">${d.op} — situazione attuale</div>
-      <div class="dr"><span class="dl">Consumo annuo stimato</span><span class="dv">${consumoAnnStima} ${ua}</span></div>
-      ${d.qfAnn?`<div class="dr"><span class="dl">Canone fisso annuo attuale</span><span class="dv r">€ ${d.qfAnn.toFixed(2)}</span></div>`:''}
-      <div class="dr"><span class="dl">Spesa totale annua (proiez.)</span><span class="dv r">€ ${spesaAnnAttuale.toFixed(2)}</span></div>
-      <div class="trow c"><span style="color:var(--tx2)">TOTALE attuale (stima annua)</span><span class="dv r">€ ${spesaAnnAttuale.toFixed(2)}</span></div>
-
-      <div class="dstit">${isWt?'🌀':'🔵'} ${opN} — solo consumi + canone</div>
-      <div class="dr"><span class="dl">${indN}+spread+comm. × IVA incl.</span><span class="dv ${opC}">${pzL.toFixed(5)} €/${ua}</span></div>
-      <div class="dr"><span class="dl">Consumo annuo stimato</span><span class="dv">${consumoAnnStima} ${ua}</span></div>
-      <div class="dr"><span class="dl">Spesa energia annua</span><span class="dv">€ ${(costoVarPer*fattore).toFixed(2)}</span></div>
-      <div class="dr"><span class="dl">Canone fisso annuo ${opN}</span><span class="dv ${opC}">€ ${fissoAnn}</span></div>
-      <div class="trow ${isWt?'w':'o'}"><span style="color:var(--tx2)">TOTALE annuo ${opN} (consumi+canone)</span><span style="color:${isWt?'#fdba74':'#7dd3fc'}">€ ${costoAnn.toFixed(2)}</span></div>
-
-      <div class="dstit">✅ Risultato</div>
-      <div class="dr"><span class="dl">Risparmio/extra stesso periodo</span>
-        <span class="dv ${isSav?'g':'r'}">${isSav?'− ':'+ '}€ ${Math.abs(rispPer).toFixed(2)}</span></div>
-      <div class="dr"><span class="dl">Variazione % sul periodo</span>
-        <span class="dv ${isSav?'g':'r'}">${isSav?'−':'+'}${Math.abs(percPer)}%</span></div>
-      <div class="dr"><span class="dl">Risparmio/extra annuo stimato</span>
-        <span class="dv ${rispAnn>=0?'g':'r'}">${rispAnn>=0?'− ':'+ '}€ ${Math.abs(rispAnn).toFixed(2)}/anno</span></div>
-    </div>
   `;
-
   document.getElementById('R'+U(t)).style.display='block';
-  mkCharts(t,op,costoPer,rispPer,costoAnn,rispAnn,isSav);
-  window.scrollTo({top:document.getElementById('R'+U(t)).offsetTop-16,behavior:'smooth'});
 }
 
-// ── GRAFICI ─────────────────────────────────────────────────
-function mkCharts(t,op,cNoPer,rispPer,costoNos,rispAnn,isSav){
-  ['CP','CA'].forEach(k=>{if(CH[k+t])CH[k+t].destroy();});
-  const cO=op==='wt'?'rgba(224,112,32,.85)':'rgba(14,165,233,.85)';
-  function mk(id,val,diff){
-    const ctx=document.getElementById(id);if(!ctx)return null;
-    return new Chart(ctx.getContext('2d'),{
-      type:'doughnut',
-      data:{datasets:[{data:[val,Math.max(Math.abs(diff),.01)],
-        backgroundColor:[cO,diff>=0?'rgba(34,197,94,.82)':'rgba(239,68,68,.75)'],
-        borderColor:'#090912',borderWidth:3,hoverOffset:5}]},
-      options:{cutout:'66%',animation:{duration:800},
-        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' € '+c.parsed.toFixed(2)}}}}
-    });
-  }
-  CH['CP'+t]=mk('CP'+t,cNoPer,rispPer);
-  CH['CA'+t]=mk('CA'+t,costoNos,rispAnn);
-}
-
-// ── UTILITY ─────────────────────────────────────────────────
 function showEr(m){const e=document.getElementById('mEr');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',8000);}
 function showOk(m){const e=document.getElementById('mOk');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',8000);}
 </script>
