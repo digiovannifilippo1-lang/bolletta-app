@@ -204,9 +204,15 @@ pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/p
 // ── INDICI ──────────────────────────────────────────────────
 const IND={pun:0.132660,psv:0.404227,mese:'Gen 2026'};
 (async()=>{
-  try{const r=await fetch('/api/indici',{signal:AbortSignal.timeout(3000)});
-    if(r.ok){const d=await r.json();if(d.pun)IND.pun=d.pun;if(d.psv)IND.psv=d.psv;if(d.mese)IND.mese=d.mese;}}
-  catch(e){}
+  try{
+    const r=await fetch('/api/indici',{signal:AbortSignal.timeout(3000)});
+    if(r.ok){
+      const d=await r.json();
+      if(d.pun)IND.pun=d.pun;
+      if(d.psv)IND.psv=d.psv;
+      if(d.mese)IND.mese=d.mese;
+    }
+  }catch(e){}
   document.getElementById('pV').textContent=IND.pun.toFixed(5);
   document.getElementById('sV').textContent=IND.psv.toFixed(5);
   document.getElementById('pM').textContent=IND.mese;
@@ -214,7 +220,6 @@ const IND={pun:0.132660,psv:0.404227,mese:'Gen 2026'};
 })();
 
 // ── TARIFFE ─────────────────────────────────────────────────
-// Tutto annuale. Fisso = quota fissa annua nostra offerta.
 const TAR={
   l:{get idx(){return IND.pun;},iva:0.10,
      wt:{sp:0.0278,vc:0.0154,fWT:90,fNO:156},
@@ -266,12 +271,11 @@ async function readPDF(file,t){
     }
     sb.style.display='none';
 
-    // ── PARSING DIRETTAMENTE IN BROWSER ─────────────────────
     const tipo=t==='l'?'luce':'gas';
     const dati=parseBolletta(raw,tipo);
 
-    if(!dati.consumoAnn||!dati.spesaAnn){
-      showEr('⚠️ Dati non trovati nel PDF. Controlla che il file sia leggibile.\nAnteprima: '+raw.slice(0,200));
+    if(!dati.consumoPer||!dati.spesaPer){
+      showEr('⚠️ Dati principali non trovati nel PDF. Controlla che il file sia leggibile.\nAnteprima: '+raw.slice(0,200));
       return;
     }
 
@@ -280,67 +284,65 @@ async function readPDF(file,t){
     const ua=t==='l'?'kWh':'Smc';
     showOk(
       '✅ '+dati.op+
-      ' · '+dati.consumoAnn.toFixed(0)+' '+ua+'/anno'+
-      ' · € '+dati.spesaAnn.toFixed(2)+'/anno'+
-      (dati.qfAnn?' · Q.fissa €'+dati.qfAnn.toFixed(2)+'/anno ✅':' · Q.fissa stimata ⚠️')+
-      ' — Scegli operatore'
+      ' · Periodo '+dati.periodo+
+      ' · '+dati.consumoPer.toFixed(0)+' '+ua+
+      ' · € '+dati.spesaPer.toFixed(2)+' nel periodo'+
+      (dati.qfAnn?' · Q.fissa stimata €'+dati.qfAnn.toFixed(2)+'/anno':'')
+      +' — Scegli operatore'
     );
   }catch(err){console.error(err);showEr('Errore lettura PDF: '+err.message);sb.style.display='none';}
 }
 
 // ═══════════════════════════════════════════════════════════
-// PARSING BOLLETTA — TUTTO IN BROWSER, NIENTE API
+// PARSING BOLLETTA — in browser
 // ═══════════════════════════════════════════════════════════
 function parseBolletta(raw,tipo){
-  // Normalizza: metti tutto su una riga per regex multi-spazio
   const t=raw.replace(/\s+/g,' ');
   const tl=t.toLowerCase();
 
   const out={
     op:       detectOp(t),
-    consumoAnn: null,   // kWh o Smc annui
-    spesaAnn:   null,   // € annui totali (IVA incl.)
-    consumoPer: null,   // kWh o Smc del periodo
-    spesaPer:   null,   // € totali del periodo
-    mesi:       2,      // default bimestrale
-    qfAnn:      null,   // quota fissa annuale cliente (€)
+    periodo:  '',
+    consumoAnn: null,
+    spesaAnn:   null,
+    consumoPer: null,
+    spesaPer:   null,
+    mesi:       2,
+    qfAnn:      null,
     qfFonte:    'stimata'
   };
 
-  // ── MESI FATTURATI ─────────────────────────────────────
-  // "2 mesi x 19,55" → 2
+  // Periodo di riferimento
+  const dm=[...t.matchAll(/(\d{2}\/\d{2}\/\d{4})\s*[-–]\s*(\d{2}\/\d{2}\/\d{4})/g)];
+  if(dm.length>0){
+    out.periodo=dm[0][1]+' - '+dm[0][2];
+    const a=pd(dm[0][1]),b=pd(dm[0][2]);
+    if(a&&b){
+      const mesi=Math.max(1,Math.round((b-a)/2592000000));
+      if(mesi>=1&&mesi<=12)out.mesi=mesi;
+    }
+  }
   const mM=tl.match(/(\d)\s+mes[ei]\s+x\s+[\d,\.]+/i);
   if(mM){const v=parseInt(mM[1]);if(v>=1&&v<=12)out.mesi=v;}
   else if(tl.includes('bimestrale'))out.mesi=2;
   else if(tl.includes('trimestrale'))out.mesi=3;
   else if(tl.match(/mensile(?!.*bimestrale)/i))out.mesi=1;
-  else{
-    // Da date "01/09/2025 - 31/10/2025"
-    const dm=[...t.matchAll(/(\d{2}\/\d{2}\/\d{4})\s*[-–]\s*(\d{2}\/\d{2}\/\d{4})/g)];
-    if(dm.length>0){
-      const a=pd(dm[0][1]),b=pd(dm[0][2]);
-      if(a&&b){const d=Math.round((b-a)/2592000000);if(d>=1&&d<=12)out.mesi=d;}
-    }
-  }
 
-  // ── CONSUMO ANNUO (fonte primaria: riquadro ARERA obbligatorio) ──
+  // Consumo annuo (se presente)
   if(tipo==='luce'){
-    // IREN: "Consumo Annuo kWh Dal 01112024 Al 31102025 F1 155 F2 114 F3 174 TOTALE 443 kWh"
-    // Enel/altri: "Consumo Annuo kWh 443"
     const caPatterns=[
       /consumo\s+annuo\s+kwh[^]*?totale\s+([\d]+)\s*kwh/i,
       /consumo\s+annuo\s+kwh\s*(?:dal[^\d]*al[^\d]*)?\s*([\d]{3,5})\s*kwh/i,
-      /consumo\s+annuo[^\d]*([\d]{3,5})\s*kwh/i,
-      /totale\s+([\d]{3,5})\s*kwh\b/i,
+      /consumo\s+annuo[^\d]*([\d]{3,5})\s*kwh/i
     ];
     for(const p of caPatterns){
       const m=tl.match(p);
       if(m){const v=pf(m[1]);if(v>=50&&v<=99999){out.consumoAnn=v;break;}}
     }
-  } else {
+  }else{
     const caP=[
       /consumo\s+annuo[^\d]*([\d]{2,5}[,\.]?\d*)\s*(?:smc|sm3|mc)/i,
-      /consumo\s+annuo\s+([\d]{2,5})\s*(?:smc|sm3)/i,
+      /consumo\s+annuo\s+([\d]{2,5})\s*(?:smc|sm3)/i
     ];
     for(const p of caP){
       const m=tl.match(p);
@@ -348,78 +350,64 @@ function parseBolletta(raw,tipo){
     }
   }
 
-  // ── SPESA ANNUA (fonte primaria: riquadro ARERA "Informazioni storiche") ──
-  // IREN: "Spesa annua sostenuta iva compresa dal 01112024 al 31102025 ... 343,48"
-  const saPatterns=[
-    /spesa\s+annua\s+sostenuta[^\d]*([\d]{2,5}[,\.]\d{2})/i,
-    /spesa\s+annua[^\d]*([\d]{2,5}[,\.]\d{2})/i,
-    /importo\s+annuo[^\d]*([\d]{2,5}[,\.]\d{2})/i,
-    /spesa\s+(?:totale\s+)?annuale[^\d]*([\d]{2,5}[,\.]\d{2})/i,
-  ];
-  for(const p of saPatterns){
-    const m=tl.match(p);
-    if(m){const v=pf(m[1]);if(v>=30&&v<=9999){out.spesaAnn=v;break;}}
-  }
-
-  // ── CONSUMO E SPESA PERIODO (fallback) ─────────────────
+  // Consumo periodo (dato fondamentale)
   if(tipo==='luce'){
-    // "86 kWh x 0,205" oppure "consumo totale fatturato ... 86 kWh"
     const cpP=[
-      /consumo\s+totale\s+fatturato[^\d]*([\d]{2,4})\s*kwh/i,
-      /([\d]{2,4})\s*kwh\s+x\s+[\d,\.]+/i,
-      /consumo[^\d]*([\d]{2,3})\s*kwh/i,
+      /consumo\s+totale\s+fatturato[^\d]*([\d]{2,5})\s*kwh/i,
+      /totale\s+consumo\s*\(kwh\)\s*([\d]{2,5})/i,
+      /([\d]{2,4})\s*kwh\s+x\s+[\d,\.]+/i
     ];
     for(const p of cpP){
       const m=tl.match(p);
-      if(m){const v=pf(m[1]);if(v>=5&&v<=9999){out.consumoPer=v;break;}}
+      if(m){const v=pf(m[1]);if(v>=5&&v<=99999){out.consumoPer=v;break;}}
     }
-  } else {
+  }else{
     const cpP=[
       /consumo\s+(?:gas\s+)?(?:totale|fatturato)[^\d]*([\d]{1,5}[,\.]?\d*)\s*(?:smc|sm3)/i,
-      /volume\s+(?:convertito|fatturato)[^\d]*([\d]{1,4})\s*(?:smc|sm3)/i,
+      /totale\s+consumo\s*\(smc\)\s*([\d]{1,5}[,\.]?\d*)/i
     ];
     for(const p of cpP){
       const m=tl.match(p);
-      if(m){const v=pf(m[1]);if(v>=1&&v<=9999){out.consumoPer=v;break;}}
+      if(m){const v=pf(m[1]);if(v>=1&&v<=99999){out.consumoPer=v;break;}}
     }
   }
+  if(!out.consumoPer&&out.consumoAnn)out.consumoPer=Math.round(out.consumoAnn*(out.mesi/12));
 
   // Totale periodo
   const tpP=[
     /totale\s+da\s+pagare[^\d]*([\d]{1,5}[,\.]\d{2})/i,
-    /importo\s+da\s+pagare[^\d]*([\d]{1,5}[,\.]\d{2})/i,
     /totale\s+bolletta[^\d€]*([\d]{1,5}[,\.]\d{2})/i,
-    /totale\s+fattura[^\d€]*([\d]{1,5}[,\.]\d{2})/i,
+    /totale\s+fattura[^\d€]*([\d]{1,5}[,\.]\d{2})/i
   ];
   for(const p of tpP){
     const m=tl.match(p);
-    if(m){const v=pf(m[1]);if(v>=5&&v<=9999){out.spesaPer=v;break;}}
+    if(m){const v=pf(m[1]);if(v>=5&&v<=99999){out.spesaPer=v;break;}}
   }
 
-  // Fallback annuale da periodo
-  if(!out.consumoAnn&&out.consumoPer)out.consumoAnn=Math.round(out.consumoPer*(12/out.mesi));
+  // Spesa annua se presente nel riquadro informativo
+  const saPatterns=[
+    /spesa\s+annua\s+sostenuta[^\d]*([\d]{2,5}[,\.]\d{2})/i,
+    /spesa\s+annua[^\d]*([\d]{2,5}[,\.]\d{2})/i,
+    /importo\s+annuo[^\d]*([\d]{2,5}[,\.]\d{2})/i
+  ];
+  for(const p of saPatterns){
+    const m=tl.match(p);
+    if(m){const v=pf(m[1]);if(v>=30&&v<=99999){out.spesaAnn=v;break;}}
+  }
   if(!out.spesaAnn&&out.spesaPer)out.spesaAnn=parseFloat((out.spesaPer*(12/out.mesi)).toFixed(2));
 
-  // ── QUOTA FISSA ANNUALE CLIENTE ──────────────────────
-  // Cerca "2 mesi x 19,55 €/mesi 39,10" → annualizza
+  // Quota fissa annua cliente (se riusciamo a leggerla)
   const qf1=tl.match(/(\d)\s+mes[ei]\s+x\s+([\d,\.]+)\s*(?:€?\/?\s*mes[ei])\s+([\d,\.]+)/i);
   if(qf1){
     const nm=parseInt(qf1[1]);const totQF=pf(qf1[3]);
     if(totQF>0&&totQF<500){out.qfAnn=parseFloat((totQF*(12/nm)).toFixed(2));out.qfFonte='reale';}
   }
   if(!out.qfAnn){
-    // "quota fissa ... €/mese" o "quota fissa N mesi ... importo"
-    const qf2=tl.match(/quota\s+fissa\s+(\d)\s+mes[ei][^\d]*([\d]{1,3}[,\.]\d{2})/i);
-    if(qf2){const nm=parseInt(qf2[1]);const v=pf(qf2[2]);if(v>0&&v<500){out.qfAnn=parseFloat((v*(12/nm)).toFixed(2));out.qfFonte='reale';}}
-  }
-  if(!out.qfAnn){
-    const qf3=tl.match(/quota\s+fissa[^\d]{0,20}([\d]{1,3}[,\.]\d{2})/i);
-    if(qf3){const v=pf(qf3[1]);if(v>0&&v<500&&out.mesi){out.qfAnn=parseFloat((v*(12/out.mesi)).toFixed(2));out.qfFonte='reale';}}
-  }
-  // Stima se non trovata
-  if(!out.qfAnn&&out.spesaAnn){
-    out.qfAnn=parseFloat((tipo==='luce'?out.spesaAnn*0.22:out.spesaAnn*0.14).toFixed(2));
-    out.qfFonte='stimata';
+    const qf2=tl.match(/quota\s+fissa[^\d]{0,20}([\d]{1,3}[,\.]\d{2})/i);
+    if(qf2){
+      const v=pf(qf2[1]);
+      if(v>0&&v<500){out.qfAnn=parseFloat((v*(12/out.mesi)).toFixed(2));out.qfFonte='reale';}
+    }
   }
 
   return out;
@@ -463,22 +451,7 @@ function selWt(t,v){
 }
 
 // ═══════════════════════════════════════════════════════════
-// CALCOLO — BASE ANNUALE PURA
-//
-// COSTO ATTUALE ANNUO (dalla bolletta):
-//   SpesaAnn = QFissaClienteAnn + MateriaVarAnn + FisseARERAAnn
-//              (rete + oneri + imposte — invariate al cambio)
-//
-// COSTO NOSTRA OFFERTA ANNUO:
-//   CostoNos = (Indice+Spread+VarCons)*(1+IVA)*ConsumoAnn
-//            + FissoNostroAnn
-//            + FisseARERAAnn  ← IDENTICHE (stesso distributore ARERA)
-//
-// RISPARMIO = SpesaAnn − CostoNos
-//
-// Componenti ARERA (% validate su campione 2025-26 bollette ital.):
-//   LUCE: imposte≈11.3%,  rete≈22.8%, oneri≈21.4%  (tot ~55.5%)
-//   GAS:  imposte≈19.5%,  rete≈23.7%, oneri≈7.5%   (tot ~50.7%)
+// CALCOLO — basato sullo STESSO PERIODO della bolletta
 // ═══════════════════════════════════════════════════════════
 function calcola(t,op){
   const d=BD[t]; if(!d)return;
@@ -489,65 +462,67 @@ function calcola(t,op){
   const opN=isWt?'WindTre':'Optima';
   const opC=isWt?'or':'bl';
   const isWtCl=isWt&&SWT[t]===true;
-  const fissoNos=isWt?(isWtCl?O.fWT:O.fNO):O.f;
+  const fissoAnn=isWt?(isWtCl?O.fWT:O.fNO):O.f;
 
-  // Prezzo unitario nostra offerta (IVA inclusa)
+  const mesi=d.mesi||2;
+  const consumoPer=d.consumoPer;
+  const spesaPer=d.spesaPer;
+  const fattore=12/mesi;
+
+  // Prezzo unitario offerta (IVA incl.)
   const pzL=parseFloat(((T2.idx+O.sp+(O.vc||0))*(1+T2.iva)).toFixed(6));
 
-  // Valori annuali cliente attuale
-  const spAnn = d.spesaAnn;
-  const cAnn  = d.consumoAnn;
-  const qfAnn = d.qfAnn;   // quota fissa annuale cliente attuale
-  const mesi  = d.mesi;
+  // Costo nostra offerta sul PERIODO (energia + fisso + ARERA stimata)
+  const costoVarPer=parseFloat((pzL*consumoPer).toFixed(2));       // energia
+  const costoFissoPer=parseFloat((fissoAnn*(mesi/12)).toFixed(2)); // quota fissa riproporzionata
 
-  // Componenti ARERA annuali (invariate al cambio operatore)
-  let reteAnn,oneriAnn,impoAnn;
+  // Stima componenti ARERA sul nostro prezzo (percentuali medie)
+  let percRete,percOneri,percImposte;
   if(tipo==='luce'){
-    impoAnn  = spAnn*0.113;
-    const b  = spAnn-impoAnn;
-    reteAnn  = b*0.411;   // ~22.8% del totale
-    oneriAnn = b*0.385;   // ~21.4%
-  } else {
-    impoAnn  = spAnn*0.195;
-    const b  = spAnn-impoAnn;
-    reteAnn  = b*0.295;
-    oneriAnn = b*0.093;
+    percImposte=0.20; // % del totale finale
+    percRete   =0.25;
+    percOneri  =0.10;
+  }else{
+    percImposte=0.22;
+    percRete   =0.24;
+    percOneri  =0.10;
   }
-  const fisseAnn=parseFloat((reteAnn+oneriAnn+impoAnn).toFixed(2));
+  // Per stimare le fisse partiamo dalla sola parte "energia+fisso" e gonfiamo
+  const baseEnergiaFisso=costoVarPer+costoFissoPer;
+  const fisseFactor=1+percRete+percOneri+percImposte;
+  const totaleStimatoPer=parseFloat((baseEnergiaFisso*fisseFactor).toFixed(2));
 
-  // Materia variabile attuale = tutto tranne ARERA e quota fissa
-  const matVarAnn=parseFloat((spAnn-fisseAnn-qfAnn).toFixed(2));
+  const retePer   =parseFloat((totaleStimatoPer*percRete/fisseFactor).toFixed(2));
+  const oneriPer  =parseFloat((totaleStimatoPer*percOneri/fisseFactor).toFixed(2));
+  const impostePer=parseFloat((totaleStimatoPer*percImposte/fisseFactor).toFixed(2));
 
-  // ── NOSTRA OFFERTA ────────────────────────────────────────
-  const enNos   = parseFloat((pzL*cAnn).toFixed(2));   // energia variabile annua
-  const costoNos= parseFloat((enNos+fissoNos+fisseAnn).toFixed(2)); // totale annuo
+  // Annualizzazione pura
+  const spesaAnnAttuale=parseFloat((spesaPer*fattore).toFixed(2));
+  const costoAnnNos=parseFloat((totaleStimatoPer*fattore).toFixed(2));
 
-  // Dati periodo (per info)
-  const f      = mesi/12;
-  const spPer  = d.spesaPer||parseFloat((spAnn*f).toFixed(2));
-  const cNoPer = parseFloat((costoNos*f).toFixed(2));
+  const rispPer=parseFloat((spesaPer-totaleStimatoPer).toFixed(2));
+  const rispAnn=parseFloat((spesaAnnAttuale-costoAnnNos).toFixed(2));
+  const percAnn=parseFloat((rispAnn/spesaAnnAttuale*100).toFixed(1));
+  const isSav=rispAnn>=0;
 
-  // ── RISPARMI ─────────────────────────────────────────────
-  const rispAnn = parseFloat((spAnn-costoNos).toFixed(2));
-  const rispPer = parseFloat((spPer-cNoPer).toFixed(2));
-  const percAnn = parseFloat((rispAnn/spAnn*100).toFixed(1));
-  const rispQF  = parseFloat((qfAnn-fissoNos).toFixed(2));       // solo quota fissa
-  const rispVar = parseFloat((matVarAnn-enNos).toFixed(2));       // solo variabile
-  const isSav   = rispAnn>=0;
+  // Decomposizione annua per dettaglio
+  const costoVarAnn=parseFloat((costoVarPer*fattore).toFixed(2));
+  const costoFissoAnn=parseFloat((costoFissoPer*fattore).toFixed(2));
+  const reteAnn=parseFloat((retePer*fattore).toFixed(2));
+  const oneriAnn=parseFloat((oneriPer*fattore).toFixed(2));
+  const imposteAnn=parseFloat((impostePer*fattore).toFixed(2));
 
-  const qfBadge = d.qfFonte==='reale'?'<span class="br">✅ reale</span>':'<span class="bs">⚠️ stimata</span>';
-  const indN    = t==='l'?'PUN GME':'PSV';
+  const qfBadge=d.qfAnn?'<span class="br">✓ letta da bolletta</span>':'<span class="bs">stima</span>';
+  const indN=t==='l'?'PUN GME':'PSV';
 
   document.getElementById('R'+U(t)).innerHTML=`
 
     <div class="chips">
-      <div class="chip"><b>${cAnn.toFixed(0)}</b>${ua}/anno</div>
+      <div class="chip"><b>${(d.consumoAnn||consumoPer*fattore).toFixed(0)}</b>${ua}/anno (stima)</div>
       <div class="chip"><b>${d.op}</b>operatore att.</div>
-      <div class="chip"><b>€ ${spAnn.toFixed(2)}</b>/anno att.</div>
+      <div class="chip"><b>€ ${spesaAnnAttuale.toFixed(2)}</b>/anno att. (proiezione)</div>
       <div class="chip"><b>${mesi}</b>mes${mesi===1?'e':'i'} bolletta</div>
-      <div class="chip" style="${d.qfFonte==='reale'?'border-color:rgba(34,197,94,.28)':'border-color:rgba(245,158,11,.28)'}">
-        Q.fissa ${qfBadge}
-      </div>
+      <div class="chip">${d.qfAnn?`Q.fissa attuale: € ${d.qfAnn.toFixed(2)}/anno ${qfBadge}`:'Q.fissa attuale non disponibile'}</div>
     </div>
 
     <div class="oi ${isWt?'w':'o'}">
@@ -557,39 +532,27 @@ function calcola(t,op){
         <div class="oi-i">Spread: <b class="${opC}">+${O.sp} €/${ua}</b></div>
         ${O.vc?`<div class="oi-i">Comm.var.: <b class="${opC}">+${O.vc} €/${ua}</b></div>`:''}
         <div class="oi-i">Prezzo IVA: <b class="${opC}">${pzL.toFixed(5)} €/${ua}</b></div>
-        <div class="oi-i">Fisso annuo: <b class="${opC}">€ ${fissoNos}${isWtCl?' 🏷️':''}</b></div>
-      </div>
-    </div>
-
-    <div class="qfb">
-      <div class="qfb-t">📌 Confronto quota fissa annuale</div>
-      <div class="dr"><span class="dl">${d.op} ${qfBadge}</span><span class="dv r">€ ${qfAnn.toFixed(2)}/anno</span></div>
-      <div class="dr"><span class="dl">${opN}</span><span class="dv ${opC}">€ ${fissoNos}/anno</span></div>
-      <div class="dr" style="margin-top:5px;padding-top:6px;border-top:1px solid rgba(255,255,255,.06)">
-        <span class="dl" style="font-weight:600;color:var(--tx)">Risparmio quota fissa</span>
-        <span class="dv ${rispQF>=0?'g':'r'}" style="font-size:.95rem">
-          ${rispQF>=0?'− ':'+ '}€ ${Math.abs(rispQF).toFixed(2)}/anno
-        </span>
+        <div class="oi-i">Fisso annuo: <b class="${opC}">€ ${fissoAnn}${isWtCl?' 🏷️':''}</b></div>
       </div>
     </div>
 
     <div class="hero ${isSav?'sav':'los'}">
-      <div class="h-tag">Risparmio totale stimato su 12 mesi</div>
-      <div class="h-big ${isSav?'g':'r'}">${isSav?'':'− '}€ ${Math.abs(rispAnn).toFixed(2)}</div>
-      <div class="h-sub">Con <strong>${d.op}</strong>: € ${spAnn.toFixed(2)}/anno → Con <strong>${opN}</strong>: € ${costoNos.toFixed(2)}/anno</div>
-      <div class="pill ${isSav?'g':'r'}">${isSav?'−':'+'}${Math.abs(percAnn)}% annuo</div>
+      <div class="h-tag">Risparmio stimato su ${mesi} mes${mesi===1?'e':'i'}</div>
+      <div class="h-big ${isSav?'g':'r'}">${isSav?'':'− '}€ ${Math.abs(rispPer).toFixed(2)}</div>
+      <div class="h-sub">Con <strong>${d.op}</strong>: € ${spesaPer.toFixed(2)} → Con <strong>${opN}</strong>: € ${totaleStimatoPer.toFixed(2)}</div>
+      <div class="pill ${isSav?'g':'r'}">${isSav?'−':'+'}${Math.abs((rispPer/spesaPer*100).toFixed(1))}% sul periodo</div>
       <div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06);font-size:.78rem;color:var(--tx2)">
-        Periodo (${mesi} mes${mesi===1?'e':'i'}): <strong>${d.op} € ${spPer.toFixed(2)}</strong> → <strong>${opN} € ${cNoPer.toFixed(2)}</strong>
-        · Risp. <strong style="color:${rispPer>=0?'var(--ok)':'var(--er)'}">${rispPer>=0?'− ':'+ '}€ ${Math.abs(rispPer).toFixed(2)}</strong>
+        Proiezione 12 mesi: <strong>${d.op} € ${spesaAnnAttuale.toFixed(2)}/anno</strong> → <strong>${opN} € ${costoAnnNos.toFixed(2)}/anno</strong>
+        · Risp. <strong style="color:${isSav?'var(--ok)':'var(--er)'}">${isSav?'− ':'+ '}€ ${Math.abs(rispAnn).toFixed(2)}/anno</strong>
       </div>
     </div>
 
     <div class="ng">
-      <div class="nc cr"><div class="nc-l">Paga ora con</div><div class="nc-o">${d.op}</div>
-        <div class="nc-v r">€ ${spAnn.toFixed(2)}</div><div class="nc-u">/ anno</div></div>
+      <div class="nc cr"><div class="nc-l">Spesa attuale (proiezione)</div><div class="nc-o">${d.op}</div>
+        <div class="nc-v r">€ ${spesaAnnAttuale.toFixed(2)}</div><div class="nc-u">/ anno</div></div>
       <div class="nc ${isWt?'nw':'no'}"><div class="nc-l">Con ${opN} pagherebbe</div>
         <div class="nc-o">${opN}${isWtCl?' ✅':''}</div>
-        <div class="nc-v ${opC}">€ ${costoNos.toFixed(2)}</div><div class="nc-u">/ anno</div></div>
+        <div class="nc-v ${opC}">€ ${costoAnnNos.toFixed(2)}</div><div class="nc-u">/ anno</div></div>
     </div>
 
     <div class="ch-row">
@@ -597,12 +560,12 @@ function calcola(t,op){
         <h3>📋 Periodo (${mesi} mes${mesi===1?'e':'i'})</h3>
         <div class="chw"><canvas id="CP${t}" width="175" height="175"></canvas>
           <div class="chcen">
-            <div class="cb ${rispPer>=0?'g':'r'}">${rispPer>=0?'−':'+'}${Math.abs(parseFloat((rispPer/spPer*100).toFixed(1)))}%</div>
+            <div class="cb ${rispPer>=0?'g':'r'}">${rispPer>=0?'−':'+'}${Math.abs((rispPer/spesaPer*100).toFixed(1))}%</div>
             <div class="cs">${rispPer>=0?'risparmio':'extra'}</div>
           </div>
         </div>
         <div class="chl">
-          <span><span class="dot" style="background:${isWt?'#e07020':'#0ea5e9'}"></span>${opN} € ${cNoPer.toFixed(2)}</span>
+          <span><span class="dot" style="background:${isWt?'#e07020':'#0ea5e9'}"></span>${opN} € ${totaleStimatoPer.toFixed(2)}</span>
           <span><span class="dot" style="background:${rispPer>=0?'#22c55e':'#ef4444'}"></span>${rispPer>=0?'Risp.':'Extra'} € ${Math.abs(rispPer).toFixed(2)}</span>
         </div>
       </div>
@@ -615,48 +578,39 @@ function calcola(t,op){
           </div>
         </div>
         <div class="chl">
-          <span><span class="dot" style="background:${isWt?'#e07020':'#0ea5e9'}"></span>${opN} € ${costoNos.toFixed(2)}</span>
+          <span><span class="dot" style="background:${isWt?'#e07020':'#0ea5e9'}"></span>${opN} € ${costoAnnNos.toFixed(2)}</span>
           <span><span class="dot" style="background:${isSav?'#22c55e':'#ef4444'}"></span>${isSav?'Risp.':'Extra'} € ${Math.abs(rispAnn).toFixed(2)}</span>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="ctit">🔍 Dettaglio calcolo annuale</div>
+      <div class="ctit">🔍 Dettaglio calcolo (proiezione annua)</div>
 
-      <div class="dstit">📌 ${d.op} — spesa annua reale da bolletta</div>
-      <div class="dr"><span class="dl">Consumo annuo</span><span class="dv">${cAnn.toFixed(0)} ${ua}</span></div>
-      <div class="dr"><span class="dl">Materia variabile (vendita) annua</span><span class="dv r">€ ${matVarAnn.toFixed(2)}</span></div>
-      <div class="dr"><span class="dl">Quota fissa cliente annua ${qfBadge}</span><span class="dv r">€ ${qfAnn.toFixed(2)}</span></div>
-      <div class="dr"><span class="dl">Rete + distribuzione + misura</span><span class="dv">€ ${reteAnn.toFixed(2)}</span></div>
-      <div class="dr"><span class="dl">Oneri di sistema</span><span class="dv">€ ${oneriAnn.toFixed(2)}</span></div>
-      <div class="dr"><span class="dl">Imposte (accise + IVA)</span><span class="dv">€ ${impoAnn.toFixed(2)}</span></div>
-      <div class="trow c"><span style="color:var(--tx2)">TOTALE annuo ${d.op}</span><span class="dv r">€ ${spAnn.toFixed(2)}</span></div>
-
-      <div class="dstit">${isWt?'🌀':'🔵'} ${opN}${isWtCl?' · Cliente WindTre ✅':''}</div>
+      <div class="dstit">${opN} — struttura costi</div>
+      <div class="dr"><span class="dl">Consumo annuo stimato</span><span class="dv">${(d.consumoAnn||consumoPer*fattore).toFixed(0)} ${ua}</span></div>
       <div class="dr"><span class="dl">${indN}+spread+comm. × IVA incl.</span><span class="dv ${opC}">${pzL.toFixed(5)} €/${ua}</span></div>
-      <div class="dr"><span class="dl">Energia: ${cAnn.toFixed(0)} ${ua} × ${pzL.toFixed(5)}</span><span class="dv">€ ${enNos.toFixed(2)}</span></div>
-      <div class="dr"><span class="dl">Quota fissa annua ${opN}${isWtCl?' 🏷️':''}</span><span class="dv ${opC}">€ ${fissoNos}</span></div>
-      <div class="dr"><span class="dl">Rete + oneri + imposte (invariate ARERA)</span><span class="dv">€ ${fisseAnn.toFixed(2)}</span></div>
-      <div class="trow ${isWt?'w':'o'}"><span style="color:var(--tx2)">TOTALE annuo ${opN}</span><span style="color:${isWt?'#fdba74':'#7dd3fc'}">€ ${costoNos.toFixed(2)}</span></div>
+      <div class="dr"><span class="dl">Energia variabile annua</span><span class="dv">€ ${costoVarAnn.toFixed(2)}</span></div>
+      <div class="dr"><span class="dl">Quota fissa annua ${opN}${isWtCl?' 🏷️':''}</span><span class="dv ${opC}">€ ${costoFissoAnn.toFixed(2)}</span></div>
+      <div class="dr"><span class="dl">Rete e trasporto (stima)</span><span class="dv">€ ${reteAnn.toFixed(2)}</span></div>
+      <div class="dr"><span class="dl">Oneri di sistema (stima)</span><span class="dv">€ ${oneriAnn.toFixed(2)}</span></div>
+      <div class="dr"><span class="dl">Imposte (accise+IVA) stima</span><span class="dv">€ ${imposteAnn.toFixed(2)}</span></div>
+      <div class="trow ${isWt?'w':'o'}"><span style="color:var(--tx2)">TOTALE annuo ${opN}</span><span style="color:${isWt?'#fdba74':'#7dd3fc'}">€ ${costoAnnNos.toFixed(2)}</span></div>
 
-      <div class="dstit">✅ Risultato</div>
-      <div class="dr"><span class="dl">Risparmio quota fissa</span>
-        <span class="dv ${rispQF>=0?'g':'r'}">${rispQF>=0?'− ':'+ '}€ ${Math.abs(rispQF).toFixed(2)}/anno</span></div>
-      <div class="dr"><span class="dl">Risparmio materia variabile</span>
-        <span class="dv ${rispVar>=0?'g':'r'}">${rispVar>=0?'− ':'+ '}€ ${Math.abs(rispVar).toFixed(2)}/anno</span></div>
+      <div class="dstit">✅ Confronto con spesa attuale (proiezione)</div>
+      <div class="dr"><span class="dl">Spesa attuale proiettata</span><span class="dv r">€ ${spesaAnnAttuale.toFixed(2)}/anno</span></div>
+      <div class="dr"><span class="dl">Spesa con ${opN}</span><span class="dv ${opC}">€ ${costoAnnNos.toFixed(2)}/anno</span></div>
       <div class="dr" style="font-size:.92rem;padding:6px 0">
         <span class="dl" style="font-weight:700;color:var(--tx)">RISPARMIO TOTALE ANNUALE</span>
         <span class="dv ${isSav?'g':'r'}" style="font-size:1rem">${isSav?'− ':'+ '}€ ${Math.abs(rispAnn).toFixed(2)}/anno</span>
       </div>
       <div class="dr"><span class="dl">Variazione %</span>
         <span class="dv ${isSav?'g':'r'}">${isSav?'−':'+'}${Math.abs(percAnn)}%</span></div>
-      ${isWtCl?`<div class="dr"><span class="dl">Di cui sconto cliente WindTre</span><span class="dv g">− € 66,00/anno</span></div>`:''}
     </div>
   `;
 
   document.getElementById('R'+U(t)).style.display='block';
-  mkCharts(t,op,cNoPer,rispPer,costoNos,rispAnn,isSav);
+  mkCharts(t,op,totaleStimatoPer,rispPer,costoAnnNos,rispAnn,isSav);
   window.scrollTo({top:document.getElementById('R'+U(t)).offsetTop-16,behavior:'smooth'});
 }
 
