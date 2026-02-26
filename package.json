@@ -1,5 +1,8 @@
 {
   "version": 2,
+  "buildCommand": "",
+  "outputDirectory": ".",
+  "framework": null,
   "builds": [
     { "src": "index.html", "use": "@vercel/static" },
     { "src": "api/*.js", "use": "@vercel/node" }
