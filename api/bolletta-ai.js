@@ -151,9 +151,10 @@ async function callModel(prompt) {
   const response = await client.responses.create({
     model: "gpt-4.1-mini",
     input: prompt,
-    response_format: { type: "text" },
+    response_format: { type: "json_object" }, // <-- JSON obbligatorio
   });
 
-  const content = response.output[0].content[0].text;
-  return content.trim();
+  // Con response_format=json_object l’output è già una stringa JSON valida
+  const content = response.output[0].content[0].json;
+  return typeof content === "string" ? content.trim() : JSON.stringify(content);
 }
